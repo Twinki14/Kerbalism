@@ -62,7 +62,6 @@ namespace Kerbalism.System
 
             // inject MM patches on-the-fly, so that profile/features can be queried with NEEDS[]
             Inject(root, "Profile", Lib.UppercaseFirst(Settings.Profile));
-            if (Features.Reliability) Inject(root, "Feature", "Reliability");
             if (Features.Deploy) Inject(root, "Feature", "Deploy");
             if (Features.SpaceWeather) Inject(root, "Feature", "SpaceWeather");
             if (Features.Automation) Inject(root, "Feature", "Automation");

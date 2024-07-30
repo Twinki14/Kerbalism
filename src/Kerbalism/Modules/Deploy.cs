@@ -181,7 +181,7 @@ namespace Kerbalism.Modules
             }
         }
 
-        // Some modules need to constantly update the UI 
+        // Some modules need to constantly update the UI
         public virtual void Constant_OnGUI(bool isEnabled)
         {
             // wtf?

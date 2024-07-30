@@ -35,14 +35,6 @@ namespace Kerbalism
             p.AddRightIcon(vd.cfg_show ? Textures.toggle_green : Textures.toggle_red, tooltip,
                 () => p.Toggle(ref vd.cfg_show));
 
-            if (Features.Reliability)
-            {
-                tooltip = Local.VESSELCONFIG_Highlightfailed_desc; //"Highlight failed components"
-                p.AddContent(Local.VESSELCONFIG_Highlightfailed, string.Empty, tooltip); //"highlight malfunctions"
-                p.AddRightIcon(vd.cfg_highlights ? Textures.toggle_green : Textures.toggle_red, tooltip,
-                    () => p.Toggle(ref vd.cfg_highlights));
-            }
-
             // toggle messages
             p.AddSection(Local.VESSELCONFIG_MESSAGES); //"MESSAGES"
             tooltip = Local.VESSELCONFIG_EClow; //"Receive a message when\nElectricCharge level is low"
@@ -63,14 +55,6 @@ namespace Kerbalism
                 p.AddContent(Local.VESSELCONFIG_signal, string.Empty, tooltip); //"signal"
                 p.AddRightIcon(vd.cfg_signal ? Textures.toggle_green : Textures.toggle_red, tooltip,
                     () => p.Toggle(ref vd.cfg_signal));
-            }
-
-            if (Features.Reliability)
-            {
-                tooltip = Local.VESSELCONFIG_Componentfail; //"Receive a message\nwhen a component fail"
-                p.AddContent(Local.VESSELCONFIG_reliability, string.Empty, tooltip); //"reliability"
-                p.AddRightIcon(vd.cfg_malfunction ? Textures.toggle_green : Textures.toggle_red, tooltip,
-                    () => p.Toggle(ref vd.cfg_malfunction));
             }
 
             if (Features.SpaceWeather)

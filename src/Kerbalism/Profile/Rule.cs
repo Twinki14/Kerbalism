@@ -175,8 +175,6 @@ namespace Kerbalism.Profile
                     }
                 }
 
-                bool do_breakdown = false;
-
                 if (breakdown)
                 {
                     // don't do breakdowns and don't show stress message if disabled
@@ -201,8 +199,6 @@ namespace Kerbalism.Profile
                         (breakdown_probability * elapsed_s) / (Lib.DaysInYear * Lib.HoursInDay * 3600);
                     if (breakdown_probability > Lib.RandomDouble())
                     {
-                        do_breakdown = true;
-
                         // we're stressed out and just made a major mistake, this further increases the stress level...
                         rd.problem +=
                             warning_threshold * 0.05; // add 5% of the warning treshold to current stress level
@@ -222,8 +218,6 @@ namespace Kerbalism.Profile
 
                     if (breakdown)
                     {
-                        do_breakdown = true;
-
                         // move back between warning and danger level
                         rd.problem = (warning_threshold + danger_threshold) * 0.5;
 
@@ -253,12 +247,6 @@ namespace Kerbalism.Profile
                     if (relax_message.Length > 0)
                         Message.Post(Severity.relax, Lib.ExpandMsg(relax_message, v, c, variant));
                     rd.message = 0;
-                }
-
-                if (do_breakdown)
-                {
-                    // trigger breakdown event
-                    Misc.Breakdown(v, c);
                 }
             }
 

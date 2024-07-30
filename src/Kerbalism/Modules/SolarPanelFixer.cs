@@ -187,14 +187,6 @@ namespace Kerbalism.Modules
             if ((state == PanelState.Retracted || state == PanelState.Extended || state == PanelState.ExtendedFixed) &&
                 state != SolarPanel.GetState())
                 SolarPanel.SetDeployedStateOnLoad(state);
-
-            // apply reliability broken state and ensure we are correctly initialized (in case we are repaired mid-flight)
-            // note : this rely on the fact that the reliability module is disabling the SolarPanelFixer monobehavior from OnStart, after OnLoad has been called
-            if (!isEnabled)
-            {
-                ReliabilityEvent(true);
-                OnStart(StartState.None);
-            }
         }
 
         public override void OnStart(StartState startState)
@@ -751,12 +743,6 @@ namespace Kerbalism.Modules
             SolarPanel.ToggleState(state);
         }
 
-        public void ReliabilityEvent(bool isBroken)
-        {
-            state = isBroken ? PanelState.Failure : SolarPanel.GetState();
-            SolarPanel.Break(isBroken);
-        }
-
         private double GetAnalyticalCosineFactorLanded(VesselData vd)
         {
             double finalFactor = 0.0;
@@ -842,11 +828,6 @@ namespace Kerbalism.Modules
 
             /// <summary>Kopernicus stars support : must set the animation tracked body</summary>
             public virtual void SetTrackedBody(CelestialBody body)
-            {
-            }
-
-            /// <summary>Reliability : specific hacks for the target module that must be applied when the panel is disabled by a failure</summary>
-            public virtual void Break(bool isBroken)
             {
             }
 
@@ -1120,16 +1101,6 @@ namespace Kerbalism.Modules
                 return panelModule.retractable;
             }
 
-            public override void Break(bool isBroken)
-            {
-                // reenable the target module
-                panelModule.isEnabled = !isBroken;
-                panelModule.enabled = !isBroken;
-                if (isBroken)
-                    panelModule.part.FindModelComponents<Animation>()
-                        .ForEach(k => k.Stop()); // stop the animations if we are disabling it
-            }
-
             public override bool IsTracking => panelModule.isTracking;
 
             public override void SetTrackedBody(CelestialBody body)
@@ -1320,16 +1291,6 @@ namespace Kerbalism.Modules
             {
                 return true;
             }
-
-            public override void Break(bool isBroken)
-            {
-                // in any case, the monobehavior stays disabled
-                panelModule.enabled = false;
-                if (isBroken)
-                    panelModule.isEnabled = false; // hide the extend/retract UI
-                else
-                    panelModule.isEnabled = true; // show the extend/retract UI
-            }
         }
 
         #endregion
@@ -1436,12 +1397,6 @@ namespace Kerbalism.Modules
             public override bool SupportProtoAutomation(ProtoPartModuleSnapshot protoModule)
             {
                 return false;
-            }
-
-            public override void Break(bool isBroken)
-            {
-                // in any case, everything stays disabled
-                panelModule.enabled = panelModule.isEnabled = panelModule.moduleIsEnabled = false;
             }
         }
 

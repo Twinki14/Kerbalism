@@ -5,7 +5,6 @@ using Kerbalism.Comms;
 using Kerbalism.Database;
 using Kerbalism.External;
 using Kerbalism.Modules;
-using Kerbalism.Profile;
 using Kerbalism.Science;
 using Kerbalism.Utility;
 using KSP.UI.Screens;
@@ -1046,94 +1045,6 @@ namespace Kerbalism.System
             {
                 Reputation.Instance.AddReputation(-Settings.KerbalDeathReputationPenalty, TransactionReasons.Any);
             }
-        }
-
-        // trigger a random breakdown event
-        public static void Breakdown(Vessel v, ProtoCrewMember c)
-        {
-            // constants
-            const double res_penalty = 0.1; // proportion of food lost on 'depressed' and 'wrong_valve'
-
-            // get a supply resource at random
-            ResourceInfo res = null;
-            if (Profile.Profile.supplies.Count > 0)
-            {
-                Supply supply = Profile.Profile.supplies[Lib.RandomInt(Profile.Profile.supplies.Count)];
-                res = global::Kerbalism.ResourceCache.GetResource(v, supply.resource);
-            }
-
-            // compile list of events with condition satisfied
-            List<KerbalBreakdown> events = new List<KerbalBreakdown>
-            {
-                KerbalBreakdown.mumbling //< do nothing, here so there is always something that can happen
-            };
-            if (Lib.HasData(v))
-                events.Add(KerbalBreakdown.fat_finger);
-            if (Reliability.CanMalfunction(v))
-                events.Add(KerbalBreakdown.rage);
-            if (res != null && res.Amount > double.Epsilon)
-                events.Add(KerbalBreakdown.wrong_valve);
-
-            // choose a breakdown event
-            KerbalBreakdown breakdown = events[Lib.RandomInt(events.Count)];
-
-            // generate message
-            string text = "";
-            string subtext = "";
-            switch (breakdown)
-            {
-                case KerbalBreakdown.mumbling:
-                    text = Local.Kerbalmumbling; //"$ON_VESSEL$KERBAL has been in space for too long"
-                    subtext = Local.Kerbalmumbling_subtext; //"Mumbling incoherently"
-                    break;
-                case KerbalBreakdown.fat_finger:
-                    text = Local
-                        .Kerbalfatfinger_subtext; //"$ON_VESSEL$KERBAL is pressing buttons at random on the control panel"
-                    subtext = Local.Kerbalfatfinger_subtext; //"Science data has been lost"
-                    break;
-                case KerbalBreakdown.rage:
-                    text = Local.Kerbalrage; //"$ON_VESSEL$KERBAL is possessed by a blind rage"
-                    subtext = Local.Kerbalrage_subtext; //"A component has been damaged"
-                    break;
-                case KerbalBreakdown.wrong_valve:
-                    text = Local.Kerbalwrongvalve; //"$ON_VESSEL$KERBAL opened the wrong valve"
-                    subtext = res.ResourceName + " " + Local.Kerbalwrongvalve_subtext; //has been lost"
-                    break;
-            }
-
-            // post message first so this one is shown before malfunction message
-            Message.Post(Severity.breakdown, Lib.ExpandMsg(text, v, c), subtext);
-
-            // trigger the event
-            switch (breakdown)
-            {
-                case KerbalBreakdown.mumbling:
-                    break; // do nothing
-                case KerbalBreakdown.fat_finger:
-                    Lib.RemoveData(v);
-                    break;
-                case KerbalBreakdown.rage:
-                    Reliability.CauseMalfunction(v);
-                    break;
-                case KerbalBreakdown.wrong_valve:
-                    res.Consume(res.Amount * res_penalty, global::Kerbalism.ResourceBroker.Generic);
-                    break;
-            }
-
-            // remove reputation
-            if (HighLogic.CurrentGame.Mode == Game.Modes.CAREER)
-            {
-                Reputation.Instance.AddReputation(-Settings.KerbalBreakdownReputationPenalty, TransactionReasons.Any);
-            }
-        }
-
-        // breakdown events
-        public enum KerbalBreakdown
-        {
-            mumbling, // do nothing (in case all conditions fail)
-            fat_finger, // data has been canceled
-            rage, // components have been damaged
-            wrong_valve // supply resource has been lost
         }
     }
 } // KERBALISM

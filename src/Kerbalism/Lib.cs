@@ -1542,21 +1542,6 @@ namespace Kerbalism
                 target == null ? null : target.celestialBody ?? target.vessel?.mainBody;
         }
 
-        /* this appears to be broken / working unreliably, use a raycast instead
-        /// <summary
-        /// return terrain height at point specified
-        ///- body terrain must be loaded for this to work: use it only for loaded vessels
-        /// </summary>
-        public static double TerrainHeight(CelestialBody body, Vector3d pos)
-        {
-            PQS pqs = body.pqsController;
-            if (pqs == null) return 0.0;
-            Vector2d latlong = body.GetLatitudeAndLongitude(pos);
-            Vector3d radial = QuaternionD.AngleAxis(latlong.y, Vector3d.down) * QuaternionD.AngleAxis(latlong.x, Vector3d.forward) * Vector3d.right;
-            return (pos - body.position).magnitude - pqs.GetSurfaceHeight(radial);
-        }
-        */
-
         #endregion
 
         #region VESSEL

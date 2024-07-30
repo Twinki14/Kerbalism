@@ -231,7 +231,7 @@ namespace Kerbalism
                 this.paramString = Localizer.Format(prefix + paramString);
             }
 
-            /// <summary> 
+            /// <summary>
             /// Replace &lt;&lt;x&gt;&gt; tags with the provided params. Doesn't support nested "#xxx" strings in the params, but faster.
             /// </summary>
             public string Format(params string[] parameters)
@@ -243,7 +243,7 @@ namespace Kerbalism
                 return Grammar.useGrammar(paramString, parameterCache);
             }
 
-            /// <summary> 
+            /// <summary>
             /// Replace &lt;&lt;x&gt;&gt; tags with the provided params. Support nested "#xxx" strings in the params, but slower.
             /// </summary>
             public string FormatNested(params string[] parameters)
@@ -282,7 +282,6 @@ namespace Kerbalism
         public static string Group_Radiation = GetLoc("Group_Radiation"); // "Radiation"
         public static string Group_Configuration = GetLoc("Group_Configuration"); // "Configuration"
         public static string Group_Processes = GetLoc("Group_Processes"); // "Processes"
-        public static string Group_Reliability = GetLoc("Group_Reliability"); // "Reliability"
         public static string Group_Sensors = GetLoc("Group_Sensors"); // "Sensors"
 
         ////////////////////////////////////////////////////////////////////
@@ -661,29 +660,6 @@ namespace Kerbalism
         public static string ConnManager_noconnection = GetLoc("ConnManager_noconnection"); // "no connection"
 
         ////////////////////////////////////////////////////////////////////
-        // Telemetry/Planner UI : reliability / quality
-        ////////////////////////////////////////////////////////////////////
-        public static string QualityManagement_title = GetLoc("QualityManagement_title"); // "Quality Management"
-
-        public static string
-            QualityManagement_noqualityinfo = GetLoc("QualityManagement_noqualityinfo"); // "no quality info"
-
-        public static string QualityManagement_Misc = GetLoc("QualityManagement_Misc"); // "Misc"
-        public static string QualityManagement_busted = GetLoc("QualityManagement_busted"); // "busted"
-        public static string QualityManagement_needsrepair = GetLoc("QualityManagement_needsrepair"); // "needs repair"
-
-        public static string
-            QualityManagement_needsservice = GetLoc("QualityManagement_needsservice"); // "needs service"
-
-        public static string
-            QualityManagement_operationduration = GetLoc("QualityManagement_operationduration"); // "operation duration"
-
-        public static string
-            QualityManagement_ignitionlimit = GetLoc("QualityManagement_ignitionlimit"); // "ignition limit"
-
-        public static string QualityManagement_good = GetLoc("QualityManagement_good"); // "good"
-
-        ////////////////////////////////////////////////////////////////////
         // Monitor UI : file manager
         ////////////////////////////////////////////////////////////////////
         public static ParamString
@@ -728,7 +704,7 @@ namespace Kerbalism
                 GetLoc("FILEMANAGER_analysis"); // "Flag the file for analysis in a <b>laboratory</b>"
 
         public static string
-            FILEMANAGER_Dumpsample = GetLoc("FILEMANAGER_Dumpsample"); // "Dump the sample"																
+            FILEMANAGER_Dumpsample = GetLoc("FILEMANAGER_Dumpsample"); // "Dump the sample"
 
         public static string FILEMANAGER_DumpConfirm_button1 = GetLoc("FILEMANAGER_DumpConfirm_button1"); // "Dump it"
         public static string FILEMANAGER_DumpConfirm_button2 = GetLoc("FILEMANAGER_DumpConfirm_button2"); // "Keep it"
@@ -840,12 +816,6 @@ namespace Kerbalism
                 GetLoc("VESSELCONFIG_Signallost"); // "Receive a message when signal is lost or obtained"
 
         public static string VESSELCONFIG_signal = GetLoc("VESSELCONFIG_signal"); // "signal"
-
-        public static string
-            VESSELCONFIG_Componentfail =
-                GetLoc("VESSELCONFIG_Componentfail"); // "Receive a message\nwhen a component fail"
-
-        public static string VESSELCONFIG_reliability = GetLoc("VESSELCONFIG_reliability"); // "reliability"
 
         public static string
             VESSELCONFIG_CMEevent = GetLoc("VESSELCONFIG_CMEevent"); // "Receive a message\nduring CME events"
@@ -1079,7 +1049,7 @@ namespace Kerbalism
             GetLoc("Module_Experiment_Specifics_info12_none"); // "none"
 
         public static string Module_Experiment_MultipleRunsMessage_title =
-            GetLoc("Module_Experiment_MultipleRunsMessage_title"); // "ALREADY RUNNING"																														
+            GetLoc("Module_Experiment_MultipleRunsMessage_title"); // "ALREADY RUNNING"
 
         public static string
             Module_Experiment_Message1 = GetLoc("Module_Experiment_Message1"); // "I'm not qualified for this"
@@ -1135,7 +1105,7 @@ namespace Kerbalism
                 GetLoc("Greenhouse_desc"); // "Grow crops in space and on the surface of celestial bodies, even far from the sun."
 
         public static string Greenhouse_disabled = GetLoc("Greenhouse_disabled"); // "disabled"
-        public static string Greenhouse_enabled = GetLoc("Greenhouse_enabled"); // "enabled"																	
+        public static string Greenhouse_enabled = GetLoc("Greenhouse_enabled"); // "enabled"
         public static string Greenhouse_issue1 = GetLoc("Greenhouse_issue1"); // "insufficient lighting"
         public static string Greenhouse_issue2 = GetLoc("Greenhouse_issue2"); // "insufficient pressure"
         public static string Greenhouse_issue3 = GetLoc("Greenhouse_issue3"); // "excessive radiation"
@@ -1233,7 +1203,7 @@ namespace Kerbalism
 
         public static string
             Harvester_abundancebelow =
-                GetLoc("Harvester_abundancebelow"); // "abundance below threshold"																				
+                GetLoc("Harvester_abundancebelow"); // "abundance below threshold"
 
         public static string
             Harvester_simulatedabundance = GetLoc("Harvester_simulatedabundance"); // "Simulate at abundance"
@@ -1323,129 +1293,6 @@ namespace Kerbalism
         public static string ProcessController_stopped = GetLoc("ProcessController_stopped"); // "stopped"
         public static string ProcessController_Dump = GetLoc("ProcessController_Dump"); // "Dump"
         public static string ProcessController_info1 = GetLoc("ProcessController_info1"); // "Half-life"
-
-        ////////////////////////////////////////////////////////////////////
-        // Module : Reliability
-        ////////////////////////////////////////////////////////////////////
-        public static ParamString Reliability_Inspect = new ParamString("Reliability_Inspect"); // "Inspect <<1>>"
-        public static ParamString Reliability_Repair = new ParamString("Reliability_Repair"); // "Repair <<1>>"
-        public static ParamString Reliability_Service = new ParamString("Reliability_Service"); // "Service <<1>>"
-
-        public static ParamString
-            Reliability_qualityinfo = new ParamString("Reliability_qualityinfo"); // "<<1>> quality"
-
-        public static string Reliability_Reliability = GetLoc("Reliability_Reliability"); // "Reliability"
-        public static string Reliability_criticalfailure = GetLoc("Reliability_criticalfailure"); // "critical failure"
-        public static string Reliability_malfunction = GetLoc("Reliability_malfunction"); // "malfunction"
-        public static string Reliability_burnremaining = GetLoc("Reliability_burnremaining"); // "remaining burn:"
-        public static string Reliability_ignitions = GetLoc("Reliability_ignitions"); // "ignitions:"
-
-        public static string
-            Reliability_takingradiationdamage =
-                GetLoc("Reliability_takingradiationdamage"); // "taking radiation damage"
-
-        public static string Reliability_qualityhigh = GetLoc("Reliability_qualityhigh"); // "high"
-        public static string Reliability_qualitystandard = GetLoc("Reliability_qualitystandard"); // "standard"
-
-        public static string
-            Reliability_MTBF =
-                GetLoc("Reliability_MTBF"); // "MTBF:                //Mean Time Between Failures(I guess)"
-
-        public static string Reliability_Burntime = GetLoc("Reliability_Burntime"); // "Burn time:"
-        public static string Reliability_MessagePost1 = GetLoc("Reliability_MessagePost1"); // "It is practically new"
-        public static string Reliability_MessagePost2 = GetLoc("Reliability_MessagePost2"); // "It is in good shape"
-        public static string Reliability_MessagePost3 = GetLoc("Reliability_MessagePost3"); // "This will last for ages"
-        public static string Reliability_MessagePost4 = GetLoc("Reliability_MessagePost4"); // "Brand new!"
-
-        public static string
-            Reliability_MessagePost5 =
-                GetLoc("Reliability_MessagePost5"); // "Doesn't look used. Is this even turned on?"
-
-        public static string
-            Reliability_MessagePost6 = GetLoc("Reliability_MessagePost6"); // "Looks like it's going to fall off soon."
-
-        public static string
-            Reliability_MessagePost7 = GetLoc("Reliability_MessagePost7"); // "Better get the duck tape ready!"
-
-        public static string
-            Reliability_MessagePost8 = GetLoc("Reliability_MessagePost8"); // "It is reaching its operational limits."
-
-        public static string
-            Reliability_MessagePost9 = GetLoc("Reliability_MessagePost9"); // "How is this still working?"
-
-        public static string
-            Reliability_MessagePost10 = GetLoc("Reliability_MessagePost10"); // "It could fail at any moment now."
-
-        public static string
-            Reliability_MessagePost11 = GetLoc("Reliability_MessagePost11"); // "I'm not qualified for this"
-
-        public static string
-            Reliability_MessagePost12 = GetLoc("Reliability_MessagePost12"); // "I will not even know where to start"
-
-        public static string
-            Reliability_MessagePost13 = GetLoc("Reliability_MessagePost13"); // "I'm afraid I can't do that"
-
-        public static ParamString
-            Reliability_MessagePost14 = new ParamString("Reliability_MessagePost14"); // "<<1>> repaired"
-
-        public static string
-            Reliability_MessagePost15 = GetLoc("Reliability_MessagePost15"); // "A powerkick did the trick."
-
-        public static string
-            Reliability_MessagePost16 =
-                GetLoc("Reliability_MessagePost16"); // "Duct tape, is there something it can't fix?"
-
-        public static string
-            Reliability_MessagePost17 = GetLoc("Reliability_MessagePost17"); // "Fully operational again."
-
-        public static string
-            Reliability_MessagePost18 = GetLoc("Reliability_MessagePost18"); // "We are back in business."
-
-        public static ParamString
-            Reliability_MessagePost19 = new ParamString("Reliability_MessagePost19"); // "<<1>> serviced"
-
-        public static string
-            Reliability_MessagePost20 =
-                GetLoc("Reliability_MessagePost20"); // "I don't know how this was still working."
-
-        public static string
-            Reliability_MessagePost21 = GetLoc("Reliability_MessagePost21"); // "Fastened that loose screw."
-
-        public static string
-            Reliability_MessagePost22 = GetLoc("Reliability_MessagePost22"); // "Someone forgot a toothpick in there."
-
-        public static string Reliability_MessagePost23 = GetLoc("Reliability_MessagePost23"); // "As good as new!"
-
-        public static ParamString
-            Reliability_MessagePost24 = new ParamString("Reliability_MessagePost24"); // "<<1>> malfunctioned on <<2>>"
-
-        public static string
-            Reliability_MessagePost25 = GetLoc("Reliability_MessagePost25"); // "We can still repair it"
-
-        public static ParamString
-            Reliability_MessagePost26 = new ParamString("Reliability_MessagePost26"); // "<<1>> failed on <<2>>"
-
-        public static string Reliability_MessagePost27 = GetLoc("Reliability_MessagePost27"); // "It is gone for good"
-
-        public static ParamString
-            Reliability_MessagePost28 =
-                new ParamString("Reliability_MessagePost28"); // "There has been a problem with <<1>> on <<2>>"
-
-        public static string
-            Reliability_MessagePost29 =
-                GetLoc("Reliability_MessagePost29"); // "We were able to fix it remotely, this time"
-
-        public static string Reliability_info1 = GetLoc("Reliability_info1"); // "Redundancy"
-        public static string Reliability_info2 = GetLoc("Reliability_info2"); // "Repair"
-        public static string Reliability_info3 = GetLoc("Reliability_info3"); // "Standard quality"
-        public static string Reliability_info4 = GetLoc("Reliability_info4"); // "MTBF"
-        public static string Reliability_info5 = GetLoc("Reliability_info5"); // "Ignition failures"
-        public static string Reliability_info6 = GetLoc("Reliability_info6"); // "Rated burn duration"
-        public static string Reliability_info7 = GetLoc("Reliability_info7"); // "Rated ignitions"
-        public static string Reliability_info8 = GetLoc("Reliability_info8"); // "Radiation rating"
-        public static string Reliability_info9 = GetLoc("Reliability_info9"); // "High quality"
-        public static string Reliability_info10 = GetLoc("Reliability_info10"); // "Extra cost"
-        public static string Reliability_info11 = GetLoc("Reliability_info11"); // "Extra mass"
 
         ////////////////////////////////////////////////////////////////////
         // Module : Sensor
@@ -1569,55 +1416,6 @@ namespace Kerbalism
         ////////////////////////////////////////////////////////////////////
         // Class : Preferences
         ////////////////////////////////////////////////////////////////////
-        public static string Preferences_Reliability = GetLoc("Preferences_Reliability"); // "Reliability"
-        public static string HighlightMalfunctions = GetLoc("HighlightMalfunctions"); // "Highlight Malfunctions"
-
-        public static string
-            HighlightMalfunctions_desc = GetLoc("HighlightMalfunctions_desc"); // "Highlight failed parts in flight"
-
-        public static string PartMalfunctions = GetLoc("PartMalfunctions"); // "Part Malfunctions"
-
-        public static string
-            PartMalfunctions_desc =
-                GetLoc("PartMalfunctions_desc"); // "Allow engine failures based on part age and mean time between failures"
-
-        public static string CriticalFailureRate = GetLoc("CriticalFailureRate"); // "Critical Failure Rate"
-
-        public static string
-            CriticalFailureRate_desc =
-                GetLoc("CriticalFailureRate_desc"); // "Proportion of malfunctions that lead to critical failures"
-
-        public static string FixableFailureRate = GetLoc("FixableFailureRate"); // "Fixable Failure Rate"
-
-        public static string
-            FixableFailureRate_desc =
-                GetLoc("FixableFailureRate_desc"); // "Proportion of malfunctions that can be fixed remotely"
-
-        public static string IncentiveRedundancy = GetLoc("IncentiveRedundancy"); // "Incentive Redundancy"
-
-        public static string
-            IncentiveRedundancy_desc =
-                GetLoc("IncentiveRedundancy_desc"); // "Each malfunction will increase the MTBF\nof components in the same redundancy group"
-
-        public static string EngineMalfunctions = GetLoc("EngineMalfunctions"); // "Engine Malfunctions"
-
-        public static string
-            EngineMalfunctions_desc =
-                GetLoc("EngineMalfunctions_desc"); // "Allow engine failures on ignition and exceeded burn durations"
-
-        public static string
-            EngineIgnitionFailureChance = GetLoc("EngineIgnitionFailureChance"); // "Engine Ignition Failure Chance"
-
-        public static string
-            EngineIgnitionFailureChance_desc =
-                GetLoc("EngineIgnitionFailureChance_desc"); // "Adjust the probability of engine failures on ignition"
-
-        public static string
-            EngineBurnFailureChance = GetLoc("EngineBurnFailureChance"); // "Engine Burn Failure Chance"
-
-        public static string
-            EngineBurnFailureChance_desc =
-                GetLoc("EngineBurnFailureChance_desc"); // "Adjust the probability of an engine failure caused by excessive burn time"
 
         //
         public static string Preferences_Science = GetLoc("Preferences_Science"); // "Science"
@@ -1841,34 +1639,6 @@ namespace Kerbalism
 
         public static string Planner_shielding = GetLoc("Planner_shielding"); // "shielding"
 
-        //traduce the redundancy metric to string
-        public static string Planner_none = GetLoc("Planner_none"); // "none"
-        public static string Planner_poor = GetLoc("Planner_poor"); // "poor"
-        public static string Planner_okay = GetLoc("Planner_okay"); // "okay"
-        public static string Planner_great = GetLoc("Planner_great"); // "great"
-
-        public static string
-            Planner_engineer_tip =
-                GetLoc("Planner_engineer_tip"); // "The engineer on board should\nbe able to handle all repairs"
-
-        public static string
-            Planner_safemode_tip =
-                GetLoc("Planner_safemode_tip"); // "We have a chance of repairing\nsome of the malfunctions remotely"
-
-        public static string Planner_RELIABILITY = GetLoc("Planner_RELIABILITY"); // "RELIABILITY"
-        public static string Planner_malfunctions = GetLoc("Planner_malfunctions"); // "malfunctions"
-
-        public static string
-            Planner_malfunctions_tip =
-                GetLoc("Planner_malfunctions_tip"); // "average case estimate\nfor the whole vessel"
-
-        public static string Planner_highquality = GetLoc("Planner_highquality"); // "high quality"
-
-        public static string
-            Planner_highquality_tip = GetLoc("Planner_highquality_tip"); // "percentage of high quality components"
-
-        public static string Planner_redundancy = GetLoc("Planner_redundancy"); // "redundancy"
-        public static string Planner_repair = GetLoc("Planner_repair"); // "repair"
         public static string Planner_scrubbingunnecessary = GetLoc("Planner_scrubbingunnecessary"); // "not required"
         public static string Planner_noscrubbing = GetLoc("Planner_noscrubbing"); // "none"
         public static string Planner_insufficientscrubbing = GetLoc("Planner_insufficientscrubbing"); // "inadequate"

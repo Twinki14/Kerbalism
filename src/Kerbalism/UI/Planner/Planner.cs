@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using Kerbalism.Modules;
 using Kerbalism.Profile;
 using Kerbalism.System;
@@ -38,8 +37,6 @@ namespace Kerbalism.Planner
                 panel_special.Add("qol");
             if (Features.Radiation && Profile.Profile.rules.Find(k => k.modifiers.Contains("radiation")) != null)
                 panel_special.Add("radiation");
-            if (Features.Reliability)
-                panel_special.Add("reliability");
 
             // environment panels
             if (Features.Pressure || Features.Poisoning)
@@ -183,9 +180,6 @@ namespace Kerbalism.Planner
                             break;
                         case "radiation":
                             AddSubPanelRadiation(panel);
-                            break;
-                        case "reliability":
-                            AddSubPanelReliability(panel);
                             break;
                     }
                 }
@@ -585,94 +579,6 @@ namespace Kerbalism.Planner
             p.AddContent(Local.Planner_shielding,
                 rule.modifiers.Contains("shielding") ? Habitat.Shielding_to_string(vessel_analyzer.shielding) : "N/A",
                 tooltip); //"shielding"
-        }
-
-        ///<summary> Add reliability sub-panel, including tooltips </summary>
-        private static void AddSubPanelReliability(Panel p)
-        {
-            // evaluate redundancy metric
-            // - 0: no redundancy
-            // - 0.5: all groups have 2 elements
-            // - 1.0: all groups have 3 or more elements
-            double redundancy_metric = 0.0;
-            foreach (KeyValuePair<string, int> pair in vessel_analyzer.redundancy)
-            {
-                switch (pair.Value)
-                {
-                    case 1:
-                        break;
-                    case 2:
-                        redundancy_metric += 0.5 / vessel_analyzer.redundancy.Count;
-                        break;
-                    default:
-                        redundancy_metric += 1.0 / vessel_analyzer.redundancy.Count;
-                        break;
-                }
-            }
-
-            // traduce the redundancy metric to string
-            string redundancy_str = string.Empty;
-            if (redundancy_metric <= 0.1)
-                redundancy_str = Local.Planner_none; //"none"
-            else if (redundancy_metric <= 0.33)
-                redundancy_str = Local.Planner_poor; //"poor"
-            else if (redundancy_metric <= 0.66)
-                redundancy_str = Local.Planner_okay; //"okay"
-            else
-                redundancy_str = Local.Planner_great; //"great"
-
-            // generate redundancy tooltip
-            string redundancy_tooltip = string.Empty;
-            if (vessel_analyzer.redundancy.Count > 0)
-            {
-                StringBuilder sb = new StringBuilder();
-                foreach (KeyValuePair<string, int> pair in vessel_analyzer.redundancy)
-                {
-                    if (sb.Length > 0)
-                        sb.Append("\n");
-                    sb.Append(Lib.Color(pair.Value.ToString(),
-                        pair.Value == 1 ? Lib.Kolor.Red : pair.Value == 2 ? Lib.Kolor.Yellow : Lib.Kolor.Green, true));
-                    sb.Append("\t");
-                    sb.Append(pair.Key);
-                }
-
-                redundancy_tooltip = Lib.BuildString("<align=left />", sb.ToString());
-            }
-
-            // generate repair string and tooltip
-            string repair_str = Local.Planner_none; //"none"
-            string repair_tooltip = string.Empty;
-            if (vessel_analyzer.crew_engineer)
-            {
-                repair_str = "engineer";
-                repair_tooltip =
-                    Local.Planner_engineer_tip; //"The engineer on board should\nbe able to handle all repairs"
-            }
-            else if (vessel_analyzer.crew_capacity == 0)
-            {
-                repair_str = "safemode";
-                repair_tooltip =
-                    Local.Planner_safemode_tip; //"We have a chance of repairing\nsome of the malfunctions remotely"
-            }
-
-            // render panel
-            p.AddSection(Local.Planner_RELIABILITY, string.Empty, //"RELIABILITY"
-                () =>
-                {
-                    p.Prev(ref special_index, panel_special.Count);
-                    enforceUpdate = true;
-                },
-                () =>
-                {
-                    p.Next(ref special_index, panel_special.Count);
-                    enforceUpdate = true;
-                });
-            p.AddContent(Local.Planner_malfunctions, Lib.HumanReadableAmount(vessel_analyzer.failure_year, "/y"),
-                Local.Planner_malfunctions_tip); //"malfunctions""average case estimate\nfor the whole vessel"
-            p.AddContent(Local.Planner_highquality, Lib.HumanReadablePerc(vessel_analyzer.high_quality),
-                Local.Planner_highquality_tip); //"high quality""percentage of high quality components"
-            p.AddContent(Local.Planner_redundancy, redundancy_str, redundancy_tooltip); //"redundancy"
-            p.AddContent(Local.Planner_repair, repair_str, repair_tooltip); //"repair"
         }
 
         ///<summary> Add habitat sub-panel, including tooltips </summary>

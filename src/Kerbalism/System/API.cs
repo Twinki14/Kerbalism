@@ -100,12 +100,6 @@ namespace Kerbalism.System
         }
 
         // trigger an undesiderable event for the kerbal specified
-        public static void Breakdown(Vessel v, ProtoCrewMember c)
-        {
-            if (!v.KerbalismData().IsSimulated) return;
-            if (!DB.ContainsKerbal(c.name)) return;
-            Misc.Breakdown(v, c);
-        }
 
         // disable or re-enable all rules for the specified kerbal
         public static void DisableKerbal(string k_name, bool disabled)
@@ -352,34 +346,6 @@ namespace Kerbalism.System
         public static void SetStormObservationQuality(float quality)
         {
             Storm.sun_observation_quality = Lib.Clamp(quality, 0.0f, 1.0f);
-        }
-
-        // --- RELIABILITY ----------------------------------------------------------
-
-        // return true if at least a component has malfunctioned, or had a critical failure
-        public static bool Malfunction(Vessel v)
-        {
-            if (!Features.Reliability) return false;
-            return v.KerbalismData().Malfunction;
-        }
-
-        // return true if at least a componet had a critical failure
-        public static bool Critical(Vessel v)
-        {
-            if (!Features.Reliability) return false;
-            return v.KerbalismData().Critical;
-        }
-
-        // return true if the part specified has a malfunction or critical failure
-        public static bool Broken(Part part)
-        {
-            return part.FindModulesImplementing<Reliability>().FindAll(k => k.isEnabled && k.broken) != null;
-        }
-
-        // repair a specified part
-        public static void Repair(Part part)
-        {
-            part.FindModulesImplementing<Reliability>().FindAll(k => k.isEnabled && k.broken).ForEach(k => k.Repair());
         }
 
 

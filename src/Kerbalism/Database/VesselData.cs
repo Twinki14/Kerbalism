@@ -58,7 +58,6 @@ namespace Kerbalism.Database
         public bool cfg_malfunction; // enable/disable message: malfunctions
         public bool cfg_storm; // enable/disable message: storms
         public bool cfg_script; // enable/disable message: scripts
-        public bool cfg_highlights; // show/hide malfunction highlights
         public bool cfg_showlink; // show/hide link line
         public bool cfg_show; // show/hide vessel in monitor
         public Computer computer; // store scripts
@@ -451,16 +450,6 @@ namespace Kerbalism.Database
 
         int crewCapacity;
 
-        /// <summary>true if at least a component has malfunctioned or had a critical failure</summary>
-        public bool Malfunction => malfunction;
-
-        bool malfunction;
-
-        /// <summary>true if at least a component had a critical failure</summary>
-        public bool Critical => critical;
-
-        bool critical;
-
         /// <summary>connection info</summary>
         public ConnectionInfo Connection => connection;
 
@@ -542,20 +531,6 @@ namespace Kerbalism.Database
 
         public void SaveSolarPanelExposure(double exposure) =>
             solarPanelsExposure.Add(exposure); // meant to be called by SolarPanelFixer
-
-        private List<ReliabilityInfo> reliabilityStatus;
-
-        public List<ReliabilityInfo> ReliabilityStatus()
-        {
-            if (reliabilityStatus != null) return reliabilityStatus;
-            reliabilityStatus = ReliabilityInfo.BuildList(Vessel);
-            return reliabilityStatus;
-        }
-
-        public void ResetReliabilityStatus()
-        {
-            reliabilityStatus = null;
-        }
 
         #endregion
 
@@ -699,7 +674,6 @@ namespace Kerbalism.Database
                 return;
 
             resourceUpdateDelegates = null;
-            ResetReliabilityStatus();
             habitatInfo = new VesselHabitatInfo(null);
             EvaluateStatus();
             CommHandler.ResetPartTransmitters();
@@ -875,7 +849,6 @@ namespace Kerbalism.Database
             cfg_malfunction = PreferencesMessages.Instance.malfunction;
             cfg_storm = Features.SpaceWeather && PreferencesMessages.Instance.storm && Lib.CrewCount(pv) > 0;
             cfg_script = PreferencesMessages.Instance.script;
-            cfg_highlights = PreferencesReliability.Instance.highlights;
             cfg_showlink = true;
             cfg_show = true;
             deviceTransmit = true;
@@ -910,7 +883,6 @@ namespace Kerbalism.Database
             cfg_malfunction = Lib.ConfigValue(node, "cfg_malfunction", PreferencesMessages.Instance.malfunction);
             cfg_storm = Lib.ConfigValue(node, "cfg_storm", PreferencesMessages.Instance.storm);
             cfg_script = Lib.ConfigValue(node, "cfg_script", PreferencesMessages.Instance.script);
-            cfg_highlights = Lib.ConfigValue(node, "cfg_highlights", PreferencesReliability.Instance.highlights);
             cfg_showlink = Lib.ConfigValue(node, "cfg_showlink", true);
             cfg_show = Lib.ConfigValue(node, "cfg_show", true);
 
@@ -985,7 +957,6 @@ namespace Kerbalism.Database
             node.AddValue("cfg_malfunction", cfg_malfunction);
             node.AddValue("cfg_storm", cfg_storm);
             node.AddValue("cfg_script", cfg_script);
-            node.AddValue("cfg_highlights", cfg_highlights);
             node.AddValue("cfg_showlink", cfg_showlink);
             node.AddValue("cfg_show", cfg_show);
 
@@ -1058,10 +1029,6 @@ namespace Kerbalism.Database
             // calculate crew info for the vessel
             crewCount = Lib.CrewCount(Vessel);
             crewCapacity = Lib.CrewCapacity(Vessel);
-
-            // malfunction stuff
-            malfunction = Reliability.HasMalfunction(Vessel);
-            critical = Reliability.HasCriticalFailure(Vessel);
 
             // communications info
             CommHandler.UpdateConnection(connection);

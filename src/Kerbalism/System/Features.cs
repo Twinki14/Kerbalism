@@ -8,7 +8,6 @@ namespace Kerbalism.System
         public static void Detect()
         {
             // set user-specified features
-            Reliability = Settings.Reliability;
             Deploy = Settings.Deploy;
             Science = Settings.Science;
             SpaceWeather = Settings.SpaceWeather;
@@ -48,7 +47,6 @@ namespace Kerbalism.System
 
             // log features
             Lib.Log("features:");
-            Lib.Log("- Reliability: " + Reliability);
             Lib.Log("- Deploy: " + Deploy);
             Lib.Log("- Science: " + Science);
             Lib.Log("- SpaceWeather: " + SpaceWeather);
@@ -64,7 +62,6 @@ namespace Kerbalism.System
         }
 
         // user-specified features
-        public static bool Reliability;
         public static bool Deploy;
         public static bool Science;
         public static bool SpaceWeather;

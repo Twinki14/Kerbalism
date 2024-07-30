@@ -15,7 +15,6 @@ namespace Kerbalism
         telemetry,
         data,
         scripts,
-        failures,
         config,
         log
     }
@@ -121,9 +120,6 @@ namespace Kerbalism
                         break;
                     case MonitorPage.log:
                         panel.Logman(selected_v);
-                        break;
-                    case MonitorPage.failures:
-                        panel.Failman(selected_v);
                         break;
                 }
             }
@@ -300,9 +296,6 @@ namespace Kerbalism
             // supply indicator
             if (Features.Supplies) Indicator_supplies(p, v, vd);
 
-            // reliability indicator
-            if (Features.Reliability) Indicator_reliability(p, v, vd);
-
             // signal indicator
             if (Features.Science) Indicator_signal(p, v, vd);
 
@@ -360,24 +353,6 @@ namespace Kerbalism
                         UI.window.Close();
                     else
                         UI.Open((p) => p.Devman(v));
-                }
-            }
-
-            if (Features.Reliability)
-            {
-                GUILayout.Label(
-                    new GUIContent(
-                        Lib.Color(page == MonitorPage.failures, " " + Local.Monitor_FAILURES, Lib.Kolor.Green,
-                            Lib.Kolor.None, true), Textures.small_wrench,
-                        Local.Monitor_FAILURES_desc + Local.Monitor_tooltip),
-                    config_style); //FAILURES"See failures and maintenance state"
-                if (Lib.IsClicked()) page = MonitorPage.failures;
-                else if (Lib.IsClicked(2))
-                {
-                    if (UI.window.PanelType == Panel.PanelType.failures)
-                        UI.window.Close();
-                    else
-                        UI.Open((p) => p.Failman(v));
                 }
             }
 
@@ -704,29 +679,6 @@ namespace Kerbalism
                     : Textures.box_white;
 
             p.AddRightIcon(image, string.Join("\n", tooltips.ToArray()));
-        }
-
-        void Indicator_reliability(Panel p, Vessel v, VesselData vd)
-        {
-            Texture2D image;
-            string tooltip;
-            if (!vd.Malfunction)
-            {
-                image = Textures.wrench_white;
-                tooltip = string.Empty;
-            }
-            else if (!vd.Critical)
-            {
-                image = Textures.wrench_yellow;
-                tooltip = Local.Monitor_Malfunctions; //"Malfunctions"
-            }
-            else
-            {
-                image = Textures.wrench_red;
-                tooltip = Local.Monitor_Criticalfailures; //"Critical failures"
-            }
-
-            p.AddRightIcon(image, tooltip);
         }
 
         void Indicator_signal(Panel p, Vessel v, VesselData vd)

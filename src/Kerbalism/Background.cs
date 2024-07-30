@@ -83,8 +83,7 @@ namespace Kerbalism
 
         public enum Module_type
         {
-            Reliability = 0,
-            Experiment,
+            Experiment = 1,
             Greenhouse,
             GravityRing,
             Harvester,
@@ -115,7 +114,6 @@ namespace Kerbalism
         {
             switch (module_name)
             {
-                case "Reliability": return Module_type.Reliability;
                 case "Experiment": return Module_type.Experiment;
                 case "Greenhouse": return Module_type.Greenhouse;
                 case "GravityRing": return Module_type.GravityRing;
@@ -174,9 +172,6 @@ namespace Kerbalism
             {
                 switch (e.type)
                 {
-                    case Module_type.Reliability:
-                        Reliability.BackgroundUpdate(v, e.p, e.m, e.module_prefab as Reliability, elapsed_s);
-                        break;
                     case Module_type.Experiment:
                         (e.module_prefab as Experiment).BackgroundUpdate(v, vd, e.m, ec, resources, elapsed_s);
                         break; // experiments use the prefab as a singleton instead of a static method

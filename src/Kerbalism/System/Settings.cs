@@ -26,7 +26,6 @@ namespace Kerbalism.System
             Profile = Lib.ConfigValue(cfg, "Profile", string.Empty);
 
             // user-defined features
-            Reliability = Lib.ConfigValue(cfg, "Reliability", false);
             Deploy = Lib.ConfigValue(cfg, "Deploy", false);
             Science = Lib.ConfigValue(cfg, "Science", false);
             SpaceWeather = Lib.ConfigValue(cfg, "SpaceWeather", false);
@@ -53,9 +52,6 @@ namespace Kerbalism.System
             // science
             ScienceDialog = Lib.ConfigValue(cfg, "ScienceDialog", true);
             AsteroidSampleMassPerMB = Lib.ConfigValue(cfg, "AsteroidSampleMassPerMB", 0.00002);
-
-            // reliability
-            QualityScale = Lib.ConfigValue(cfg, "QualityScale", 4.0);
 
             // crew level
             LaboratoryCrewLevelBonus = Lib.ConfigValue(cfg, "LaboratoryCrewLevelBonus", 0.2);
@@ -130,7 +126,6 @@ namespace Kerbalism.System
         // name of profile to use, if any
 
         // user-defined features
-        public static bool Reliability; // component malfunctions and critical failures
         public static bool Deploy; // add EC cost to keep module working/animation, add EC cost to Extend\Retract
         public static bool Science; // science data storage, transmission and analysis
         public static bool SpaceWeather; // coronal mass ejections
@@ -175,9 +170,6 @@ namespace Kerbalism.System
 
         public static double
             AsteroidSampleMassPerMB; // When taking an asteroid sample, mass (in t) per MB of sample (baseValue * dataScale). default of 0.00002 => 34 Kg in stock
-
-        // reliability
-        public static double QualityScale; // scale applied to MTBF for high-quality components
 
 
         // crew level

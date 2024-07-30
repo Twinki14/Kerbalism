@@ -21,7 +21,6 @@ namespace Kerbalism.Planner
             Analyze_crew(parts);
             Analyze_habitat(parts, sim, env);
             Analyze_radiation(parts, sim);
-            Analyze_reliability(parts);
             Analyze_qol(parts, sim, env);
             Analyze_comms(parts);
         }
@@ -170,64 +169,6 @@ namespace Kerbalism.Planner
                 : 0;
         }
 
-        void Analyze_reliability(List<Part> parts)
-        {
-            // reset data
-            high_quality = 0.0;
-            components = 0;
-            failure_year = 0.0;
-            redundancy = new Dictionary<string, int>();
-
-            // scan the parts
-            double year_time = 60.0 * 60.0 * Lib.HoursInDay * Lib.DaysInYear;
-            foreach (Part p in parts)
-            {
-                // for each module
-                foreach (PartModule m in p.Modules)
-                {
-                    // skip disabled modules
-                    if (!m.isEnabled)
-                        continue;
-
-                    // malfunctions
-                    if (m.moduleName == "Reliability")
-                    {
-                        Reliability reliability = m as Reliability;
-
-                        // calculate mtbf
-                        double mtbf = reliability.mtbf * (reliability.quality ? Settings.QualityScale : 1.0);
-                        if (mtbf <= 0) continue;
-
-                        // accumulate failures/y
-                        failure_year += year_time / mtbf;
-
-                        // accumulate high quality percentage
-                        high_quality += reliability.quality ? 1.0 : 0.0;
-
-                        // accumulate number of components
-                        ++components;
-
-                        // compile redundancy data
-                        if (reliability.redundancy.Length > 0)
-                        {
-                            int count = 0;
-                            if (redundancy.TryGetValue(reliability.redundancy, out count))
-                            {
-                                redundancy[reliability.redundancy] = count + 1;
-                            }
-                            else
-                            {
-                                redundancy.Add(reliability.redundancy, 1);
-                            }
-                        }
-                    }
-                }
-            }
-
-            // calculate high quality percentage
-            high_quality /= Math.Max(components, 1u);
-        }
-
         void Analyze_qol(List<Part> parts, ResourceSimulator sim, EnvironmentAnalyzer env)
         {
             // calculate living space factor
@@ -264,12 +205,6 @@ namespace Kerbalism.Planner
         // quality-of-life related
         public double living_space; // living space factor
         public Comforts comforts; // comfort info
-
-        // reliability-related
-        public uint components; // number of components that can fail
-        public double high_quality; // percentage of high quality components
-        public double failure_year; // estimated failures per-year, averaged per-component
-        public Dictionary<string, int> redundancy; // number of components per redundancy group
 
         public bool has_comms;
     }
