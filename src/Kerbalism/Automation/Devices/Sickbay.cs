@@ -1,54 +1,51 @@
-using System;
-using System.Collections.Generic;
-using UnityEngine;
-using KSP.Localization;
+using Kerbalism.Modules;
 
-
-namespace KERBALISM
+namespace Kerbalism.Automation.Devices
 {
-	public sealed class SickbayDevice : LoadedDevice<Sickbay>
-	{
-		public SickbayDevice(Sickbay module) : base(module) { }
+    public sealed class SickbayDevice : LoadedDevice<Sickbay>
+    {
+        public SickbayDevice(Sickbay module) : base(module)
+        {
+        }
 
-		public override string Status
-			=> Lib.Color(module.running, Local.Generic_RUNNING, Lib.Kolor.Green, Local.Generic_STOPPED, Lib.Kolor.Yellow);
+        public override string Status
+            => Lib.Color(module.running, Local.Generic_RUNNING, Lib.Kolor.Green, Local.Generic_STOPPED,
+                Lib.Kolor.Yellow);
 
-		public override void Ctrl(bool value)
-		{
-			module.running = value;
-		}
+        public override void Ctrl(bool value)
+        {
+            module.running = value;
+        }
 
-		public override void Toggle()
-		{
-			Ctrl(!module.running);
-		}
+        public override void Toggle()
+        {
+            Ctrl(!module.running);
+        }
 
-		public override bool IsVisible => module.slots > 0;
-	}
+        public override bool IsVisible => module.slots > 0;
+    }
 
-	public sealed class ProtoSickbayDevice : ProtoDevice<Sickbay>
-	{
-		public ProtoSickbayDevice(Sickbay prefab, ProtoPartSnapshot protoPart, ProtoPartModuleSnapshot protoModule)
-			: base(prefab, protoPart, protoModule) { }
+    public sealed class ProtoSickbayDevice : ProtoDevice<Sickbay>
+    {
+        public ProtoSickbayDevice(Sickbay prefab, ProtoPartSnapshot protoPart, ProtoPartModuleSnapshot protoModule)
+            : base(prefab, protoPart, protoModule)
+        {
+        }
 
-		public override string Status
-			=> Lib.Color(Lib.Proto.GetBool(protoModule, "running"), Local.Generic_RUNNING, Lib.Kolor.Green, Local.Generic_STOPPED, Lib.Kolor.Yellow);
+        public override string Status
+            => Lib.Color(Lib.Proto.GetBool(protoModule, "running"), Local.Generic_RUNNING, Lib.Kolor.Green,
+                Local.Generic_STOPPED, Lib.Kolor.Yellow);
 
-		public override void Ctrl(bool value)
-		{
-			Lib.Proto.Set(protoModule, "running", value);
-		}
+        public override void Ctrl(bool value)
+        {
+            Lib.Proto.Set(protoModule, "running", value);
+        }
 
-		public override void Toggle()
-		{
-			Ctrl(!Lib.Proto.GetBool(protoModule, "running"));
-		}
+        public override void Toggle()
+        {
+            Ctrl(!Lib.Proto.GetBool(protoModule, "running"));
+        }
 
-		public override bool IsVisible => Lib.Proto.GetUInt(protoModule, "slots", 0) > 0;
-	}
-
-
+        public override bool IsVisible => Lib.Proto.GetUInt(protoModule, "slots", 0) > 0;
+    }
 } // KERBALISM
-
-
-

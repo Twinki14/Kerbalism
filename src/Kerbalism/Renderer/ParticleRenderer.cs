@@ -3,91 +3,86 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-namespace KERBALISM
+namespace Kerbalism
 {
+    // a simple particle renderer
+    public static class ParticleRenderer
+    {
+        // pseudo-ctor
+        public static void Init()
+        {
+            // load shader
+            mat = Lib.GetShader("FullPointParticle");
+
+            // create mesh
+            mesh = new Mesh();
+            mesh.MarkDynamic();
+        }
 
 
-	// a simple particle renderer
-	public static class ParticleRenderer
-	{
-		// pseudo-ctor
-		public static void Init()
-		{
-			// load shader
-			mat = Lib.GetShader("FullPointParticle");
+        // commit a particle to the renderer
+        // note: this function may trigger actual rendering
+        public static void Commit(Vector3 p, float size, Color32 color)
+        {
+            points[point_index].Set(p.x, p.y, p.z);
+            sizes[point_index].Set(size, 0.0f);
+            colors[point_index] = color;
+            indices.Add(point_index);
+            ++point_index;
 
-			// create mesh
-			mesh = new Mesh();
-			mesh.MarkDynamic();
-		}
+            if (point_index == max_particles)
+            {
+                // update mesh data
+                mesh.vertices = points;
+                mesh.uv = sizes;
+                mesh.colors32 = colors;
+                mesh.SetIndices(indices.ToArray(), MeshTopology.Points, 0);
 
+                // enable material
+                mat.SetPass(0);
 
-		// commit a particle to the renderer
-		// note: this function may trigger actual rendering
-		public static void Commit(Vector3 p, float size, Color32 color)
-		{
-			points[point_index].Set(p.x, p.y, p.z);
-			sizes[point_index].Set(size, 0.0f);
-			colors[point_index] = color;
-			indices.Add(point_index);
-			++point_index;
+                // render mesh
+                Graphics.DrawMeshNow(mesh, Matrix4x4.identity);
 
-			if (point_index == max_particles)
-			{
-				// update mesh data
-				mesh.vertices = points;
-				mesh.uv = sizes;
-				mesh.colors32 = colors;
-				mesh.SetIndices(indices.ToArray(), MeshTopology.Points, 0);
-
-				// enable material
-				mat.SetPass(0);
-
-				// render mesh
-				Graphics.DrawMeshNow(mesh, Matrix4x4.identity);
-
-				// cleanup
-				indices.Clear();
-				point_index = 0;
-			}
-		}
+                // cleanup
+                indices.Clear();
+                point_index = 0;
+            }
+        }
 
 
-		// render all particles
-		// note: this only render all particles not already rendered during commit
-		public static void Render()
-		{
-			if (point_index > 0)
-			{
-				// update mesh data
-				mesh.vertices = points;
-				mesh.uv = sizes;
-				mesh.colors32 = colors;
-				mesh.SetIndices(indices.ToArray(), MeshTopology.Points, 0);
+        // render all particles
+        // note: this only render all particles not already rendered during commit
+        public static void Render()
+        {
+            if (point_index > 0)
+            {
+                // update mesh data
+                mesh.vertices = points;
+                mesh.uv = sizes;
+                mesh.colors32 = colors;
+                mesh.SetIndices(indices.ToArray(), MeshTopology.Points, 0);
 
-				// enable material
-				mat.SetPass(0);
+                // enable material
+                mat.SetPass(0);
 
-				// render mesh
-				Graphics.DrawMeshNow(mesh, Matrix4x4.identity);
+                // render mesh
+                Graphics.DrawMeshNow(mesh, Matrix4x4.identity);
 
-				// cleanup
-				indices.Clear();
-				point_index = 0;
-			}
-		}
-
-
-
-		private const int max_particles = 64000;                                    // max particles per-mesh
-		private readonly static Vector3[] points = new Vector3[max_particles];      // mesh data: position
-		private readonly static Vector2[] sizes = new Vector2[max_particles];       // mesh data: size in pixels
-		private readonly static Color32[] colors = new Color32[max_particles];      // mesh data: 32bit color
-		private static List<int> indices = new List<int>(max_particles);            // mesh data: indices
-		private static Mesh mesh;                                                   // mesh used as set of VBA
-		private static Material mat;                                                // material used
-		private static int point_index;                                             // index of next point in the arrays
-	}
+                // cleanup
+                indices.Clear();
+                point_index = 0;
+            }
+        }
 
 
+        private const int max_particles = 64000; // max particles per-mesh
+        private readonly static Vector3[] points = new Vector3[max_particles]; // mesh data: position
+        private readonly static Vector2[] sizes = new Vector2[max_particles]; // mesh data: size in pixels
+        private readonly static Color32[] colors = new Color32[max_particles]; // mesh data: 32bit color
+        private static List<int> indices = new List<int>(max_particles); // mesh data: indices
+        private static Mesh mesh; // mesh used as set of VBA
+        private static Material mat; // material used
+        private static int point_index; // index of next point in the arrays
+    }
 } // KERBALISM

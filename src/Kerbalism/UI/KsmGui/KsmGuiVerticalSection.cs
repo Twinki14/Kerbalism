@@ -1,17 +1,14 @@
-using System;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KERBALISM.KsmGui
+namespace Kerbalism.KsmGui
 {
-	public class KsmGuiVerticalSection : KsmGuiVerticalLayout
-	{
-		public KsmGuiVerticalSection(KsmGuiBase parent) : base(parent, 0, 5,5,5,5, TextAnchor.UpperLeft)
-		{
-			Image background = TopObject.AddComponent<Image>();
-			background.color = KsmGuiStyle.boxColor;
-		}
-
-	}
+    public class KsmGuiVerticalSection : KsmGuiVerticalLayout
+    {
+        public KsmGuiVerticalSection(KsmGuiBase parent) : base(parent, 0, 5, 5, 5, 5, TextAnchor.UpperLeft)
+        {
+            Image background = TopObject.AddComponent<Image>();
+            background.color = KsmGuiStyle.boxColor;
+        }
+    }
 }

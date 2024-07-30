@@ -1,377 +1,392 @@
-using KERBALISM.KsmGui;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Kerbalism.KsmGui;
+using Kerbalism.Science;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
-using static KERBALISM.ScienceDB;
-using KSP.Localization;
+using static Kerbalism.Science.ScienceDB;
 
-namespace KERBALISM
+namespace Kerbalism
 {
-	public class ExperimentSubjectList : KsmGuiVerticalLayout
-	{
-		public KsmGuiToggle KnownSubjectsToggle {get; private set;}
-		public List<BodyContainer> BodyContainers = new List<BodyContainer>();
+    public class ExperimentSubjectList : KsmGuiVerticalLayout
+    {
+        public KsmGuiToggle KnownSubjectsToggle { get; private set; }
+        public List<BodyContainer> BodyContainers = new List<BodyContainer>();
 
 
-		public ExperimentSubjectList(KsmGuiBase parent, ExperimentInfo expInfo) : base(parent)
-		{
-			KnownSubjectsToggle = new KsmGuiToggle(this, Local.SCIENCEARCHIVE_Showonlyknownsubjects, true, ToggleKnownSubjects, null, -1, 21);//"Show only known subjects"
+        public ExperimentSubjectList(KsmGuiBase parent, ExperimentInfo expInfo) : base(parent)
+        {
+            KnownSubjectsToggle = new KsmGuiToggle(this, Local.SCIENCEARCHIVE_Showonlyknownsubjects, true,
+                ToggleKnownSubjects, null, -1, 21); //"Show only known subjects"
 
-			KsmGuiBase listHeader = new KsmGuiBase(this);
-			listHeader.SetLayoutElement(true, false, -1, 16);
-			listHeader.AddImageComponentWithColor(KsmGuiStyle.boxColor);
+            KsmGuiBase listHeader = new KsmGuiBase(this);
+            listHeader.SetLayoutElement(true, false, -1, 16);
+            listHeader.AddImageComponentWithColor(KsmGuiStyle.boxColor);
 
-			KsmGuiText rndHeaderText = new KsmGuiText(listHeader, Local.SCIENCEARCHIVE_RnD, Local.SCIENCEARCHIVE_RnD_desc, TextAlignmentOptions.Left);//"RnD""Science points\nretrieved in RnD"
-			rndHeaderText.TextComponent.color = Lib.KolorToColor(Lib.Kolor.Science);
-			rndHeaderText.TextComponent.fontStyle = FontStyles.Bold;
-			rndHeaderText.TopTransform.SetAnchorsAndPosition(TextAnchor.MiddleLeft, TextAnchor.MiddleLeft, 10, 0);
-			rndHeaderText.TopTransform.SetSizeDelta(50, 16);
+            KsmGuiText rndHeaderText = new KsmGuiText(listHeader, Local.SCIENCEARCHIVE_RnD,
+                Local.SCIENCEARCHIVE_RnD_desc, TextAlignmentOptions.Left); //"RnD""Science points\nretrieved in RnD"
+            rndHeaderText.TextComponent.color = Lib.KolorToColor(Lib.Kolor.Science);
+            rndHeaderText.TextComponent.fontStyle = FontStyles.Bold;
+            rndHeaderText.TopTransform.SetAnchorsAndPosition(TextAnchor.MiddleLeft, TextAnchor.MiddleLeft, 10, 0);
+            rndHeaderText.TopTransform.SetSizeDelta(50, 16);
 
-			KsmGuiText flightHeaderText = new KsmGuiText(listHeader, Local.SCIENCEARCHIVE_Flight, Local.SCIENCEARCHIVE_Flight_desc, TextAlignmentOptions.Left);//"Flight""Science points\ncollected in all vessels"
-			flightHeaderText.TextComponent.color = Lib.KolorToColor(Lib.Kolor.Science);
-			flightHeaderText.TextComponent.fontStyle = FontStyles.Bold;
-			flightHeaderText.TopTransform.SetAnchorsAndPosition(TextAnchor.MiddleLeft, TextAnchor.MiddleLeft, 60, 0);
-			flightHeaderText.TopTransform.SetSizeDelta(50, 16);
+            KsmGuiText flightHeaderText = new KsmGuiText(listHeader, Local.SCIENCEARCHIVE_Flight,
+                Local.SCIENCEARCHIVE_Flight_desc,
+                TextAlignmentOptions.Left); //"Flight""Science points\ncollected in all vessels"
+            flightHeaderText.TextComponent.color = Lib.KolorToColor(Lib.Kolor.Science);
+            flightHeaderText.TextComponent.fontStyle = FontStyles.Bold;
+            flightHeaderText.TopTransform.SetAnchorsAndPosition(TextAnchor.MiddleLeft, TextAnchor.MiddleLeft, 60, 0);
+            flightHeaderText.TopTransform.SetSizeDelta(50, 16);
 
-			KsmGuiText valueHeaderText = new KsmGuiText(listHeader, Local.SCIENCEARCHIVE_Value, Local.SCIENCEARCHIVE_Value_desc, TextAlignmentOptions.Left);//"Value""Remaining science value\naccounting for data retrieved in RnD\nand collected in flight"
-			valueHeaderText.TextComponent.color = Lib.KolorToColor(Lib.Kolor.Science);
-			valueHeaderText.TextComponent.fontStyle = FontStyles.Bold;
-			valueHeaderText.TopTransform.SetAnchorsAndPosition(TextAnchor.MiddleLeft, TextAnchor.MiddleLeft, 110, 0);
-			valueHeaderText.TopTransform.SetSizeDelta(50, 16);
+            KsmGuiText valueHeaderText = new KsmGuiText(listHeader, Local.SCIENCEARCHIVE_Value,
+                Local.SCIENCEARCHIVE_Value_desc,
+                TextAlignmentOptions
+                    .Left); //"Value""Remaining science value\naccounting for data retrieved in RnD\nand collected in flight"
+            valueHeaderText.TextComponent.color = Lib.KolorToColor(Lib.Kolor.Science);
+            valueHeaderText.TextComponent.fontStyle = FontStyles.Bold;
+            valueHeaderText.TopTransform.SetAnchorsAndPosition(TextAnchor.MiddleLeft, TextAnchor.MiddleLeft, 110, 0);
+            valueHeaderText.TopTransform.SetSizeDelta(50, 16);
 
-			KsmGuiText completedHeaderText = new KsmGuiText(listHeader, Local.SCIENCEARCHIVE_Completed, Local.SCIENCEARCHIVE_Completed_desc, TextAlignmentOptions.Left);//"Completed""How many times the subject\nhas been retrieved in RnD"
-			completedHeaderText.TextComponent.color = Lib.KolorToColor(Lib.Kolor.Yellow);
-			completedHeaderText.TextComponent.fontStyle = FontStyles.Bold;
-			completedHeaderText.TopTransform.SetAnchorsAndPosition(TextAnchor.MiddleLeft, TextAnchor.MiddleLeft, 160, 0);
-			completedHeaderText.TopTransform.SetSizeDelta(100, 16);
+            KsmGuiText completedHeaderText = new KsmGuiText(listHeader, Local.SCIENCEARCHIVE_Completed,
+                Local.SCIENCEARCHIVE_Completed_desc,
+                TextAlignmentOptions.Left); //"Completed""How many times the subject\nhas been retrieved in RnD"
+            completedHeaderText.TextComponent.color = Lib.KolorToColor(Lib.Kolor.Yellow);
+            completedHeaderText.TextComponent.fontStyle = FontStyles.Bold;
+            completedHeaderText.TopTransform.SetAnchorsAndPosition(TextAnchor.MiddleLeft, TextAnchor.MiddleLeft, 160,
+                0);
+            completedHeaderText.TopTransform.SetSizeDelta(100, 16);
 
-			KsmGuiVerticalScrollView scrollView = new KsmGuiVerticalScrollView(this);
-			scrollView.SetLayoutElement(true, true, 320, -1, -1, 250);
-			scrollView.ContentGroup.padding = new RectOffset(0, 5, 5, 5);
+            KsmGuiVerticalScrollView scrollView = new KsmGuiVerticalScrollView(this);
+            scrollView.SetLayoutElement(true, true, 320, -1, -1, 250);
+            scrollView.ContentGroup.padding = new RectOffset(0, 5, 5, 5);
 
-			BodiesSituationsBiomesSubject subjects = GetSubjectsForExperiment(expInfo);
-			if (subjects != null)
-			{
-				foreach (ObjectPair<int, SituationsBiomesSubject> bodySubjects in GetSubjectsForExperiment(expInfo))
-				{
-					CelestialBody body = FlightGlobals.Bodies[bodySubjects.Key];
-					BodyContainer bodyEntry = new BodyContainer(scrollView, body, bodySubjects.Value);
-					BodyContainers.Add(bodyEntry);
-				}
-			}
+            ScienceDB.BodiesSituationsBiomesSubject subjects = GetSubjectsForExperiment(expInfo);
+            if (subjects != null)
+            {
+                foreach (ObjectPair<int, ScienceDB.SituationsBiomesSubject> bodySubjects in GetSubjectsForExperiment(
+                             expInfo))
+                {
+                    CelestialBody body = FlightGlobals.Bodies[bodySubjects.Key];
+                    BodyContainer bodyEntry = new BodyContainer(scrollView, body, bodySubjects.Value);
+                    BodyContainers.Add(bodyEntry);
+                }
+            }
 
-			SetUpdateCoroutine(new KsmGuiUpdateCoroutine(Update));
-			ForceExecuteCoroutine();
-			ToggleKnownSubjects(true);
-		}
+            SetUpdateCoroutine(new KsmGuiUpdateCoroutine(Update));
+            ForceExecuteCoroutine();
+            ToggleKnownSubjects(true);
+        }
 
-		public void ToggleKnownSubjects(bool onlyKnown)
-		{
-			foreach (BodyContainer body in BodyContainers)
-			{
-				if (onlyKnown && !body.isKnown)
-				{
-					body.Enabled = false;
-					continue;
-				}
-				body.Enabled = true;
-				body.ToggleBody(body.isKnown);
+        public void ToggleKnownSubjects(bool onlyKnown)
+        {
+            foreach (BodyContainer body in BodyContainers)
+            {
+                if (onlyKnown && !body.isKnown)
+                {
+                    body.Enabled = false;
+                    continue;
+                }
 
-				foreach (SituationContainer situation in body.SubjectsContainer.Situations)
-				{
-					situation.Enabled = (onlyKnown && situation.isKnown) || !onlyKnown;
+                body.Enabled = true;
+                body.ToggleBody(body.isKnown);
 
-					foreach (SubjectLine subject in situation.SubjectLines)
-					{
-						subject.Enabled = (onlyKnown && subject.isKnown) || !onlyKnown;
-					}
-				}
-			}
-			RebuildLayout();
-		}
+                foreach (SituationContainer situation in body.SubjectsContainer.Situations)
+                {
+                    situation.Enabled = (onlyKnown && situation.isKnown) || !onlyKnown;
 
-		private IEnumerator Update()
-		{
-			foreach (BodyContainer body in BodyContainers)
-			{
-				body.isKnown = false;
+                    foreach (SubjectLine subject in situation.SubjectLines)
+                    {
+                        subject.Enabled = (onlyKnown && subject.isKnown) || !onlyKnown;
+                    }
+                }
+            }
 
-				foreach (SituationContainer situation in body.SubjectsContainer.Situations)
-				{
-					// check if unknown (non-DB) subjects have been created
-					if (situation.DBLinesCount() != situation.SubjectLines.Count)
-						situation.UpdateLines();
+            RebuildLayout();
+        }
 
-					situation.isKnown = false;
-					foreach (SubjectLine subject in situation.SubjectLines)
-					{
-						if (subject.SubjectData.ScienceCollectedTotal > 0.0)
-						{
-							subject.isKnown = true;
-							situation.isKnown |= true;
-							body.isKnown |= true;
-						}
+        private IEnumerator Update()
+        {
+            foreach (BodyContainer body in BodyContainers)
+            {
+                body.isKnown = false;
 
-						if (KnownSubjectsToggle.IsOn && subject.Enabled != subject.isKnown)
-						{
-							if (!body.SubjectsContainer.IsInstantiated)
-								body.SubjectsContainer.InstantiateUIObjects();
+                foreach (SituationContainer situation in body.SubjectsContainer.Situations)
+                {
+                    // check if unknown (non-DB) subjects have been created
+                    if (situation.DBLinesCount() != situation.SubjectLines.Count)
+                        situation.UpdateLines();
 
-							subject.Enabled = subject.isKnown;
-							RebuildLayout();
-						}
+                    situation.isKnown = false;
+                    foreach (SubjectLine subject in situation.SubjectLines)
+                    {
+                        if (subject.SubjectData.ScienceCollectedTotal > 0.0)
+                        {
+                            subject.isKnown = true;
+                            situation.isKnown |= true;
+                            body.isKnown |= true;
+                        }
 
-						subject.UpdateText();
-					}
+                        if (KnownSubjectsToggle.IsOn && subject.Enabled != subject.isKnown)
+                        {
+                            if (!body.SubjectsContainer.IsInstantiated)
+                                body.SubjectsContainer.InstantiateUIObjects();
 
-					if (KnownSubjectsToggle.IsOn && body.SubjectsContainer.IsInstantiated && situation.Enabled != situation.isKnown)
-					{
-						situation.Enabled = situation.isKnown;
-						RebuildLayout();
-					}
+                            subject.Enabled = subject.isKnown;
+                            RebuildLayout();
+                        }
 
-					// only do 1 situation per update
-					yield return null;
-				}
+                        subject.UpdateText();
+                    }
 
-				if (KnownSubjectsToggle.IsOn && body.Enabled != body.isKnown)
-				{
-					body.Enabled = body.isKnown;
-					RebuildLayout();
-				}
-			}
-			yield break;
-		}
+                    if (KnownSubjectsToggle.IsOn && body.SubjectsContainer.IsInstantiated &&
+                        situation.Enabled != situation.isKnown)
+                    {
+                        situation.Enabled = situation.isKnown;
+                        RebuildLayout();
+                    }
 
-		public class BodyContainer: KsmGuiVerticalLayout
-		{
-			public bool isKnown;
-			public SubjectsContainer SubjectsContainer { get; private set; }
-			KsmGuiIconButton bodyToggle;
+                    // only do 1 situation per update
+                    yield return null;
+                }
 
-			public BodyContainer(KsmGuiBase parent, CelestialBody body, SituationsBiomesSubject situationsAndSubjects) : base(parent)
-			{
-				KsmGuiHeader header = new KsmGuiHeader(this, body.name, KsmGuiStyle.boxColor);
-				header.TextObject.TextComponent.fontStyle = FontStyles.Bold;
-				header.TextObject.TextComponent.color = Lib.KolorToColor(Lib.Kolor.Orange);
-				header.TextObject.TextComponent.alignment = TextAlignmentOptions.Left;
-				bodyToggle = new KsmGuiIconButton(header, Textures.KsmGuiTexHeaderArrowsUp, ToggleBody);
-				bodyToggle.SetIconColor(Lib.Kolor.Orange);
-				bodyToggle.MoveAsFirstChild();
+                if (KnownSubjectsToggle.IsOn && body.Enabled != body.isKnown)
+                {
+                    body.Enabled = body.isKnown;
+                    RebuildLayout();
+                }
+            }
 
-				SubjectsContainer = new SubjectsContainer(this, situationsAndSubjects);
-			}
+            yield break;
+        }
 
-			public void ToggleBody()
-			{
-				ToggleBody(!SubjectsContainer.Enabled);
-			}
+        public class BodyContainer : KsmGuiVerticalLayout
+        {
+            public bool isKnown;
+            public SubjectsContainer SubjectsContainer { get; private set; }
+            KsmGuiIconButton bodyToggle;
 
-			public void ToggleBody(bool enable)
-			{
-				if (enable)
-					SubjectsContainer.InstantiateUIObjects();
+            public BodyContainer(KsmGuiBase parent, CelestialBody body,
+                ScienceDB.SituationsBiomesSubject situationsAndSubjects) : base(parent)
+            {
+                KsmGuiHeader header = new KsmGuiHeader(this, body.name, KsmGuiStyle.boxColor);
+                header.TextObject.TextComponent.fontStyle = FontStyles.Bold;
+                header.TextObject.TextComponent.color = Lib.KolorToColor(Lib.Kolor.Orange);
+                header.TextObject.TextComponent.alignment = TextAlignmentOptions.Left;
+                bodyToggle = new KsmGuiIconButton(header, Textures.KsmGuiTexHeaderArrowsUp, ToggleBody);
+                bodyToggle.SetIconColor(Lib.Kolor.Orange);
+                bodyToggle.MoveAsFirstChild();
 
-				SubjectsContainer.Enabled = enable;
-				bodyToggle.SetIconTexture(enable ? Textures.KsmGuiTexHeaderArrowsUp : Textures.KsmGuiTexHeaderArrowsDown);
-				RebuildLayout();
-			}
-		}
+                SubjectsContainer = new SubjectsContainer(this, situationsAndSubjects);
+            }
 
-		public class SubjectsContainer : KsmGuiVerticalLayout
-		{
-			public List<SituationContainer> Situations { get; private set; } = new List<SituationContainer>();
-			public bool IsInstantiated { get; private set; } = false;
+            public void ToggleBody()
+            {
+                ToggleBody(!SubjectsContainer.Enabled);
+            }
 
-			public SubjectsContainer(BodyContainer parent, SituationsBiomesSubject situationsSubjects) : base(parent)
-			{
-				foreach (ObjectPair<ScienceSituation, BiomesSubject> situation in situationsSubjects)
-				{
-					Situations.Add(new SituationContainer(situation));
-				}
-			}
+            public void ToggleBody(bool enable)
+            {
+                if (enable)
+                    SubjectsContainer.InstantiateUIObjects();
 
-			public void InstantiateUIObjects()
-			{
-				if (IsInstantiated || Situations.Count == 0)
-					return;
+                SubjectsContainer.Enabled = enable;
+                bodyToggle.SetIconTexture(
+                    enable ? Textures.KsmGuiTexHeaderArrowsUp : Textures.KsmGuiTexHeaderArrowsDown);
+                RebuildLayout();
+            }
+        }
 
-				IsInstantiated = true;
+        public class SubjectsContainer : KsmGuiVerticalLayout
+        {
+            public List<SituationContainer> Situations { get; private set; } = new List<SituationContainer>();
+            public bool IsInstantiated { get; private set; } = false;
 
-				foreach (SituationContainer situationContainer in Situations)
-				{
-					situationContainer.InstantiateUIObjects(this);
-				}
-			}
+            public SubjectsContainer(BodyContainer parent, ScienceDB.SituationsBiomesSubject situationsSubjects) :
+                base(parent)
+            {
+                foreach (ObjectPair<ScienceSituation, ScienceDB.BiomesSubject> situation in situationsSubjects)
+                {
+                    Situations.Add(new SituationContainer(situation));
+                }
+            }
 
-			public void DestroyUIObjects()
-			{
-				if (IsInstantiated)
-				{
-					IsInstantiated = false;
-					foreach (SituationContainer situationContainer in Situations)
-					{
-						situationContainer.DestroyUIObjects();
-					}
-				}
-			}
-		}
+            public void InstantiateUIObjects()
+            {
+                if (IsInstantiated || Situations.Count == 0)
+                    return;
 
-		public class SituationContainer
-		{
-			public bool isKnown;
-			KsmGuiText situationText;
-			public bool IsInstantiated => situationText != null;
-			private ObjectPair<ScienceSituation, BiomesSubject> situationSubjects;
+                IsInstantiated = true;
 
-			public bool Enabled
-			{
-				get => situationText != null ? situationText.Enabled : false;
-				set
-				{
-					if (situationText != null)
-						situationText.Enabled = value;
-				}
-			}
+                foreach (SituationContainer situationContainer in Situations)
+                {
+                    situationContainer.InstantiateUIObjects(this);
+                }
+            }
 
-			public List<SubjectLine> SubjectLines { get; private set; } = new List<SubjectLine>();
+            public void DestroyUIObjects()
+            {
+                if (IsInstantiated)
+                {
+                    IsInstantiated = false;
+                    foreach (SituationContainer situationContainer in Situations)
+                    {
+                        situationContainer.DestroyUIObjects();
+                    }
+                }
+            }
+        }
 
-			public SituationContainer(ObjectPair<ScienceSituation, BiomesSubject> situationSubjects)
-			{
-				this.situationSubjects = situationSubjects;
-				foreach (ObjectPair<int, List<SubjectData>> subjects in situationSubjects.Value)
-				{
-					foreach (SubjectData subjectData in subjects.Value)
-					{
-						SubjectLines.Add(new SubjectLine(subjectData));
-					}
-				}
-			}
+        public class SituationContainer
+        {
+            public bool isKnown;
+            KsmGuiText situationText;
+            public bool IsInstantiated => situationText != null;
+            private ObjectPair<ScienceSituation, ScienceDB.BiomesSubject> situationSubjects;
 
-			public int DBLinesCount()
-			{
-				int count = 0;
-				foreach (ObjectPair<int, List<SubjectData>> subjects in situationSubjects.Value)
-					count += subjects.Value.Count;
-				return count;
-			}
+            public bool Enabled
+            {
+                get => situationText != null ? situationText.Enabled : false;
+                set
+                {
+                    if (situationText != null)
+                        situationText.Enabled = value;
+                }
+            }
 
-			public void UpdateLines()
-			{
-				SubjectLines.Clear();
-				foreach (ObjectPair<int, List<SubjectData>> subjects in situationSubjects.Value)
-				{
-					foreach (SubjectData subjectData in subjects.Value)
-					{
-						SubjectLines.Add(new SubjectLine(subjectData));
-					}
-				}
-			}
+            public List<SubjectLine> SubjectLines { get; private set; } = new List<SubjectLine>();
 
-			public void InstantiateUIObjects(SubjectsContainer parent)
-			{
-				isKnown = false;
+            public SituationContainer(ObjectPair<ScienceSituation, ScienceDB.BiomesSubject> situationSubjects)
+            {
+                this.situationSubjects = situationSubjects;
+                foreach (ObjectPair<int, List<SubjectData>> subjects in situationSubjects.Value)
+                {
+                    foreach (SubjectData subjectData in subjects.Value)
+                    {
+                        SubjectLines.Add(new SubjectLine(subjectData));
+                    }
+                }
+            }
 
-				if (SubjectLines.Count == 0)
-					return;
+            public int DBLinesCount()
+            {
+                int count = 0;
+                foreach (ObjectPair<int, List<SubjectData>> subjects in situationSubjects.Value)
+                    count += subjects.Value.Count;
+                return count;
+            }
 
-				situationText = new KsmGuiText(parent, SubjectLines[0].SubjectData.Situation.ScienceSituationTitle);
-				situationText.TopTransform.SetAnchorsAndPosition(TextAnchor.MiddleLeft, TextAnchor.MiddleLeft, 5);
-				situationText.TopTransform.SetSizeDelta(150, 14);
-				situationText.TextComponent.color = Lib.KolorToColor(Lib.Kolor.Yellow);
-				situationText.TextComponent.fontStyle = FontStyles.Bold;
+            public void UpdateLines()
+            {
+                SubjectLines.Clear();
+                foreach (ObjectPair<int, List<SubjectData>> subjects in situationSubjects.Value)
+                {
+                    foreach (SubjectData subjectData in subjects.Value)
+                    {
+                        SubjectLines.Add(new SubjectLine(subjectData));
+                    }
+                }
+            }
 
-				foreach (SubjectLine subjectLine in SubjectLines)
-				{
-					subjectLine.InstantiateText(parent);
+            public void InstantiateUIObjects(SubjectsContainer parent)
+            {
+                isKnown = false;
 
-					if (subjectLine.SubjectData.ScienceCollectedTotal > 0.0)
-					{
-						subjectLine.isKnown = true;
-						isKnown |= true;
-					}
-				}
-			}
+                if (SubjectLines.Count == 0)
+                    return;
 
-			public void DestroyUIObjects()
-			{
-				if (situationText != null)
-				{
-					situationText.TopObject.DestroyGameObject();
-					situationText = null;
-				}
+                situationText = new KsmGuiText(parent, SubjectLines[0].SubjectData.Situation.ScienceSituationTitle);
+                situationText.TopTransform.SetAnchorsAndPosition(TextAnchor.MiddleLeft, TextAnchor.MiddleLeft, 5);
+                situationText.TopTransform.SetSizeDelta(150, 14);
+                situationText.TextComponent.color = Lib.KolorToColor(Lib.Kolor.Yellow);
+                situationText.TextComponent.fontStyle = FontStyles.Bold;
 
-				foreach (SubjectLine subjectLine in SubjectLines)
-					subjectLine.DestroyText();
-			}
-		}
+                foreach (SubjectLine subjectLine in SubjectLines)
+                {
+                    subjectLine.InstantiateText(parent);
 
-		public class SubjectLine
-		{
-			public bool isKnown;
-			public SubjectData SubjectData { get; private set; }
-			KsmGuiText subjectText;
+                    if (subjectLine.SubjectData.ScienceCollectedTotal > 0.0)
+                    {
+                        subjectLine.isKnown = true;
+                        isKnown |= true;
+                    }
+                }
+            }
 
-			public bool Enabled
-			{
-				get => subjectText != null ? subjectText.Enabled : false;
-				set
-				{
-					if (subjectText != null)
-						subjectText.Enabled = value;
-				}
-			}
+            public void DestroyUIObjects()
+            {
+                if (situationText != null)
+                {
+                    situationText.TopObject.DestroyGameObject();
+                    situationText = null;
+                }
 
-			public SubjectLine(SubjectData subject)
-			{
-				SubjectData = subject;
-			}
+                foreach (SubjectLine subjectLine in SubjectLines)
+                    subjectLine.DestroyText();
+            }
+        }
 
-			public void InstantiateText(SubjectsContainer parent)
-			{
-				subjectText = new KsmGuiText(parent, GetText(), null, TextAlignmentOptions.TopLeft, false);
-				subjectText.SetLayoutElement(true, false, -1, 14);
-			}
+        public class SubjectLine
+        {
+            public bool isKnown;
+            public SubjectData SubjectData { get; private set; }
+            KsmGuiText subjectText;
 
-			public void DestroyText()
-			{
-				if (subjectText != null)
-				{
-					subjectText.TopObject.DestroyGameObject();
-					subjectText = null;
-				}
-			}
+            public bool Enabled
+            {
+                get => subjectText != null ? subjectText.Enabled : false;
+                set
+                {
+                    if (subjectText != null)
+                        subjectText.Enabled = value;
+                }
+            }
 
-			public void UpdateText()
-			{
-				if (subjectText != null) subjectText.Text = GetText();
-			}
+            public SubjectLine(SubjectData subject)
+            {
+                SubjectData = subject;
+            }
 
-			public string GetText()
-			{
-				return Lib.BuildString
-				(
-					"<pos=10>",
-					Lib.Color(Math.Round(SubjectData.ScienceRetrievedInKSC, 1).ToString("0.0;--;--"), Lib.Kolor.Science, true),
-					"<pos=60>",
-					Lib.Color(Math.Round(SubjectData.ScienceCollectedInFlight, 1).ToString("+0.0;--;--"), Lib.Kolor.Science, true),
-					"<pos=110>",
-					Lib.Color(Math.Round(SubjectData.ScienceRemainingTotal, 1).ToString("0.0;--;--"), Lib.Kolor.Science, true),
-					"<pos=160>",
-					Lib.Color(Math.Round(SubjectData.PercentRetrieved, 1).ToString("0.0x;--;--"), Lib.Kolor.Yellow, true),
-					"<pos=200>",
-					SubjectData.BiomeTitle
-				);
-			}
-		}
-	}
+            public void InstantiateText(SubjectsContainer parent)
+            {
+                subjectText = new KsmGuiText(parent, GetText(), null, TextAlignmentOptions.TopLeft, false);
+                subjectText.SetLayoutElement(true, false, -1, 14);
+            }
 
+            public void DestroyText()
+            {
+                if (subjectText != null)
+                {
+                    subjectText.TopObject.DestroyGameObject();
+                    subjectText = null;
+                }
+            }
 
+            public void UpdateText()
+            {
+                if (subjectText != null) subjectText.Text = GetText();
+            }
 
-
+            public string GetText()
+            {
+                return Lib.BuildString
+                (
+                    "<pos=10>",
+                    Lib.Color(Math.Round(SubjectData.ScienceRetrievedInKSC, 1).ToString("0.0;--;--"), Lib.Kolor.Science,
+                        true),
+                    "<pos=60>",
+                    Lib.Color(Math.Round(SubjectData.ScienceCollectedInFlight, 1).ToString("+0.0;--;--"),
+                        Lib.Kolor.Science, true),
+                    "<pos=110>",
+                    Lib.Color(Math.Round(SubjectData.ScienceRemainingTotal, 1).ToString("0.0;--;--"), Lib.Kolor.Science,
+                        true),
+                    "<pos=160>",
+                    Lib.Color(Math.Round(SubjectData.PercentRetrieved, 1).ToString("0.0x;--;--"), Lib.Kolor.Yellow,
+                        true),
+                    "<pos=200>",
+                    SubjectData.BiomeTitle
+                );
+            }
+        }
+    }
 }

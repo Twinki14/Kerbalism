@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
+using Kerbalism.Database;
+using Kerbalism.System;
 using UnityEngine;
 using KSP.Localization;
 
 
-namespace KERBALISM
+namespace Kerbalism
 {
     public static class Storm
     {
@@ -80,8 +82,8 @@ namespace KERBALISM
 
         public static void Update(CelestialBody body, double elapsed_s)
         {
-			// do nothing if storms are disabled
-			if (!Features.SpaceWeather) return;
+            // do nothing if storms are disabled
+            if (!Features.SpaceWeather) return;
 
             StormData bd = DB.Storm(body.name);
             CreateStorm(bd, body, body.orbit.semiMajorAxis);
@@ -95,25 +97,36 @@ namespace KERBALISM
                     case 2:
                         if (bd.msg_storm < 2)
                         {
-							Message.Post(Severity.danger, Local.Storm_msg1.Format("<b>" + body.name + "</b>"),//"The coronal mass ejection hit <<1>> system  //Lib.BuildString( )
-								Lib.BuildString(Local.Storm_msg1text, " ", Lib.HumanReadableDuration(bd.displayed_duration)));//"Storm duration:"
+                            Message.Post(Severity.danger,
+                                Local.Storm_msg1.Format("<b>" + body.name +
+                                                        "</b>"), //"The coronal mass ejection hit <<1>> system  //Lib.BuildString( )
+                                Lib.BuildString(Local.Storm_msg1text, " ",
+                                    Lib.HumanReadableDuration(bd.displayed_duration))); //"Storm duration:"
                         }
+
                         break;
 
                     case 1:
                         if (bd.msg_storm < 1 && bd.display_warning)
                         {
                             var tti = bd.storm_time - Planetarium.GetUniversalTime();
-							Message.Post(Severity.warning, Local.Storm_msg2.Format("<b>" + body.name + "</b>"),//Lib.BuildString("Our observatories report a coronal mass ejection directed toward <<1>> system")
-								Lib.BuildString(Local.Storm_msg2text," ", Lib.HumanReadableDuration(tti)));//"Time to impact:"
+                            Message.Post(Severity.warning,
+                                Local.Storm_msg2.Format("<b>" + body.name +
+                                                        "</b>"), //Lib.BuildString("Our observatories report a coronal mass ejection directed toward <<1>> system")
+                                Lib.BuildString(Local.Storm_msg2text, " ",
+                                    Lib.HumanReadableDuration(tti))); //"Time to impact:"
                         }
+
                         break;
 
                     case 0:
                         if (bd.msg_storm == 2)
                         {
-                            Message.Post(Severity.relax, Local.Storm_msg3.Format("<b>" + body.name + "</b>"));//Lib.BuildString("The solar storm at <<1>> system is over")
+                            Message.Post(Severity.relax,
+                                Local.Storm_msg3.Format("<b>" + body.name +
+                                                        "</b>")); //Lib.BuildString("The solar storm at <<1>> system is over")
                         }
+
                         break;
                 }
             }
@@ -129,8 +142,8 @@ namespace KERBALISM
             // only consider vessels in interplanetary space
             if (!Lib.IsSun(v.mainBody)) return;
 
-			// disregard EVAs
-			if (v.isEVA) return;
+            // disregard EVAs
+            if (v.isEVA) return;
 
             var bd = vd.stormData;
             CreateStorm(bd, v.mainBody, vd.EnvMainSun.Distance);
@@ -142,30 +155,43 @@ namespace KERBALISM
                     case 0: // no storm
                         if (bd.msg_storm == 2)
                         {
-							// send message
-							Message.Post(Severity.relax, Local.Storm_msg4.Format("<b>" + v.vesselName + "</b>"));//Lib.BuildString("The solar storm around <<1>> is over")
-                            vd.msg_signal = false; // used to avoid sending 'signal is back' messages en-masse after the storm is over
+                            // send message
+                            Message.Post(Severity.relax,
+                                Local.Storm_msg4.Format("<b>" + v.vesselName +
+                                                        "</b>")); //Lib.BuildString("The solar storm around <<1>> is over")
+                            vd.msg_signal =
+                                false; // used to avoid sending 'signal is back' messages en-masse after the storm is over
                         }
+
                         break;
 
                     case 2: // storm in progress
                         if (bd.msg_storm < 2)
                         {
-							Message.Post(Severity.danger, Local.Storm_msg5.Format("<b>" + v.vesselName + "</b>"),//Lib.BuildString("The coronal mass ejection hit <<1>>)
-							  Lib.BuildString(Local.Storm_msg1text, " ", Lib.HumanReadableDuration(bd.displayed_duration)));//"Storm duration:"
+                            Message.Post(Severity.danger,
+                                Local.Storm_msg5.Format("<b>" + v.vesselName +
+                                                        "</b>"), //Lib.BuildString("The coronal mass ejection hit <<1>>)
+                                Lib.BuildString(Local.Storm_msg1text, " ",
+                                    Lib.HumanReadableDuration(bd.displayed_duration))); //"Storm duration:"
                         }
+
                         break;
 
                     case 1: // storm incoming
                         if (bd.msg_storm < 1 && bd.display_warning)
                         {
                             var tti = bd.storm_time - Planetarium.GetUniversalTime();
-							Message.Post(Severity.warning, Local.Storm_msg6.Format("<b>" + v.vesselName + "</b>"),//Lib.BuildString("Our observatories report a coronal mass ejection directed toward <<1>>)
-								Lib.BuildString(Local.Storm_msg2text, " ", Lib.HumanReadableDuration(tti)));//"Time to impact:
+                            Message.Post(Severity.warning,
+                                Local.Storm_msg6.Format("<b>" + v.vesselName +
+                                                        "</b>"), //Lib.BuildString("Our observatories report a coronal mass ejection directed toward <<1>>)
+                                Lib.BuildString(Local.Storm_msg2text, " ",
+                                    Lib.HumanReadableDuration(tti))); //"Time to impact:
                         }
-						break;
+
+                        break;
                 }
             }
+
             bd.msg_storm = bd.storm_state;
         }
 
@@ -212,6 +238,7 @@ namespace KERBALISM
                     return true;
                 }
             }
+
             return false;
         }
 
@@ -236,16 +263,19 @@ namespace KERBALISM
         /// <summary>return true if a storm is incoming</summary>
         public static bool Incoming(Vessel v)
         {
-            var bd = Lib.IsSun(v.mainBody) ? v.KerbalismData().stormData : DB.Storm(Lib.GetParentPlanet(v.mainBody).name);
+            var bd = Lib.IsSun(v.mainBody)
+                ? v.KerbalismData().stormData
+                : DB.Storm(Lib.GetParentPlanet(v.mainBody).name);
             return bd.storm_state == 1 && bd.display_warning;
         }
 
         /// <summary>return true if a storm is in progress</summary>
         public static bool InProgress(Vessel v)
         {
-            var bd = Lib.IsSun(v.mainBody) ? v.KerbalismData().stormData : DB.Storm(Lib.GetParentPlanet(v.mainBody).name);
+            var bd = Lib.IsSun(v.mainBody)
+                ? v.KerbalismData().stormData
+                : DB.Storm(Lib.GetParentPlanet(v.mainBody).name);
             return bd.storm_state == 2;
         }
     }
-
 } // KERBALISM

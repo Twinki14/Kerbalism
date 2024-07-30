@@ -1,201 +1,207 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using UnityEngine;
 
 
-namespace KERBALISM
+namespace Kerbalism
 {
-	// a window containing a panel
-	public sealed class Window
-	{
-		// click through locks
-		private bool clickThroughLocked = false;
-		private const ControlTypes WindowLockTypes = ControlTypes.MANNODE_ADDEDIT | ControlTypes.MANNODE_DELETE | ControlTypes.MAP_UI |
-			ControlTypes.TARGETING | ControlTypes.VESSEL_SWITCHING | ControlTypes.TWEAKABLES | ControlTypes.EDITOR_UI | ControlTypes.EDITOR_SOFT_LOCK | ControlTypes.UI;
+    // a window containing a panel
+    public sealed class Window
+    {
+        // click through locks
+        private bool clickThroughLocked = false;
 
-		// - width: window width in pixel
-		// - left: initial window horizontal position
-		// - top: initial window vertical position
-		public Window(uint width, uint left, uint top)
-		{
-			// generate unique id
-			win_id = Lib.RandomInt(int.MaxValue);
+        private const ControlTypes WindowLockTypes =
+            ControlTypes.MANNODE_ADDEDIT | ControlTypes.MANNODE_DELETE | ControlTypes.MAP_UI |
+            ControlTypes.TARGETING | ControlTypes.VESSEL_SWITCHING | ControlTypes.TWEAKABLES | ControlTypes.EDITOR_UI |
+            ControlTypes.EDITOR_SOFT_LOCK | ControlTypes.UI;
 
-			// setup window geometry
-			win_rect = new Rect((float)left, (float)top, (float)width, 0.0f);
+        // - width: window width in pixel
+        // - left: initial window horizontal position
+        // - top: initial window vertical position
+        public Window(uint width, uint left, uint top)
+        {
+            // generate unique id
+            win_id = Lib.RandomInt(int.MaxValue);
 
-			// setup dragbox geometry
-			drag_rect = new Rect(0.0f, 0.0f, (float)width, Styles.ScaleFloat(20.0f));
+            // setup window geometry
+            win_rect = new Rect((float) left, (float) top, (float) width, 0.0f);
 
-			// initialize tooltip utility
-			tooltip = new Tooltip();
-		}
+            // setup dragbox geometry
+            drag_rect = new Rect(0.0f, 0.0f, (float) width, Styles.ScaleFloat(20.0f));
 
-		public void Open(Action<Panel> refresh)
-		{
-			this.refresh = refresh;
-		}
+            // initialize tooltip utility
+            tooltip = new Tooltip();
+        }
 
-		public void Close()
-		{
-			// clear input locks
-			InputLockManager.RemoveControlLock("KerbalismWindowLock");
-			InputLockManager.RemoveControlLock("KerbalismMainGUILock");
+        public void Open(Action<Panel> refresh)
+        {
+            this.refresh = refresh;
+        }
 
-			refresh = null;
-			panel = null;
-		}
+        public void Close()
+        {
+            // clear input locks
+            InputLockManager.RemoveControlLock("KerbalismWindowLock");
+            InputLockManager.RemoveControlLock("KerbalismMainGUILock");
 
-		public void Update()
-		{
-			if (refresh != null)
-			{
-				// initialize or clear panel
-				if (panel == null) panel = new Panel();
-				else panel.Clear();
+            refresh = null;
+            panel = null;
+        }
 
-				// refresh panel content
-				refresh(panel);
+        public void Update()
+        {
+            if (refresh != null)
+            {
+                // initialize or clear panel
+                if (panel == null) panel = new Panel();
+                else panel.Clear();
 
-				// if panel is empty, close the window
-				if (panel.Empty())
-				{
-					Close();
-				}
-			}
-		}
+                // refresh panel content
+                refresh(panel);
 
-		public void On_gui()
-		{
-			// window is considered closed if panel is null
-			if (panel == null) return;
+                // if panel is empty, close the window
+                if (panel.Empty())
+                {
+                    Close();
+                }
+            }
+        }
 
-			// adapt window size to panel
-			// - clamp to screen height
-			win_rect.width = Math.Min(panel.Width(), Screen.width * 0.8f);
-			win_rect.height = Math.Min(Styles.ScaleFloat(20.0f) + panel.Height(), Screen.height * 0.8f);
+        public void On_gui()
+        {
+            // window is considered closed if panel is null
+            if (panel == null) return;
 
-			// clamp the window to the screen, so it can't be dragged outside
-			float offset_x = Math.Max(0.0f, -win_rect.xMin) + Math.Min(0.0f, Screen.width - win_rect.xMax);
-			float offset_y = Math.Max(0.0f, -win_rect.yMin) + Math.Min(0.0f, Screen.height - win_rect.yMax);
-			win_rect.xMin += offset_x;
-			win_rect.xMax += offset_x;
-			win_rect.yMin += offset_y;
-			win_rect.yMax += offset_y;
+            // adapt window size to panel
+            // - clamp to screen height
+            win_rect.width = Math.Min(panel.Width(), Screen.width * 0.8f);
+            win_rect.height = Math.Min(Styles.ScaleFloat(20.0f) + panel.Height(), Screen.height * 0.8f);
 
-			// draw the window
-			win_rect = GUILayout.Window(win_id, win_rect, Draw_window, "", Styles.win);
+            // clamp the window to the screen, so it can't be dragged outside
+            float offset_x = Math.Max(0.0f, -win_rect.xMin) + Math.Min(0.0f, Screen.width - win_rect.xMax);
+            float offset_y = Math.Max(0.0f, -win_rect.yMin) + Math.Min(0.0f, Screen.height - win_rect.yMax);
+            win_rect.xMin += offset_x;
+            win_rect.xMax += offset_x;
+            win_rect.yMin += offset_y;
+            win_rect.yMax += offset_y;
 
-			// get mouse over state
-			//bool mouse_over = win_rect.Contains(Event.current.mousePosition);
-			bool mouse_over = win_rect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y));
+            // draw the window
+            win_rect = GUILayout.Window(win_id, win_rect, Draw_window, "", Styles.win);
 
-			// disable camera mouse scrolling on mouse over
-			if (mouse_over)
-			{
-				GameSettings.AXIS_MOUSEWHEEL.primary.scale = 0.0f;
-			}
+            // get mouse over state
+            //bool mouse_over = win_rect.Contains(Event.current.mousePosition);
+            bool mouse_over =
+                win_rect.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y));
 
-			// Disable Click through
-			if (mouse_over && !clickThroughLocked)
-			{
-				InputLockManager.SetControlLock(WindowLockTypes, "KerbalismWindowLock");
-				clickThroughLocked = true;
-			}
-			if (!mouse_over && clickThroughLocked)
-			{
-				InputLockManager.RemoveControlLock("KerbalismWindowLock");
-				clickThroughLocked = false;
-			}
-		}
+            // disable camera mouse scrolling on mouse over
+            if (mouse_over)
+            {
+                GameSettings.AXIS_MOUSEWHEEL.primary.scale = 0.0f;
+            }
 
-		void Draw_window(int _)
-		{
-			// render window title
-			GUILayout.BeginHorizontal(Styles.title_container);
-			GUILayout.Label(Textures.empty, Styles.left_icon);
-			GUILayout.Label(panel.Title().ToUpper(), Styles.title_text);
-			GUILayout.Label(Textures.close, Styles.right_icon);
-			bool b = Lib.IsClicked();
-			GUILayout.EndHorizontal();
-			if (b) { Close(); return; }
+            // Disable Click through
+            if (mouse_over && !clickThroughLocked)
+            {
+                InputLockManager.SetControlLock(WindowLockTypes, "KerbalismWindowLock");
+                clickThroughLocked = true;
+            }
 
-			// start scrolling view
-			scroll_pos = GUILayout.BeginScrollView(scroll_pos, HighLogic.Skin.horizontalScrollbar, HighLogic.Skin.verticalScrollbar);
+            if (!mouse_over && clickThroughLocked)
+            {
+                InputLockManager.RemoveControlLock("KerbalismWindowLock");
+                clickThroughLocked = false;
+            }
+        }
 
-			// render panel content
-			panel.Render();
+        void Draw_window(int _)
+        {
+            // render window title
+            GUILayout.BeginHorizontal(Styles.title_container);
+            GUILayout.Label(Textures.empty, Styles.left_icon);
+            GUILayout.Label(panel.Title().ToUpper(), Styles.title_text);
+            GUILayout.Label(Textures.close, Styles.right_icon);
+            bool b = Lib.IsClicked();
+            GUILayout.EndHorizontal();
+            if (b)
+            {
+                Close();
+                return;
+            }
 
-			// end scroll view
-			GUILayout.EndScrollView();
+            // start scrolling view
+            scroll_pos = GUILayout.BeginScrollView(scroll_pos, HighLogic.Skin.horizontalScrollbar,
+                HighLogic.Skin.verticalScrollbar);
 
-			// draw tooltip
-			tooltip.Draw(win_rect);
+            // render panel content
+            panel.Render();
 
-			// right click close the window
-			if (Event.current.type == EventType.MouseDown
-			 && Event.current.button == 1)
-			{
-				Close();
-			}
+            // end scroll view
+            GUILayout.EndScrollView();
 
-			// enable dragging
-			GUI.DragWindow(drag_rect);
-		}
+            // draw tooltip
+            tooltip.Draw(win_rect);
 
-		public bool Contains(Vector2 pos)
-		{
-			return win_rect.Contains(pos);
-		}
+            // right click close the window
+            if (Event.current.type == EventType.MouseDown
+                && Event.current.button == 1)
+            {
+                Close();
+            }
 
-		public void Position(uint x, uint y)
-		{
-			win_rect.Set((float)x, (float)y, win_rect.width, win_rect.height);
-		}
+            // enable dragging
+            GUI.DragWindow(drag_rect);
+        }
 
-		public uint Left()
-		{
-			return (uint)win_rect.xMin;
-		}
+        public bool Contains(Vector2 pos)
+        {
+            return win_rect.Contains(pos);
+        }
 
-		public uint Top()
-		{
-			return (uint)win_rect.yMin;
-		}
+        public void Position(uint x, uint y)
+        {
+            win_rect.Set((float) x, (float) y, win_rect.width, win_rect.height);
+        }
 
-		public Panel.PanelType PanelType
-		{
-			get
-			{
-				if (panel == null)
-					return Panel.PanelType.unknown;
-				else
-					return panel.paneltype;
-			}
-		}
+        public uint Left()
+        {
+            return (uint) win_rect.xMin;
+        }
 
-		// store window id
-		private readonly int win_id;
+        public uint Top()
+        {
+            return (uint) win_rect.yMin;
+        }
 
-		// store window geometry
-		private Rect win_rect;
+        public Panel.PanelType PanelType
+        {
+            get
+            {
+                if (panel == null)
+                    return Panel.PanelType.unknown;
+                else
+                    return panel.paneltype;
+            }
+        }
 
-		// store dragbox geometry
-		private Rect drag_rect;
+        // store window id
+        private readonly int win_id;
 
-		// used by scroll window mechanics
-		private Vector2 scroll_pos;
+        // store window geometry
+        private Rect win_rect;
 
-		// tooltip utility
-		private Tooltip tooltip;
+        // store dragbox geometry
+        private Rect drag_rect;
 
-		// panel
-		private Panel panel;
+        // used by scroll window mechanics
+        private Vector2 scroll_pos;
 
-		// refresh function
-		private Action<Panel> refresh;
-	}
+        // tooltip utility
+        private Tooltip tooltip;
 
+        // panel
+        private Panel panel;
 
+        // refresh function
+        private Action<Panel> refresh;
+    }
 } // KERBALISM

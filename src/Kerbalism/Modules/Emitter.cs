@@ -1,303 +1,316 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-using KSP.Localization;
+using Kerbalism.Database;
+using Kerbalism.System;
+using Kerbalism.Utility;
 
-namespace KERBALISM
+namespace Kerbalism.Modules
 {
-	public class Emitter : PartModule, ISpecifics, IKerbalismModule
-	{
-		// config
-		[KSPField] public string active;                          // name of animation to play when enabling/disabling
+    public class Emitter : PartModule, ISpecifics, IKerbalismModule
+    {
+        // config
+        [KSPField] public string active; // name of animation to play when enabling/disabling
 
-		[KSPField(isPersistant = true)] public string title = string.Empty;     // GUI name of the status action in the PAW
-		[KSPField(isPersistant = true)] public bool toggle;						// true if the effect can be toggled on/off
-		[KSPField(isPersistant = true)] public double radiation;				// radiation in rad/s
-		[KSPField(isPersistant = true)] public double ec_rate;					// EC consumption rate per-second (optional)
-		[KSPField(isPersistant = true)] public bool running;
-		[KSPField(isPersistant = true)] public double radiation_impact = 1.0;	// calculated based on vessel design
+        [KSPField(isPersistant = true)] public string title = string.Empty; // GUI name of the status action in the PAW
+        [KSPField(isPersistant = true)] public bool toggle; // true if the effect can be toggled on/off
+        [KSPField(isPersistant = true)] public double radiation; // radiation in rad/s
+        [KSPField(isPersistant = true)] public double ec_rate; // EC consumption rate per-second (optional)
+        [KSPField(isPersistant = true)] public bool running;
+        [KSPField(isPersistant = true)] public double radiation_impact = 1.0; // calculated based on vessel design
 
-		[KSPField(guiActive = true, guiActiveEditor = true, guiName = "_", groupName = "Radiation", groupDisplayName = "#KERBALISM_Group_Radiation")]//Radiation
-		public string Status;  // rate of radiation emitted/shielded
+        [KSPField(guiActive = true, guiActiveEditor = true, guiName = "_", groupName = "Radiation",
+            groupDisplayName = "#KERBALISM_Group_Radiation")]
+        //Radiation
+        public string Status; // rate of radiation emitted/shielded
 
-		// animations
-		Animator active_anim;
-		bool radiation_impact_calculated = false;
+        // animations
+        Animator active_anim;
+        bool radiation_impact_calculated = false;
 
-		// pseudo-ctor
-		public override void OnStart(StartState state)
-		{
-			// don't break tutorial scenarios
-			if (Lib.DisableScenario(this)) return;
+        // pseudo-ctor
+        public override void OnStart(StartState state)
+        {
+            // don't break tutorial scenarios
+            if (Lib.DisableScenario(this)) return;
 
-			// update RMB ui
-			if (string.IsNullOrEmpty(title))
-				title = radiation >= 0.0 ? "Radiation" : "Active shield";
+            // update RMB ui
+            if (string.IsNullOrEmpty(title))
+                title = radiation >= 0.0 ? "Radiation" : "Active shield";
 
-			Fields["Status"].guiName = title;
-			Events["Toggle"].active = toggle;
-			Actions["Action"].active = toggle;
+            Fields["Status"].guiName = title;
+            Events["Toggle"].active = toggle;
+            Actions["Action"].active = toggle;
 
-			// deal with non-toggable emitters
-			if (!toggle) running = true;
+            // deal with non-toggable emitters
+            if (!toggle) running = true;
 
-			// create animator
-			active_anim = new Animator(part, active);
+            // create animator
+            active_anim = new Animator(part, active);
 
-			// set animation initial state
-			active_anim.Still(running ? 0.0 : 1.0);
-		}
+            // set animation initial state
+            active_anim.Still(running ? 0.0 : 1.0);
+        }
 
-		public class HabitatInfo
-		{
-			public Habitat habitat;
-			public float distance;
+        public class HabitatInfo
+        {
+            public Habitat habitat;
+            public float distance;
 
-			public HabitatInfo(Habitat habitat, float distance)
-			{
-				this.habitat = habitat;
-				this.distance = distance;
-			}
-		}
-		List<HabitatInfo> habitatInfos = null;
+            public HabitatInfo(Habitat habitat, float distance)
+            {
+                this.habitat = habitat;
+                this.distance = distance;
+            }
+        }
 
-		public void Recalculate()
-		{
-			habitatInfos = null;
-			CalculateRadiationImpact();
-		}
+        List<HabitatInfo> habitatInfos = null;
 
-		public void BuildHabitatInfos()
-		{
-			if (habitatInfos != null) return;
-			if (part.transform == null) return;
-			var emitterPosition = part.transform.position;
+        public void Recalculate()
+        {
+            habitatInfos = null;
+            CalculateRadiationImpact();
+        }
 
-			List<Habitat> habitats;
+        public void BuildHabitatInfos()
+        {
+            if (habitatInfos != null) return;
+            if (part.transform == null) return;
+            var emitterPosition = part.transform.position;
 
-			if (Lib.IsEditor())
-			{
-				habitats = new List<Habitat>();
+            List<Habitat> habitats;
 
-				List<Part> parts = Lib.GetPartsRecursively(EditorLogic.RootPart);
-				foreach (var p in parts)
-				{
-					var habitat = p.FindModuleImplementing<Habitat>();
-					if (habitat != null) habitats.Add(habitat);
-				}
-			}
-			else
-			{
-				habitats = vessel.FindPartModulesImplementing<Habitat>();
-			}
+            if (Lib.IsEditor())
+            {
+                habitats = new List<Habitat>();
 
-			habitatInfos = new List<HabitatInfo>();
+                List<Part> parts = Lib.GetPartsRecursively(EditorLogic.RootPart);
+                foreach (var p in parts)
+                {
+                    var habitat = p.FindModuleImplementing<Habitat>();
+                    if (habitat != null) habitats.Add(habitat);
+                }
+            }
+            else
+            {
+                habitats = vessel.FindPartModulesImplementing<Habitat>();
+            }
 
-			foreach (var habitat in habitats)
-			{
-				var habitatPosition = habitat.part.transform.position;
-				var vector = habitatPosition - emitterPosition;
+            habitatInfos = new List<HabitatInfo>();
 
-				HabitatInfo spi = new HabitatInfo(habitat, vector.magnitude);
-				habitatInfos.Add(spi);
-			}
-		}
+            foreach (var habitat in habitats)
+            {
+                var habitatPosition = habitat.part.transform.position;
+                var vector = habitatPosition - emitterPosition;
 
-		/// <summary>Calculate the average radiation effect to all habitats. returns true if successful.</summary>
-		public bool CalculateRadiationImpact()
-		{
-			if (radiation < 0)
-			{
-				radiation_impact = 1.0;
-				return true;
-			}
+                HabitatInfo spi = new HabitatInfo(habitat, vector.magnitude);
+                habitatInfos.Add(spi);
+            }
+        }
 
-			if (habitatInfos == null) BuildHabitatInfos();
-			if (habitatInfos == null) return false;
+        /// <summary>Calculate the average radiation effect to all habitats. returns true if successful.</summary>
+        public bool CalculateRadiationImpact()
+        {
+            if (radiation < 0)
+            {
+                radiation_impact = 1.0;
+                return true;
+            }
 
-			radiation_impact = 0.0;
-			int habitatCount = 0;
+            if (habitatInfos == null) BuildHabitatInfos();
+            if (habitatInfos == null) return false;
 
-			foreach (var hi in habitatInfos)
-			{
-				radiation_impact += Radiation.DistanceRadiation(1.0, hi.distance);
-				habitatCount++;
-			}
+            radiation_impact = 0.0;
+            int habitatCount = 0;
 
-			if (habitatCount > 1)
-				radiation_impact /= habitatCount;
+            foreach (var hi in habitatInfos)
+            {
+                radiation_impact += Radiation.DistanceRadiation(1.0, hi.distance);
+                habitatCount++;
+            }
 
-			return true;
-		}
+            if (habitatCount > 1)
+                radiation_impact /= habitatCount;
 
-		public void Update()
-		{
-			// update ui
-			if (!part.IsPAWVisible())
-				return;
+            return true;
+        }
 
-			Status = running ? Lib.HumanReadableRadiation(Math.Abs(radiation)) : Local.Emitter_none;//"none"
-			Events["Toggle"].guiName = Lib.StatusToggle(part.partInfo.title, running ? Local.Generic_ACTIVE : Local.Generic_DISABLED);
-		}
+        public void Update()
+        {
+            // update ui
+            if (!part.IsPAWVisible())
+                return;
 
-		public void FixedUpdate()
-		{
-			if (!radiation_impact_calculated)
-				radiation_impact_calculated = CalculateRadiationImpact();
-		}
+            Status = running ? Lib.HumanReadableRadiation(Math.Abs(radiation)) : Local.Emitter_none; //"none"
+            Events["Toggle"].guiName = Lib.StatusToggle(part.partInfo.title,
+                running ? Local.Generic_ACTIVE : Local.Generic_DISABLED);
+        }
 
-		// See IKerbalismModule
-		public static string BackgroundUpdate(Vessel v,
-			ProtoPartSnapshot part_snapshot, ProtoPartModuleSnapshot module_snapshot,
-			PartModule proto_part_module, Part proto_part,
-			Dictionary<string, double> availableResources, List<KeyValuePair<string, double>> resourceChangeRequest,
-			double elapsed_s)
-		{
-			Emitter emitter = proto_part_module as Emitter;
-			if (emitter == null) return string.Empty;
+        public void FixedUpdate()
+        {
+            if (!radiation_impact_calculated)
+                radiation_impact_calculated = CalculateRadiationImpact();
+        }
 
-			if (Lib.Proto.GetBool(module_snapshot, "running") && emitter.ec_rate > 0)
-			{
-				resourceChangeRequest.Add(new KeyValuePair<string, double>("ElectricCharge", -emitter.ec_rate));
-			}
+        // See IKerbalismModule
+        public static string BackgroundUpdate(Vessel v,
+            ProtoPartSnapshot part_snapshot, ProtoPartModuleSnapshot module_snapshot,
+            PartModule proto_part_module, Part proto_part,
+            Dictionary<string, double> availableResources, List<KeyValuePair<string, double>> resourceChangeRequest,
+            double elapsed_s)
+        {
+            Emitter emitter = proto_part_module as Emitter;
+            if (emitter == null) return string.Empty;
 
-			return emitter.title;
-		}
+            if (Lib.Proto.GetBool(module_snapshot, "running") && emitter.ec_rate > 0)
+            {
+                resourceChangeRequest.Add(new KeyValuePair<string, double>("ElectricCharge", -emitter.ec_rate));
+            }
 
-		public virtual string ResourceUpdate(Dictionary<string, double> availableResources, List<KeyValuePair<string, double>> resourceChangeRequest)
-		{
-			// if enabled, and there is ec consumption
-			if (running && ec_rate > 0)
-			{
-				resourceChangeRequest.Add(new KeyValuePair<string, double>("ElectricCharge", -ec_rate));
-			}
+            return emitter.title;
+        }
 
-			return title;
-		}
+        public virtual string ResourceUpdate(Dictionary<string, double> availableResources,
+            List<KeyValuePair<string, double>> resourceChangeRequest)
+        {
+            // if enabled, and there is ec consumption
+            if (running && ec_rate > 0)
+            {
+                resourceChangeRequest.Add(new KeyValuePair<string, double>("ElectricCharge", -ec_rate));
+            }
 
-		public string PlannerUpdate(List<KeyValuePair<string, double>> resourceChangeRequest, CelestialBody body, Dictionary<string, double> environment)
-		{
-			return ResourceUpdate(null, resourceChangeRequest);
-		}
+            return title;
+        }
 
-
-		[KSPEvent(guiActive = true, guiActiveEditor = true, guiName = "_", active = true, groupName = "Radiation", groupDisplayName = "#KERBALISM_Group_Radiation")]//Radiation
-		public void Toggle()
-		{
-			// switch status
-			running = !running;
-
-			// play animation
-			active_anim.Play(running, false);
-
-			// refresh VAB/SPH ui
-			if (Lib.IsEditor()) GameEvents.onEditorShipModified.Fire(EditorLogic.fetch.ship);
-		}
+        public string PlannerUpdate(List<KeyValuePair<string, double>> resourceChangeRequest, CelestialBody body,
+            Dictionary<string, double> environment)
+        {
+            return ResourceUpdate(null, resourceChangeRequest);
+        }
 
 
-		// action groups
-		[KSPAction("#KERBALISM_Emitter_Action")] public void Action(KSPActionParam param) { Toggle(); }
+        [KSPEvent(guiActive = true, guiActiveEditor = true, guiName = "_", active = true, groupName = "Radiation",
+            groupDisplayName = "#KERBALISM_Group_Radiation")] //Radiation
+        public void Toggle()
+        {
+            // switch status
+            running = !running;
+
+            // play animation
+            active_anim.Play(running, false);
+
+            // refresh VAB/SPH ui
+            if (Lib.IsEditor()) GameEvents.onEditorShipModified.Fire(EditorLogic.fetch.ship);
+        }
 
 
-		// part tooltip
-		public override string GetInfo()
-		{
-			string desc = radiation > double.Epsilon
-			  ? Local.Emitter_EmitIonizing
-			  : Local.Emitter_ReduceIncoming;
+        // action groups
+        [KSPAction("#KERBALISM_Emitter_Action")]
+        public void Action(KSPActionParam param)
+        {
+            Toggle();
+        }
 
-			return Specs().Info(desc);
-		}
 
-		// specifics support
-		public Specifics Specs()
-		{
-			Specifics specs = new Specifics();
-			specs.Add(radiation >= 0.0 ? Local.Emitter_Emitted : Local.Emitter_ActiveShielding, Lib.HumanReadableRadiation(Math.Abs(radiation)));
-			if (ec_rate > double.Epsilon)
-			{
-				if (Settings.UseSIUnits)
-					specs.Add(Local.Deploy_actualCost, Lib.SIRate(ec_rate, Lib.ECResID));
-				else
-					specs.Add("EC/s", Lib.HumanReadableRate(ec_rate));
-			}
-			return specs;
-		}
+        // part tooltip
+        public override string GetInfo()
+        {
+            string desc = radiation > double.Epsilon
+                ? Local.Emitter_EmitIonizing
+                : Local.Emitter_ReduceIncoming;
 
-		/// <summary>
-		/// get the total radiation emitted by nearby emitters (used for EVAs). only works for loaded vessels.
-		/// </summary>
-		public static double Nearby(Vessel v)
-		{
-			if (!v.loaded || !v.isEVA) return 0.0;
-			var evaPosition = v.rootPart.transform.position;
+            return Specs().Info(desc);
+        }
 
-			double result = 0.0;
+        // specifics support
+        public Specifics Specs()
+        {
+            Specifics specs = new Specifics();
+            specs.Add(radiation >= 0.0 ? Local.Emitter_Emitted : Local.Emitter_ActiveShielding,
+                Lib.HumanReadableRadiation(Math.Abs(radiation)));
+            if (ec_rate > double.Epsilon)
+            {
+                if (Settings.UseSIUnits)
+                    specs.Add(Local.Deploy_actualCost, Lib.SIRate(ec_rate, Lib.ECResID));
+                else
+                    specs.Add("EC/s", Lib.HumanReadableRate(ec_rate));
+            }
 
-			foreach (Vessel n in FlightGlobals.VesselsLoaded)
-			{
-				var vd = n.KerbalismData();
-				if (!vd.IsSimulated) continue;
+            return specs;
+        }
 
-				foreach (var emitter in Lib.FindModules<Emitter>(n))
-				{
-					if (emitter.part == null || emitter.part.transform == null) continue;
-					if (emitter.radiation <= 0) continue; // ignore shielding effects here
-					if (!emitter.running) continue;
+        /// <summary>
+        /// get the total radiation emitted by nearby emitters (used for EVAs). only works for loaded vessels.
+        /// </summary>
+        public static double Nearby(Vessel v)
+        {
+            if (!v.loaded || !v.isEVA) return 0.0;
+            var evaPosition = v.rootPart.transform.position;
 
-					var emitterPosition = emitter.part.transform.position;
-					var vector = evaPosition - emitterPosition;
-					var distance = vector.magnitude;
+            double result = 0.0;
 
-					result += Radiation.DistanceRadiation(emitter.radiation, distance);
-				}
-			}
+            foreach (Vessel n in FlightGlobals.VesselsLoaded)
+            {
+                var vd = n.KerbalismData();
+                if (!vd.IsSimulated) continue;
 
-			return result;
-		}
+                foreach (var emitter in Lib.FindModules<Emitter>(n))
+                {
+                    if (emitter.part == null || emitter.part.transform == null) continue;
+                    if (emitter.radiation <= 0) continue; // ignore shielding effects here
+                    if (!emitter.running) continue;
 
-		// return total radiation emitted in a vessel
-		public static double Total(Vessel v)
-		{
-			// get resource cache
-			ResourceInfo ec = ResourceCache.GetResource(v, "ElectricCharge");
+                    var emitterPosition = emitter.part.transform.position;
+                    var vector = evaPosition - emitterPosition;
+                    var distance = vector.magnitude;
 
-			double tot = 0.0;
-			if (v.loaded)
-			{
-				foreach (var emitter in Lib.FindModules<Emitter>(v))
-				{
-					if (ec.Amount > double.Epsilon || emitter.ec_rate <= double.Epsilon)
-					{
-						if (emitter.running)
-						{
-							if (emitter.radiation > 0) tot += emitter.radiation * emitter.radiation_impact;
-							else tot += emitter.radiation; // always account for full shielding effect
-						}
-					}
-				}
-			}
-			else
-			{
-				foreach (ProtoPartModuleSnapshot m in Lib.FindModules(v.protoVessel, "Emitter"))
-				{
-					if (ec.Amount > double.Epsilon || Lib.Proto.GetDouble(m, "ec_rate") <= double.Epsilon)
-					{
-						if (Lib.Proto.GetBool(m, "running"))
-						{
-							var rad = Lib.Proto.GetDouble(m, "radiation");
-							if (rad < 0) tot += rad;
-							else
-							{
-								tot += rad * Lib.Proto.GetDouble(m, "radiation_factor");
-							}
-						}
-					}
-				}
-			}
-			return tot;
-		}
-	}
+                    result += Radiation.DistanceRadiation(emitter.radiation, distance);
+                }
+            }
 
+            return result;
+        }
+
+        // return total radiation emitted in a vessel
+        public static double Total(Vessel v)
+        {
+            // get resource cache
+            ResourceInfo ec = ResourceCache.GetResource(v, "ElectricCharge");
+
+            double tot = 0.0;
+            if (v.loaded)
+            {
+                foreach (var emitter in Lib.FindModules<Emitter>(v))
+                {
+                    if (ec.Amount > double.Epsilon || emitter.ec_rate <= double.Epsilon)
+                    {
+                        if (emitter.running)
+                        {
+                            if (emitter.radiation > 0) tot += emitter.radiation * emitter.radiation_impact;
+                            else tot += emitter.radiation; // always account for full shielding effect
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (ProtoPartModuleSnapshot m in Lib.FindModules(v.protoVessel, "Emitter"))
+                {
+                    if (ec.Amount > double.Epsilon || Lib.Proto.GetDouble(m, "ec_rate") <= double.Epsilon)
+                    {
+                        if (Lib.Proto.GetBool(m, "running"))
+                        {
+                            var rad = Lib.Proto.GetDouble(m, "radiation");
+                            if (rad < 0) tot += rad;
+                            else
+                            {
+                                tot += rad * Lib.Proto.GetDouble(m, "radiation_factor");
+                            }
+                        }
+                    }
+                }
+            }
+
+            return tot;
+        }
+    }
 } // KERBALISM
-

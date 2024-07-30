@@ -3,11 +3,15 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
 using System.Threading;
+using Kerbalism.Database;
+using Kerbalism.Modules;
+using Kerbalism.System;
 using UnityEngine;
 using KSP.Localization;
+using Space = Kerbalism.Utility.Space;
 
 
-namespace KERBALISM
+namespace Kerbalism
 {
     // store data for a radiation environment model
     // and can evaluate signed distance from the inner & outer belt and the magnetopause
@@ -64,21 +68,25 @@ namespace KERBALISM
             float d1 = Mathf.Sqrt(q1 * q1 + p.y * p.y) - inner_radius;
             float q2 = Mathf.Sqrt((p.x * p.x + p.z * p.z) * inner_border_deform_xy) - inner_border_dist;
             float d2 = Mathf.Sqrt(q2 * q2 + p.y * p.y) - inner_border_radius;
-            return Mathf.Max(d1, -d2) + (inner_deform > 0.001 ? (Mathf.Sin(p.x * 5.0f) * Mathf.Sin(p.y * 7.0f) * Mathf.Sin(p.z * 6.0f)) * inner_deform : 0.0f);
+            return Mathf.Max(d1, -d2) + (inner_deform > 0.001
+                ? (Mathf.Sin(p.x * 5.0f) * Mathf.Sin(p.y * 7.0f) * Mathf.Sin(p.z * 6.0f)) * inner_deform
+                : 0.0f);
         }
 
         public Vector3 Inner_domain()
         {
             float p = Mathf.Max((inner_dist + inner_radius), (inner_border_dist + inner_border_radius));
             float w = p * Mathf.Sqrt(1 / Mathf.Min(inner_deform_xy, inner_border_deform_xy));
-            return new Vector3((w / inner_compression + w / inner_extension) * 0.5f, Mathf.Max(inner_radius, inner_border_radius), w) * (1.0f + inner_deform);
+            return new Vector3((w / inner_compression + w / inner_extension) * 0.5f,
+                Mathf.Max(inner_radius, inner_border_radius), w) * (1.0f + inner_deform);
         }
 
         public Vector3 Inner_offset()
         {
             float p = Mathf.Max((inner_dist + inner_radius), (inner_border_dist + inner_border_radius));
             float w = p * Mathf.Sqrt(1 / Mathf.Min(inner_deform_xy, inner_border_deform_xy));
-            return new Vector3(w / inner_compression - (w / inner_compression + w / inner_extension) * 0.5f, 0.0f, 0.0f);
+            return new Vector3(w / inner_compression - (w / inner_compression + w / inner_extension) * 0.5f, 0.0f,
+                0.0f);
         }
 
         public float Outer_func(Vector3 p)
@@ -88,21 +96,25 @@ namespace KERBALISM
             float d1 = Mathf.Sqrt(q1 * q1 + p.y * p.y) - outer_radius;
             float q2 = Mathf.Sqrt((p.x * p.x + p.z * p.z) * outer_border_deform_xy) - outer_border_dist;
             float d2 = Mathf.Sqrt(q2 * q2 + p.y * p.y) - outer_border_radius;
-            return Mathf.Max(d1, -d2) + (outer_deform > 0.001 ? (Mathf.Sin(p.x * 5.0f) * Mathf.Sin(p.y * 7.0f) * Mathf.Sin(p.z * 6.0f)) * outer_deform : 0.0f);
+            return Mathf.Max(d1, -d2) + (outer_deform > 0.001
+                ? (Mathf.Sin(p.x * 5.0f) * Mathf.Sin(p.y * 7.0f) * Mathf.Sin(p.z * 6.0f)) * outer_deform
+                : 0.0f);
         }
 
         public Vector3 Outer_domain()
         {
             float p = Mathf.Max((outer_dist + outer_radius), (outer_border_dist + outer_border_radius));
             float w = p * Mathf.Sqrt(1 / Mathf.Min(outer_deform_xy, outer_border_deform_xy));
-            return new Vector3((w / outer_compression + w / outer_extension) * 0.5f, Mathf.Max(outer_radius, outer_border_radius), w) * (1.0f + outer_deform);
+            return new Vector3((w / outer_compression + w / outer_extension) * 0.5f,
+                Mathf.Max(outer_radius, outer_border_radius), w) * (1.0f + outer_deform);
         }
 
         public Vector3 Outer_offset()
         {
             float p = Mathf.Max((outer_dist + outer_radius), (outer_border_dist + outer_border_radius));
             float w = p * Mathf.Sqrt(1 / Mathf.Min(outer_deform_xy, outer_border_deform_xy));
-            return new Vector3(w / outer_compression - (w / outer_compression + w / outer_extension) * 0.5f, 0.0f, 0.0f);
+            return new Vector3(w / outer_compression - (w / outer_compression + w / outer_extension) * 0.5f, 0.0f,
+                0.0f);
         }
 
         public float Pause_func(Vector3 p)
@@ -110,18 +122,22 @@ namespace KERBALISM
             p.x *= p.x < 0.0f ? pause_extension : pause_compression;
             p.y *= pause_height_scale;
             return p.magnitude - pause_radius
-              + (pause_deform > 0.001 ? (Mathf.Sin(p.x * 5.0f) * Mathf.Sin(p.y * 7.0f) * Mathf.Sin(p.z * 6.0f)) * pause_deform : 0.0f);
+                   + (pause_deform > 0.001
+                       ? (Mathf.Sin(p.x * 5.0f) * Mathf.Sin(p.y * 7.0f) * Mathf.Sin(p.z * 6.0f)) * pause_deform
+                       : 0.0f);
         }
 
         public Vector3 Pause_domain()
         {
             return new Vector3((pause_radius / pause_compression + pause_radius / pause_extension) * 0.5f,
-              pause_radius / pause_height_scale, pause_radius) * (1.0f + pause_deform);
+                pause_radius / pause_height_scale, pause_radius) * (1.0f + pause_deform);
         }
 
         public Vector3 Pause_offset()
         {
-            return new Vector3(pause_radius / pause_compression - (pause_radius / pause_compression + pause_radius / pause_extension) * 0.5f, 0.0f, 0.0f);
+            return new Vector3(
+                pause_radius / pause_compression -
+                (pause_radius / pause_compression + pause_radius / pause_extension) * 0.5f, 0.0f, 0.0f);
         }
 
         public bool Has_field()
@@ -130,43 +146,43 @@ namespace KERBALISM
         }
 
 
-        public string name;                     // name of the type of radiation environment
+        public string name; // name of the type of radiation environment
 
-        public bool has_inner;                  // true if there is an inner radiation ring
-        public float inner_dist;                // distance from inner belt center to body center
-        public float inner_radius;              // radius of inner belt torus
-        public float inner_deform_xy;           // wanted (high / diameter) ^ 2
-        public float inner_compression;         // compression factor in sun-exposed side
-        public float inner_extension;           // extension factor opposite to sun-exposed side
-        public float inner_border_dist;         // center of the inner torus we substract
-        public float inner_border_radius;       // radius of the inner torus we substract
-        public float inner_border_deform_xy;    // wanted (high / diameter) ^ 2
-        public float inner_deform;              // size of sin deformation (scale hard-coded to [5,7,6])
-        public float inner_quality;             // quality at the border
+        public bool has_inner; // true if there is an inner radiation ring
+        public float inner_dist; // distance from inner belt center to body center
+        public float inner_radius; // radius of inner belt torus
+        public float inner_deform_xy; // wanted (high / diameter) ^ 2
+        public float inner_compression; // compression factor in sun-exposed side
+        public float inner_extension; // extension factor opposite to sun-exposed side
+        public float inner_border_dist; // center of the inner torus we substract
+        public float inner_border_radius; // radius of the inner torus we substract
+        public float inner_border_deform_xy; // wanted (high / diameter) ^ 2
+        public float inner_deform; // size of sin deformation (scale hard-coded to [5,7,6])
+        public float inner_quality; // quality at the border
 
-        public bool has_outer;                  // true if there is an outer radiation ring
-        public float outer_dist;                // distance from outer belt center to body center
-        public float outer_radius;              // radius of outer belt torus
-        public float outer_deform_xy;           // wanted (high / diameter) ^ 2
-        public float outer_compression;         // compression factor in sun-exposed side
-        public float outer_extension;           // extension factor opposite to sun-exposed side
-        public float outer_border_dist;         // center of the outer torus we substract
-        public float outer_border_radius;       // radius of the outer torus we substract
-        public float outer_border_deform_xy;    // wanted (high / diameter) ^ 2
-        public float outer_deform;              // size of sin deformation (scale hard-coded to [5,7,6])
-        public float outer_quality;             // quality at the border
+        public bool has_outer; // true if there is an outer radiation ring
+        public float outer_dist; // distance from outer belt center to body center
+        public float outer_radius; // radius of outer belt torus
+        public float outer_deform_xy; // wanted (high / diameter) ^ 2
+        public float outer_compression; // compression factor in sun-exposed side
+        public float outer_extension; // extension factor opposite to sun-exposed side
+        public float outer_border_dist; // center of the outer torus we substract
+        public float outer_border_radius; // radius of the outer torus we substract
+        public float outer_border_deform_xy; // wanted (high / diameter) ^ 2
+        public float outer_deform; // size of sin deformation (scale hard-coded to [5,7,6])
+        public float outer_quality; // quality at the border
 
-        public bool has_pause;                  // true if there is a magnetopause
-        public float pause_radius;              // basic radius of magnetopause
-        public float pause_compression;         // compression factor in sun-exposed side
-        public float pause_extension;           // extension factor opposite to sun-exposed side
-        public float pause_height_scale;        // vertical compression factor
-        public float pause_deform;              // size of sin deformation (scale is hardcoded as [5,7,6])
-        public float pause_quality;             // quality at the border
+        public bool has_pause; // true if there is a magnetopause
+        public float pause_radius; // basic radius of magnetopause
+        public float pause_compression; // compression factor in sun-exposed side
+        public float pause_extension; // extension factor opposite to sun-exposed side
+        public float pause_height_scale; // vertical compression factor
+        public float pause_deform; // size of sin deformation (scale is hardcoded as [5,7,6])
+        public float pause_quality; // quality at the border
 
-        public ParticleMesh inner_pmesh;        // used to render the inner belt
-        public ParticleMesh outer_pmesh;        // used to render the outer belt
-        public ParticleMesh pause_pmesh;        // used to render the magnetopause
+        public ParticleMesh inner_pmesh; // used to render the inner belt
+        public ParticleMesh outer_pmesh; // used to render the outer belt
+        public ParticleMesh pause_pmesh; // used to render the magnetopause
 
         // default radiation model
         public static RadiationModel none = new RadiationModel();
@@ -203,13 +219,14 @@ namespace KERBALISM
             reference = Lib.ConfigValue(node, "reference", Lib.GetParentSun(body).flightGlobalsIndex);
 
             // get the radiation environment
-            if (!models.TryGetValue(Lib.ConfigValue(node, "radiation_model", ""), out model)) model = RadiationModel.none;
+            if (!models.TryGetValue(Lib.ConfigValue(node, "radiation_model", ""), out model))
+                model = RadiationModel.none;
 
             // get the body
             this.body = body;
 
-            float lat = (float)(geomagnetic_pole_lat * Math.PI / 180.0);
-            float lon = (float)(geomagnetic_pole_lon * Math.PI / 180.0);
+            float lat = (float) (geomagnetic_pole_lat * Math.PI / 180.0);
+            float lon = (float) (geomagnetic_pole_lon * Math.PI / 180.0);
 
             float x = Mathf.Cos(lat) * Mathf.Cos(lon);
             float y = Mathf.Sin(lat);
@@ -235,17 +252,24 @@ namespace KERBALISM
                 radiation_r0 = radiation_surface * 4 * Math.PI * body.Radius * body.Radius;
         }
 
-        public string name;            // name of the body
+        public string name; // name of the body
         public double radiation_inner; // rad/h inside inner belt
         public double radiation_inner_gradient; // how quickly the radiation rises as you go deeper into the belt
         public double radiation_outer; // rad/h inside outer belt
         public double radiation_outer_gradient; // how quickly the radiation rises as you go deeper into the belt
         public double radiation_pause; // rad/h inside magnetopause
         public double radiation_surface; // rad/h of gamma radiation on the surface
-        public double radiation_r0 = 0.0; // rad/h of gamma radiation at the center of the body (calculated from radiation_surface)
-        public double solar_cycle;     // interval time of solar activity (11 years for sun)
-        public double solar_cycle_offset; // time to add to the universal time when calculating the cycle, used to have cycles that don't start at 0
-        public int reference;          // index of the body that determine x-axis of the gsm-space
+
+        public double
+            radiation_r0 =
+                0.0; // rad/h of gamma radiation at the center of the body (calculated from radiation_surface)
+
+        public double solar_cycle; // interval time of solar activity (11 years for sun)
+
+        public double
+            solar_cycle_offset; // time to add to the universal time when calculating the cycle, used to have cycles that don't start at 0
+
+        public int reference; // index of the body that determine x-axis of the gsm-space
         public float geomagnetic_pole_lat = 90.0f;
         public float geomagnetic_pole_lon = 0.0f;
         public float geomagnetic_offset = 0.0f;
@@ -268,6 +292,7 @@ namespace KERBALISM
             {
                 return radiation_pause + radiation_pause * 0.2 * SolarActivity();
             }
+
             return radiation_pause;
         }
 
@@ -276,7 +301,8 @@ namespace KERBALISM
         {
             if (solar_cycle <= 0) return 0;
 
-            var t = (solar_cycle_offset + Planetarium.GetUniversalTime()) / solar_cycle * 2 * Math.PI; // Math.Sin/Cos works with radians
+            var t = (solar_cycle_offset + Planetarium.GetUniversalTime()) / solar_cycle * 2 *
+                    Math.PI; // Math.Sin/Cos works with radians
 
             // this gives a pseudo-erratic curve, see https://www.desmos.com/calculator/q5flvzvxia
             // in range -0.15 .. 1.05
@@ -342,10 +368,16 @@ namespace KERBALISM
                 bool used = false;
                 foreach (var body_pair in bodies)
                 {
-                    if (body_pair.Value.model == rad_pair.Value) { used = true; break; }
+                    if (body_pair.Value.model == rad_pair.Value)
+                    {
+                        used = true;
+                        break;
+                    }
                 }
+
                 if (!used) to_remove.Add(rad_pair.Key);
             }
+
             foreach (string s in to_remove) models.Remove(s);
 
             // start particle-fitting thread
@@ -394,19 +426,22 @@ namespace KERBALISM
                 // particle-fitting for the inner radiation belt
                 if (mf.has_inner)
                 {
-                    mf.inner_pmesh = new ParticleMesh(mf.Inner_func, mf.Inner_domain(), mf.Inner_offset(), inner_count, mf.inner_quality);
+                    mf.inner_pmesh = new ParticleMesh(mf.Inner_func, mf.Inner_domain(), mf.Inner_offset(), inner_count,
+                        mf.inner_quality);
                 }
 
                 // particle-fitting for the outer radiation belt
                 if (mf.has_outer)
                 {
-                    mf.outer_pmesh = new ParticleMesh(mf.Outer_func, mf.Outer_domain(), mf.Outer_offset(), outer_count, mf.outer_quality);
+                    mf.outer_pmesh = new ParticleMesh(mf.Outer_func, mf.Outer_domain(), mf.Outer_offset(), outer_count,
+                        mf.outer_quality);
                 }
 
                 // particle-fitting for the magnetopause
                 if (mf.has_pause)
                 {
-                    mf.pause_pmesh = new ParticleMesh(mf.Pause_func, mf.Pause_domain(), mf.Pause_offset(), pause_count, mf.pause_quality);
+                    mf.pause_pmesh = new ParticleMesh(mf.Pause_func, mf.Pause_domain(), mf.Pause_offset(), pause_count,
+                        mf.pause_quality);
                 }
             }
         }
@@ -426,10 +461,10 @@ namespace KERBALISM
 
             Space gsm;
             gsm.origin = ScaledSpace.LocalToScaledSpace(body.position);
-            gsm.scale = ScaledSpace.InverseScaleFactor * (float)body.Radius;
+            gsm.scale = ScaledSpace.InverseScaleFactor * (float) body.Radius;
             if (body != reference)
             {
-                gsm.x_axis = ((Vector3)ScaledSpace.LocalToScaledSpace(reference.position) - gsm.origin).normalized;
+                gsm.x_axis = ((Vector3) ScaledSpace.LocalToScaledSpace(reference.position) - gsm.origin).normalized;
                 if (!tilted)
                 {
                     gsm.y_axis = body.RotationAxis; //< initial guess
@@ -439,31 +474,31 @@ namespace KERBALISM
                 else
                 {
                     /* "Do not try and tilt the planet, that's impossible.
-					 * Instead, only try to realize the truth...there is no tilt.
-					 * Then you'll see that it is not the planet that tilts, it is
-					 * the rest of the universe."
-					 * 
-					 * - The Matrix
-					 * 
-					 * 		 
-					 * the orbits are inclined (with respect to the equator of the
-					 * Earth), but all axes are parallel. and aligned with the unity
-					 * world z axis. or is it y? whatever, KSP uses two conventions
-					 * in different places.
-					 * if you use Principia, the current main body (or if there is
-					 * none, e.g. in the space centre or tracking station, the home
-					 * body) is not tilted (its axis is the unity vertical.	 
-					 * you can fetch the full orientation (tilt and rotation) of any
-					 * body (including the current main body) in the current unity
-					 * frame (which changes of course, because sometimes KSP uses a
-					 * rotating frame, and because Principia tilts the universe
-					 * differently if the current main body changes) as the
-					 * orientation of the scaled space body
-					 * 		 
-					 * body.scaledBody.transform.rotation or something along those lines
-					 * 
-					 * - egg
-					 */
+                     * Instead, only try to realize the truth...there is no tilt.
+                     * Then you'll see that it is not the planet that tilts, it is
+                     * the rest of the universe."
+                     *
+                     * - The Matrix
+                     *
+                     *
+                     * the orbits are inclined (with respect to the equator of the
+                     * Earth), but all axes are parallel. and aligned with the unity
+                     * world z axis. or is it y? whatever, KSP uses two conventions
+                     * in different places.
+                     * if you use Principia, the current main body (or if there is
+                     * none, e.g. in the space centre or tracking station, the home
+                     * body) is not tilted (its axis is the unity vertical.
+                     * you can fetch the full orientation (tilt and rotation) of any
+                     * body (including the current main body) in the current unity
+                     * frame (which changes of course, because sometimes KSP uses a
+                     * rotating frame, and because Principia tilts the universe
+                     * differently if the current main body changes) as the
+                     * orientation of the scaled space body
+                     *
+                     * body.scaledBody.transform.rotation or something along those lines
+                     *
+                     * - egg
+                     */
 
                     Vector3 pole = rb.geomagnetic_pole;
                     Quaternion rotation = body.scaledBody.transform.rotation;
@@ -517,18 +552,21 @@ namespace KERBALISM
                         show_pause = true;
                     }
                 }
+
                 if (Input.GetKeyDown(KeyCode.Keypad1))
                 {
                     show_inner = true;
                     show_outer = false;
                     show_pause = false;
                 }
+
                 if (Input.GetKeyDown(KeyCode.Keypad2))
                 {
                     show_inner = false;
                     show_outer = true;
                     show_pause = false;
                 }
+
                 if (Input.GetKeyDown(KeyCode.Keypad3))
                 {
                     show_inner = false;
@@ -553,7 +591,8 @@ namespace KERBALISM
                         show_pause = false;
 
                         // tell the user and do nothing
-                        Message.Post("<color=#00ffff>"+Local.Fittingparticles_msg +"<b></b></color>", Local.ComebackLater_msg);//"Fitting particles to signed distance fields""Come back in a minute"
+                        Message.Post("<color=#00ffff>" + Local.Fittingparticles_msg + "<b></b></color>",
+                            Local.ComebackLater_msg); //"Fitting particles to signed distance fields""Come back in a minute"
                         return;
                     }
 
@@ -606,7 +645,8 @@ namespace KERBALISM
                 Matrix4x4 m_tilted = gsm_tilted.Look_at();
                 if (show_inner && mf.has_inner && rb.inner_visible) mf.inner_pmesh.Render(m_tilted);
                 if (show_outer && mf.has_outer && rb.outer_visible) mf.outer_pmesh.Render(m_tilted);
-                if (show_pause && mf.has_pause && rb.pause_visible) mf.pause_pmesh.Render(Gsm_space(rb, false).Look_at());
+                if (show_pause && mf.has_pause && rb.pause_visible)
+                    mf.pause_pmesh.Render(Gsm_space(rb, false).Look_at());
             }
         }
 
@@ -643,8 +683,10 @@ namespace KERBALISM
         }
 
         // return the total environent radiation at position specified
-        public static double Compute(Vessel v, Vector3d position, double gamma_transparency, double sunlight, out bool blackout,
-                                     out bool magnetosphere, out bool inner_belt, out bool outer_belt, out bool interstellar, out double shieldedRadiation)
+        public static double Compute(Vessel v, Vector3d position, double gamma_transparency, double sunlight,
+            out bool blackout,
+            out bool magnetosphere, out bool inner_belt, out bool outer_belt, out bool interstellar,
+            out double shieldedRadiation)
         {
             // prepare out parameters
             blackout = false;
@@ -698,6 +740,7 @@ namespace KERBALISM
                         r = RadiationInBelt(D, mf.inner_radius, rb.radiation_inner_gradient);
                         radiation += r * rb.radiation_inner * (1 + activity * 0.3);
                     }
+
                     if (mf.has_outer)
                     {
                         D = mf.Outer_func(p);
@@ -708,6 +751,7 @@ namespace KERBALISM
                         r = RadiationInBelt(D, mf.outer_radius, rb.radiation_outer_gradient);
                         radiation += r * rb.radiation_outer * (1 + activity * 0.3);
                     }
+
                     if (mf.has_pause)
                     {
                         gsm = Gsm_space(rb, false);
@@ -725,21 +769,24 @@ namespace KERBALISM
                 {
                     Vector3d direction;
                     double distance;
-					if (Sim.IsBodyVisible(v, position, body, v.KerbalismData().EnvVisibleBodies, out direction, out distance))
-					{
-						var r0 = RadiationR0(rb);
-						var r1 = DistanceRadiation(r0, distance);
+                    if (Sim.IsBodyVisible(v, position, body, v.KerbalismData().EnvVisibleBodies, out direction,
+                            out distance))
+                    {
+                        var r0 = RadiationR0(rb);
+                        var r1 = DistanceRadiation(r0, distance);
 
-						// clamp to max. surface radiation. when loading on a rescaled system, the vessel can appear to be within the sun for a few ticks
-						radiation += Math.Min(r1, rb.radiation_surface);
+                        // clamp to max. surface radiation. when loading on a rescaled system, the vessel can appear to be within the sun for a few ticks
+                        radiation += Math.Min(r1, rb.radiation_surface);
 #if DEBUG_RADIATION
 						if (v.loaded) Lib.Log("Radiation " + v + " from surface of " + body + ": " + Lib.HumanReadableRadiation(radiation) + " gamma: " + Lib.HumanReadableRadiation(r1));
 #endif
-					}
+                    }
                 }
 
                 // avoid loops in the chain
-                body = (body.referenceBody != null && body.referenceBody.referenceBody == body) ? null : body.referenceBody;
+                body = (body.referenceBody != null && body.referenceBody.referenceBody == body)
+                    ? null
+                    : body.referenceBody;
             }
 
             // add extern radiation
@@ -749,25 +796,24 @@ namespace KERBALISM
 			if (v.loaded) Lib.Log("Radiation " + v + " extern: " + Lib.HumanReadableRadiation(radiation) + " gamma: " + Lib.HumanReadableRadiation(Settings.ExternRadiation));
 #endif
 
-			// apply gamma transparency if inside atmosphere
-			radiation *= gamma_transparency;
+            // apply gamma transparency if inside atmosphere
+            radiation *= gamma_transparency;
 
 #if DEBUG_RADIATION
 			if (v.loaded) Lib.Log("Radiation " + v + " after gamma: " + Lib.HumanReadableRadiation(radiation) + " transparency: " + gamma_transparency);
 #endif
-			// add surface radiation of the body itself
-			if(Lib.IsSun(v.mainBody) && v.altitude < v.mainBody.Radius)
-			if(v.altitude > v.mainBody.Radius)
-			{
-				radiation += DistanceRadiation(RadiationR0(Info(v.mainBody)), v.altitude);
-
-			}
+            // add surface radiation of the body itself
+            if (Lib.IsSun(v.mainBody) && v.altitude < v.mainBody.Radius)
+                if (v.altitude > v.mainBody.Radius)
+                {
+                    radiation += DistanceRadiation(RadiationR0(Info(v.mainBody)), v.altitude);
+                }
 
 #if DEBUG_RADIATION
 			if (v.loaded) Lib.Log("Radiation " + v + " from current main body: " + Lib.HumanReadableRadiation(radiation) + " gamma: " + Lib.HumanReadableRadiation(DistanceRadiation(RadiationR0(Info(v.mainBody)), v.altitude)));
 #endif
 
-			shieldedRadiation = radiation;
+            shieldedRadiation = radiation;
 
             // if there is a storm in progress
             if (Storm.InProgress(v))
@@ -796,35 +842,35 @@ namespace KERBALISM
 			if (v.loaded) Lib.Log("Radiation " + v + " after emitters: " + Lib.HumanReadableRadiation(radiation) + " shielded " + Lib.HumanReadableRadiation(shieldedRadiation));
 #endif
 
-			// for EVAs, add the effect of nearby emitters
-			if (v.isEVA)
+            // for EVAs, add the effect of nearby emitters
+            if (v.isEVA)
             {
                 var nearbyEmitters = Emitter.Nearby(v);
-				radiation += nearbyEmitters;
+                radiation += nearbyEmitters;
                 shieldedRadiation += nearbyEmitters;
 #if DEBUG_RADIATION
 				if (v.loaded) Lib.Log("Radiation " + v + " nearby emitters " + Lib.HumanReadableRadiation(nearbyEmitters));
 #endif
-			}
+            }
 
-			var passiveShielding = PassiveShield.Total(v);
-			shieldedRadiation -= passiveShielding;
+            var passiveShielding = PassiveShield.Total(v);
+            shieldedRadiation -= passiveShielding;
 
 #if DEBUG_RADIATION
 			if (v.loaded) Lib.Log("Radiation " + v + " passiveShielding " + Lib.HumanReadableRadiation(passiveShielding));
 			if (v.loaded) Lib.Log("Radiation " + v + " before clamp: " + Lib.HumanReadableRadiation(radiation) + " shielded " + Lib.HumanReadableRadiation(shieldedRadiation));
 #endif
 
-			// clamp radiation to positive range
-			// note: we avoid radiation going to zero by using a small positive value
-			radiation = Math.Max(radiation, Nominal);
+            // clamp radiation to positive range
+            // note: we avoid radiation going to zero by using a small positive value
+            radiation = Math.Max(radiation, Nominal);
             shieldedRadiation = Math.Max(shieldedRadiation, Nominal);
 
 #if DEBUG_RADIATION
 			if (v.loaded) Lib.Log("Radiation " + v + " after clamp: " + Lib.HumanReadableRadiation(radiation) + " shielded " + Lib.HumanReadableRadiation(shieldedRadiation));
 #endif
-			// return radiation
-			return radiation;
+            // return radiation
+            return radiation;
         }
 
         /// <summary>
@@ -879,6 +925,7 @@ namespace KERBALISM
                         var r = RadiationInBelt(D, mf.inner_radius, rb.radiation_inner_gradient);
                         radiation += r * rb.radiation_inner * (1 + activity * 0.3);
                     }
+
                     if (mf.has_outer)
                     {
                         D = mf.Outer_func(p);
@@ -888,6 +935,7 @@ namespace KERBALISM
                         var r = RadiationInBelt(D, mf.outer_radius, rb.radiation_outer_gradient);
                         radiation += r * rb.radiation_outer * (1 + activity * 0.3);
                     }
+
                     if (mf.has_pause)
                     {
                         gsm = Gsm_space(rb, false);
@@ -904,14 +952,16 @@ namespace KERBALISM
                     var r0 = RadiationR0(rb);
                     var r1 = DistanceRadiation(r0, distance);
 
-					// Lib.Log("Surface radiation on " + b + " from " + body + ": " + Lib.HumanReadableRadiation(r1) + " distance " + distance);
+                    // Lib.Log("Surface radiation on " + b + " from " + body + ": " + Lib.HumanReadableRadiation(r1) + " distance " + distance);
 
-					// clamp to max. surface radiation. when loading on a rescaled system, the vessel can appear to be within the sun for a few ticks
-					radiation += Math.Min(r1, rb.radiation_surface);
+                    // clamp to max. surface radiation. when loading on a rescaled system, the vessel can appear to be within the sun for a few ticks
+                    radiation += Math.Min(r1, rb.radiation_surface);
                 }
 
                 // avoid loops in the chain
-                body = (body.referenceBody != null && body.referenceBody.referenceBody == body) ? null : body.referenceBody;
+                body = (body.referenceBody != null && body.referenceBody.referenceBody == body)
+                    ? null
+                    : body.referenceBody;
             }
 
             // add extern radiation
@@ -921,11 +971,11 @@ namespace KERBALISM
 
             // scale radiation by gamma transparency if inside atmosphere
             radiation *= gamma_transparency;
-			// Lib.Log("srf scaled on " + b + ": " + Lib.HumanReadableRadiation(radiation));
+            // Lib.Log("srf scaled on " + b + ": " + Lib.HumanReadableRadiation(radiation));
 
-			// add surface radiation of the body itself
-			RadiationBody bodyInfo = Info(b);
-			// clamp to max. bodyInfo.radiation_surface to avoid extreme radiation effects while loading a vessel on rescaled systems
+            // add surface radiation of the body itself
+            RadiationBody bodyInfo = Info(b);
+            // clamp to max. bodyInfo.radiation_surface to avoid extreme radiation effects while loading a vessel on rescaled systems
             radiation += Math.Min(bodyInfo.radiation_surface, DistanceRadiation(RadiationR0(bodyInfo), b.Radius));
 
             // Lib.Log("Radiation on " + b + ": " + Lib.HumanReadableRadiation(radiation) + ", own surface radiation " + Lib.HumanReadableRadiation(DistanceRadiation(RadiationR0(Info(b)), b.Radius)));
@@ -954,7 +1004,10 @@ namespace KERBALISM
                 // show the message
                 if (inside_belt && !vd.msg_belt && must_warn)
                 {
-					Message.Post(Local.BeltWarnings_msg.Format("<b>" + v.vesselName + "</b>", "<i>" + v.mainBody.bodyName + "</i>"), Local.BeltWarnings_msgSubtext);//<<1>> is crossing <<2>> radiation belt"Exposed to extreme radiation"
+                    Message.Post(
+                        Local.BeltWarnings_msg.Format("<b>" + v.vesselName + "</b>",
+                            "<i>" + v.mainBody.bodyName + "</i>"),
+                        Local.BeltWarnings_msgSubtext); //<<1>> is crossing <<2>> radiation belt"Exposed to extreme radiation"
                     vd.msg_belt = true;
                 }
                 else if (!inside_belt && vd.msg_belt)
@@ -974,11 +1027,11 @@ namespace KERBALISM
         // deduce first interesting body for radiation in the body chain
         static CelestialBody Interesting_body(CelestialBody body)
         {
-            if (Info(body).model.Has_field()) return body;      // main body has field
-            else if (body.referenceBody != null                 // it has a ref body
-              && body.referenceBody.referenceBody != body)      // avoid loops in planet setup (eg: OPM)
-                return Interesting_body(body.referenceBody);      // recursively
-            else return null;                                   // nothing in chain
+            if (Info(body).model.Has_field()) return body; // main body has field
+            else if (body.referenceBody != null // it has a ref body
+                     && body.referenceBody.referenceBody != body) // avoid loops in planet setup (eg: OPM)
+                return Interesting_body(body.referenceBody); // recursively
+            else return null; // nothing in chain
         }
 
         static CelestialBody Interesting_body()
@@ -986,12 +1039,12 @@ namespace KERBALISM
             var target = PlanetariumCamera.fetch.target;
             return
                 target == null
-              ? null
-              : target.celestialBody != null
-              ? Interesting_body(target.celestialBody)
-              : target.vessel != null
-              ? Interesting_body(target.vessel.mainBody)
-              : null;
+                    ? null
+                    : target.celestialBody != null
+                        ? Interesting_body(target.celestialBody)
+                        : target.vessel != null
+                            ? Interesting_body(target.vessel.mainBody)
+                            : null;
         }
 
         /// <summary>
@@ -1027,5 +1080,4 @@ namespace KERBALISM
         // nominal radiation is used to never allow zero radiation
         public static double Nominal = 0.0003 / 3600.0; // < 3 mrad/h is nominal
     }
-
 } // KERBALISM

@@ -1,91 +1,91 @@
-using KSP.Localization;
 using System.Collections.Generic;
+using Kerbalism.Database;
+using Kerbalism.Utility;
 using UnityEngine;
 
 
-namespace KERBALISM
+namespace Kerbalism
 {
+    public static class FailuresManager
+    {
+        public static void Failman(this Panel p, Vessel v)
+        {
+            // avoid corner-case when this is called in a lambda after scene changes
+            v = FlightGlobals.FindVessel(v.id);
 
+            // if vessel doesn't exist anymore, leave the panel empty
+            if (v == null) return;
 
-	public static class FailuresManager
-	{
-		public static void Failman(this Panel p, Vessel v)
-		{
-			// avoid corner-case when this is called in a lambda after scene changes
-			v = FlightGlobals.FindVessel(v.id);
+            // get data
+            VesselData vd = v.KerbalismData();
 
-			// if vessel doesn't exist anymore, leave the panel empty
-			if (v == null) return;
+            // if not a valid vessel, leave the panel empty
+            if (!vd.IsSimulated) return;
 
-			// get data
-			VesselData vd = v.KerbalismData();
+            // set metadata
+            p.Title(Lib.BuildString(Lib.Ellipsis(v.vesselName, Styles.ScaleStringLength(20)), " ",
+                Lib.Color(Local.QualityManagement_title, Lib.Kolor.LightGrey))); //"Quality Management"
+            p.Width(Styles.ScaleWidthFloat(355.0f));
+            p.paneltype = Panel.PanelType.failures;
 
-			// if not a valid vessel, leave the panel empty
-			if (!vd.IsSimulated) return;
+            string section = string.Empty;
 
-			// set metadata
-			p.Title(Lib.BuildString(Lib.Ellipsis(v.vesselName, Styles.ScaleStringLength(20)), " ", Lib.Color(Local.QualityManagement_title, Lib.Kolor.LightGrey)));//"Quality Management"
-			p.Width(Styles.ScaleWidthFloat(355.0f));
-			p.paneltype = Panel.PanelType.failures;
+            // get devices
+            List<ReliabilityInfo> devices = vd.ReliabilityStatus();
 
-			string section = string.Empty;
+            int deviceCount = 0;
 
-			// get devices
-			List<ReliabilityInfo> devices = vd.ReliabilityStatus();
+            // for each device
+            foreach (var ri in devices)
+            {
+                if (section != Group2Section(ri.group))
+                {
+                    section = Group2Section(ri.group);
+                    p.AddSection(section);
+                }
 
-			int deviceCount = 0;
+                string status = StatusString(ri);
 
-			// for each device
-			foreach (var ri in devices)
-			{
-				if(section != Group2Section(ri.group))
-				{
-					section = Group2Section(ri.group);
-					p.AddSection(section);
-				}
+                // render device entry
+                p.AddContent(
+                    label: ri.title,
+                    value: status,
+                    hover: () => Highlighter.Set(ri.partId, Color.blue));
+                deviceCount++;
+            }
 
-				string status = StatusString(ri);
+            // no devices case
+            if (deviceCount == 0)
+            {
+                p.AddContent("<i>" + Local.QualityManagement_noqualityinfo + "</i>"); //no quality info
+            }
+        }
 
-				// render device entry
-				p.AddContent(
-					label: ri.title,
-					value: status,
-					hover: () => Highlighter.Set(ri.partId, Color.blue));
-				deviceCount++;
-			}
+        private static string Group2Section(string group)
+        {
+            if (string.IsNullOrEmpty(group)) return Local.QualityManagement_Misc; //"Misc"
+            return group;
+        }
 
-			// no devices case
-			if (deviceCount == 0)
-			{
-				p.AddContent("<i>"+Local.QualityManagement_noqualityinfo +"</i>");//no quality info
-			}
-		}
+        private static string StatusString(ReliabilityInfo ri)
+        {
+            if (ri.broken)
+            {
+                if (ri.critical) return Lib.Color(Local.QualityManagement_busted, Lib.Kolor.Red); //"busted"
+                return Lib.Color(Local.QualityManagement_needsrepair, Lib.Kolor.Orange); //"needs repair"
+            }
 
-		private static string Group2Section(string group)
-		{
-			if (string.IsNullOrEmpty(group)) return Local.QualityManagement_Misc;//"Misc"
-			return group;
-		}
+            if (ri.NeedsMaintenance())
+            {
+                return Lib.Color(Local.QualityManagement_needsservice, Lib.Kolor.Yellow); //"needs service"
+            }
 
-		private static string StatusString(ReliabilityInfo ri)
-		{
-			if (ri.broken)
-			{
-				if (ri.critical) return Lib.Color(Local.QualityManagement_busted, Lib.Kolor.Red);//"busted"
-				return Lib.Color(Local.QualityManagement_needsrepair, Lib.Kolor.Orange);//"needs repair"
-			}
-			if (ri.NeedsMaintenance())
-			{
-				return Lib.Color(Local.QualityManagement_needsservice, Lib.Kolor.Yellow);//"needs service"
-			}
+            if (ri.rel_duration > 0.75)
+                return Lib.Color(Local.QualityManagement_operationduration, Lib.Kolor.Yellow); //"operation duration"
+            if (ri.rel_ignitions > 0.95)
+                return Lib.Color(Local.QualityManagement_ignitionlimit, Lib.Kolor.Yellow); //"ignition limit"
 
-			if (ri.rel_duration > 0.75) return Lib.Color(Local.QualityManagement_operationduration, Lib.Kolor.Yellow);//"operation duration"
-			if (ri.rel_ignitions > 0.95) return Lib.Color(Local.QualityManagement_ignitionlimit, Lib.Kolor.Yellow);//"ignition limit"
-			
-			return Lib.Color(Local.QualityManagement_good, Lib.Kolor.Green);//"good"
-		}
-	}
-
-
+            return Lib.Color(Local.QualityManagement_good, Lib.Kolor.Green); //"good"
+        }
+    }
 } // KERBALISM
-

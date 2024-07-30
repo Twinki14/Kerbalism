@@ -1,3 +1,4 @@
+using System.Diagnostics;
 #if DEBUG_PROFILER
 using System;
 using System.Collections.Generic;
@@ -6,7 +7,7 @@ using KSP.Localization;
 using UnityEngine;
 #endif
 
-namespace KERBALISM
+namespace Kerbalism.Utility
 {
 #if !DEBUG_PROFILER
     /// <summary> Simple profiler for measuring the execution time of code placed between the Start and Stop methods. </summary>
@@ -141,7 +142,8 @@ namespace KERBALISM
 					e.calls_txt = "0";
 				}
 
-				e.avg_txt = (e.tot_calls > 0L ? Lib.Microseconds((ulong)(e.tot_time / e.tot_calls)).ToString("F2") : "") + "ms";
+				e.avg_txt =
+ (e.tot_calls > 0L ? Lib.Microseconds((ulong)(e.tot_time / e.tot_calls)).ToString("F2") : "") + "ms";
 				e.avg_calls_txt = tot_frames > 0L ? ((float)e.tot_calls / (float)tot_frames).ToString("F3") : "0";
 			}
 
@@ -234,10 +236,10 @@ namespace KERBALISM
 		}
 #endif
 
-		[System.Diagnostics.Conditional("DEBUG_PROFILER")]
-		/// <summary> Start a profiler entry. </summary>
-		public static void Start(string e_name)
-		{
+        [Conditional("DEBUG_PROFILER")]
+        /// <summary> Start a profiler entry. </summary>
+        public static void Start(string e_name)
+        {
 #if DEBUG_PROFILER
 			if (Fetch == null)
 				return;
@@ -250,12 +252,12 @@ namespace KERBALISM
 
 			Fetch.entries[e_name].start = Lib.Clocks();
 #endif
-		}
+        }
 
-		[System.Diagnostics.Conditional("DEBUG_PROFILER")]
-		/// <summary> Stop a profiler entry. </summary>
-		public static void Stop(string e_name)
-		{
+        [Conditional("DEBUG_PROFILER")]
+        /// <summary> Stop a profiler entry. </summary>
+        public static void Stop(string e_name)
+        {
 #if DEBUG_PROFILER
 			if (Fetch == null)
 				return;
@@ -265,10 +267,9 @@ namespace KERBALISM
 			++e.calls;
 			e.time += Lib.Clocks() - e.start;
 #endif
-		}
+        }
 
 #if DEBUG_PROFILER
-
 		/// <summary> Profile a function scope. </summary>
 		public sealed class ProfileScope: IDisposable
 		{
@@ -287,6 +288,5 @@ namespace KERBALISM
 		}
 
 #endif
-	}
-
+    }
 } // KERBALISM

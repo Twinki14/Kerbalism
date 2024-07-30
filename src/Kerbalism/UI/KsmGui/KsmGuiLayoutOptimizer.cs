@@ -1,81 +1,79 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace KERBALISM.KsmGui
+namespace Kerbalism.KsmGui
 {
-	// To avoid the huge performance hit of the dynamic layout being recalculated every frame,
-	// we disable all the layout controller components, excepted ScrollRect (because it won't work otherwise)
-	// To catch them all, we search for components implementing ILayoutController :
-	// - ScrollRect
-	// - AspectRatioFitter
-	// - ContentSizeFitter
-	// - Layout groups (Vertical, Horizontal, Grid)
-	// This component is added to KsmGuiWindow, and a reference to it is kept by all KsmGuiBase elements
-	// Not ideal, but it works.
-	public class KsmGuiLayoutOptimizer : MonoBehaviour
-	{
-		private List<UIBehaviour> layoutControllers = new List<UIBehaviour>();
-		private bool isRebuilding;
-		
-		public void RebuildLayout()
-		{
-			if (isRebuilding)
-				return;
+    // To avoid the huge performance hit of the dynamic layout being recalculated every frame,
+    // we disable all the layout controller components, excepted ScrollRect (because it won't work otherwise)
+    // To catch them all, we search for components implementing ILayoutController :
+    // - ScrollRect
+    // - AspectRatioFitter
+    // - ContentSizeFitter
+    // - Layout groups (Vertical, Horizontal, Grid)
+    // This component is added to KsmGuiWindow, and a reference to it is kept by all KsmGuiBase elements
+    // Not ideal, but it works.
+    public class KsmGuiLayoutOptimizer : MonoBehaviour
+    {
+        private List<UIBehaviour> layoutControllers = new List<UIBehaviour>();
+        private bool isRebuilding;
 
-			isRebuilding = true;
+        public void RebuildLayout()
+        {
+            if (isRebuilding)
+                return;
 
-			layoutControllers.Clear();
-			foreach (ILayoutController ILayoutController in GetComponentsInChildren<ILayoutController>(true))
-			{
-				if (ILayoutController is ScrollRect)
-					continue;
+            isRebuilding = true;
 
-				UIBehaviour UIBehaviour = (UIBehaviour)ILayoutController;
-				layoutControllers.Add(UIBehaviour);
-				UIBehaviour.enabled = true;
-			}
+            layoutControllers.Clear();
+            foreach (ILayoutController ILayoutController in GetComponentsInChildren<ILayoutController>(true))
+            {
+                if (ILayoutController is ScrollRect)
+                    continue;
 
-			StartCoroutine(DisableLayoutAfterRebuild());
-		}
+                UIBehaviour UIBehaviour = (UIBehaviour) ILayoutController;
+                layoutControllers.Add(UIBehaviour);
+                UIBehaviour.enabled = true;
+            }
 
-		private IEnumerator DisableLayoutAfterRebuild()
-		{
-			// Unity needs components to be enabled at the beginning of the frame
-			// This mean the layout will rebuild only in the next frame, then we can disable
-			// the layout components in the following frame. So wait 2 frames :
-			yield return StartCoroutine(WaitForFrames(2));
+            StartCoroutine(DisableLayoutAfterRebuild());
+        }
 
-			foreach (UIBehaviour layoutController in layoutControllers)
-			{
-				layoutController.enabled = false;
-			}
+        private IEnumerator DisableLayoutAfterRebuild()
+        {
+            // Unity needs components to be enabled at the beginning of the frame
+            // This mean the layout will rebuild only in the next frame, then we can disable
+            // the layout components in the following frame. So wait 2 frames :
+            yield return StartCoroutine(WaitForFrames(2));
 
-			isRebuilding = false;
-		}
+            foreach (UIBehaviour layoutController in layoutControllers)
+            {
+                layoutController.enabled = false;
+            }
 
-		private IEnumerator WaitForFrames(int frameCount)
-		{
-			if (frameCount <= 0)
-			{
-				throw new ArgumentOutOfRangeException("frameCount", "Cannot wait for less that 1 frame");
-			}
+            isRebuilding = false;
+        }
 
-			while (frameCount > 0)
-			{
-				frameCount--;
-				yield return null;
-			}
-		}
+        private IEnumerator WaitForFrames(int frameCount)
+        {
+            if (frameCount <= 0)
+            {
+                throw new ArgumentOutOfRangeException("frameCount", "Cannot wait for less that 1 frame");
+            }
 
-		private void OnDisable()
-		{
-			isRebuilding = false;
-		}
-	}
+            while (frameCount > 0)
+            {
+                frameCount--;
+                yield return null;
+            }
+        }
+
+        private void OnDisable()
+        {
+            isRebuilding = false;
+        }
+    }
 }
