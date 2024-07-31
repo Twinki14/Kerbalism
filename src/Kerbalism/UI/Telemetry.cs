@@ -42,9 +42,7 @@ namespace Kerbalism
             // draw the content
             Render_crew(p, crew);
             if (Features.Science) Render_science(p, v, vd);
-            Render_greenhouse(p, vd);
             Render_supplies(p, v, vd, resources);
-            Render_habitat(p, v, vd);
             Render_environment(p, v, vd);
 
             // collapse eva kerbal sections into one
@@ -96,46 +94,6 @@ namespace Kerbalism
 
             if (readings.Count == 0)
                 p.AddContent("<i>" + Local.TELEMETRY_nosensorsinstalled + "</i>"); //no sensors installed
-        }
-
-        static void Render_habitat(Panel p, Vessel v, VesselData vd)
-        {
-            // if habitat feature is disabled, do not show the panel
-            if (!Features.Habitat) return;
-
-            // if vessel is unmanned, do not show the panel
-            if (vd.CrewCount == 0) return;
-
-            // render panel, add some content based on enabled features
-            p.AddSection(Local.TELEMETRY_HABITAT); //"HABITAT"
-            if (Features.Poisoning)
-                p.AddContent(Local.TELEMETRY_co2level,
-                    Lib.Color(vd.Poisoning > Settings.PoisoningThreshold, Lib.HumanReadablePerc(vd.Poisoning, "F2"),
-                        Lib.Kolor.Yellow)); //"co2 level"
-            if (Features.Radiation && v.isEVA)
-                p.AddContent(Local.TELEMETRY_radiation,
-                    Lib.HumanReadableRadiation(vd.EnvHabitatRadiation)); //"radiation"
-
-            if (!v.isEVA)
-            {
-                if (Features.Pressure)
-                    p.AddContent(Local.TELEMETRY_pressure,
-                        Lib.HumanReadablePressure(vd.Pressure * Sim.PressureAtSeaLevel())); //"pressure"
-                if (Features.Shielding)
-                    p.AddContent(Local.TELEMETRY_shielding, Habitat.Shielding_to_string(vd.Shielding)); //"shielding"
-                if (Features.LivingSpace)
-                    p.AddContent(Local.TELEMETRY_livingspace,
-                        Habitat.Living_space_to_string(vd.LivingSpace)); //"living space"
-                if (Features.Comfort)
-                    p.AddContent(Local.TELEMETRY_comfort, vd.Comforts.Summary(), vd.Comforts.Tooltip()); //"comfort"
-                if (Features.Pressure)
-                    p.AddContent(Local.TELEMETRY_EVAsavailable,
-                        vd.EnvBreathable ? Local.TELEMETRY_EnvBreathable : Lib.HumanReadableInteger(vd.Evas),
-                        vd.EnvBreathable
-                            ? Local.TELEMETRY_Breathableatm
-                            : Local
-                                .TELEMETRY_approx); //"EVA's available""infinite""breathable atmosphere""approx (derived from stored N2)"
-            }
         }
 
         static void Render_science(Panel p, Vessel v, VesselData vd)
@@ -322,50 +280,6 @@ namespace Kerbalism
                 p.AddRightIcon(
                     stress_severity == 0 ? Textures.brain_white :
                     stress_severity == 1 ? Textures.brain_yellow : Textures.brain_red, tooltip);
-            }
-        }
-
-        static void Render_greenhouse(Panel p, VesselData vd)
-        {
-            // do nothing without greenhouses
-            if (vd.Greenhouses.Count == 0) return;
-
-            // panel section
-            p.AddSection(Local.TELEMETRY_GREENHOUSE); //"GREENHOUSE"
-
-            // for each greenhouse
-            for (int i = 0; i < vd.Greenhouses.Count; ++i)
-            {
-                var greenhouse = vd.Greenhouses[i];
-
-                // state string
-                string state = greenhouse.issue.Length > 0
-                    ? Lib.Color(greenhouse.issue, Lib.Kolor.Yellow)
-                    : greenhouse.growth >= 0.99
-                        ? Lib.Color(Local.TELEMETRY_readytoharvest, Lib.Kolor.Green) //"ready to harvest"
-                        : Local.TELEMETRY_growing; //"growing"
-
-                // tooltip with summary
-                string tooltip = greenhouse.growth < 0.99
-                    ? Lib.BuildString
-                    (
-                        "<align=left />",
-                        Local.TELEMETRY_timetoharvest, "\t<b>", Lib.HumanReadableDuration(greenhouse.tta),
-                        "</b>\n", //"time to harvest"
-                        Local.TELEMETRY_growth, "\t\t<b>", Lib.HumanReadablePerc(greenhouse.growth),
-                        "</b>\n", //"growth"
-                        Local.TELEMETRY_naturallighting, "\t<b>", Lib.HumanReadableFlux(greenhouse.natural),
-                        "</b>\n", //"natural lighting"
-                        Local.TELEMETRY_artificiallighting, "\t<b>", Lib.HumanReadableFlux(greenhouse.artificial),
-                        "</b>" //"artificial lighting"
-                    )
-                    : string.Empty;
-
-                // render it
-                p.AddContent(Lib.BuildString(Local.TELEMETRY_crop, " #", (i + 1).ToString()), state, tooltip); //"crop"
-
-                // issues too, why not
-                p.AddRightIcon(greenhouse.issue.Length == 0 ? Textures.plant_white : Textures.plant_yellow, tooltip);
             }
         }
     }

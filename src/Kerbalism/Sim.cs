@@ -991,15 +991,6 @@ namespace Kerbalism
             return temp;
         }
 
-        // return difference from survival temperature
-        // - as a special case, there is no temp difference when landed on the home body
-        public static double TempDiff(double k, CelestialBody body, bool landed)
-        {
-            if (body.flightGlobalsIndex == FlightGlobals.GetHomeBodyIndex() && landed) return 0.0;
-            return Math.Max(Math.Abs(k - Settings.LifeSupportSurvivalTemperature) - Settings.LifeSupportSurvivalRange,
-                0.0);
-        }
-
         #endregion
 
         #region ATMOSPHERE

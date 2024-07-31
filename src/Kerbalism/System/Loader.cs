@@ -67,29 +67,12 @@ namespace Kerbalism.System
             if (Features.Automation) Inject(root, "Feature", "Automation");
             if (Features.Science) Inject(root, "Feature", "Science");
             if (Features.Radiation) Inject(root, "Feature", "Radiation");
-            if (Features.Shielding) Inject(root, "Feature", "Shielding");
-            if (Features.LivingSpace) Inject(root, "Feature", "LivingSpace");
-            if (Features.Comfort) Inject(root, "Feature", "Comfort");
-            if (Features.Poisoning) Inject(root, "Feature", "Poisoning");
-            if (Features.Pressure) Inject(root, "Feature", "Pressure");
-            if (Features.Habitat) Inject(root, "Feature", "Habitat");
             if (Features.Supplies) Inject(root, "Feature", "Supplies");
 
             // inject harmony patches
             harmonyInstance = new Harmony("Kerbalism");
             harmonyInstance.PatchAll(Assembly.GetExecutingAssembly());
             KerbalismSentinel.ApplyHarmonyPatches(harmonyInstance);
-
-            // register loading callbacks
-            if (HighLogic.LoadedScene == GameScenes.LOADING)
-            {
-                GameEvents.OnPartLoaderLoaded.Add(SaveHabitatData);
-            }
-        }
-
-        void OnDestroy()
-        {
-            GameEvents.OnPartLoaderLoaded.Remove(SaveHabitatData);
         }
 
         // inject an MM patch on-the-fly, so that NEEDS[TypeId] can be used in MM patches
@@ -110,21 +93,6 @@ namespace Kerbalism.System
         public static void ModuleManagerPostLoad()
         {
             Lib.LoadResourceUnitInfo();
-        }
-
-        void SaveHabitatData()
-        {
-            ConfigNode fakeNode = new ConfigNode();
-
-            foreach (KeyValuePair<string, Lib.PartVolumeAndSurfaceInfo> habInfo in Habitat.habitatDatabase)
-            {
-                ConfigNode node = new ConfigNode(Habitat.habitatDataCacheNodeName);
-                node.AddValue("partName", habInfo.Key.Replace('.', '_'));
-                habInfo.Value.Save(node);
-                fakeNode.AddNode(node);
-            }
-
-            fakeNode.Save(Habitat.HabitatDataCachePath);
         }
     }
 } // KERBALISM

@@ -27,20 +27,6 @@ namespace Kerbalism.System
 
             // detect features from modifiers
             Radiation = modifiers.Contains("radiation");
-            Shielding = modifiers.Contains("shielding");
-            LivingSpace = modifiers.Contains("living_space");
-            Comfort = modifiers.Contains("comfort");
-            Poisoning = modifiers.Contains("poisoning");
-            Pressure = modifiers.Contains("pressure");
-
-            // habitat is enabled if any of the values it provides are in use
-            Habitat =
-                Shielding
-                || LivingSpace
-                || Poisoning
-                || Pressure
-                || modifiers.Contains("volume")
-                || modifiers.Contains("surface");
 
             // supplies is enabled if any non-EC supply exist
             Supplies = Profile.Profile.supplies.Find(k => k.resource != "ElectricCharge") != null;
@@ -52,12 +38,6 @@ namespace Kerbalism.System
             Lib.Log("- SpaceWeather: " + SpaceWeather);
             Lib.Log("- Automation: " + Automation);
             Lib.Log("- Radiation: " + Radiation);
-            Lib.Log("- Shielding: " + Shielding);
-            Lib.Log("- LivingSpace: " + LivingSpace);
-            Lib.Log("- Comfort: " + Comfort);
-            Lib.Log("- Poisoning: " + Poisoning);
-            Lib.Log("- Pressure: " + Pressure);
-            Lib.Log("- Habitat: " + Habitat);
             Lib.Log("- Supplies: " + Supplies);
         }
 
@@ -70,13 +50,8 @@ namespace Kerbalism.System
         // features detected automatically from modifiers
         public static bool Radiation;
         public static bool Shielding;
-        public static bool LivingSpace;
-        public static bool Comfort;
-        public static bool Poisoning;
-        public static bool Pressure;
 
         // features detected in other ways
-        public static bool Habitat;
         public static bool Supplies;
     }
 } // KERBALISM

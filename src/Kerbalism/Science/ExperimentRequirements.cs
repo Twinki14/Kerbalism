@@ -27,9 +27,6 @@ namespace Kerbalism.Science
             CrewMax,
             CrewCapacityMin,
             CrewCapacityMax,
-            VolumePerCrewMin,
-            VolumePerCrewMax,
-            Greenhouse,
             AtmosphereAltMin,
             AtmosphereAltMax,
 
@@ -158,12 +155,6 @@ namespace Kerbalism.Science
                         TestReq((c, r) => c <= r, vd.EnvRadiation, (double) Requires[i].value, results[i]);
                         break;
 
-                    case Require.VolumePerCrewMin:
-                        TestReq((c, r) => c >= r, vd.VolumePerCrew, (double) Requires[i].value, results[i]);
-                        break;
-                    case Require.VolumePerCrewMax:
-                        TestReq((c, r) => c <= r, vd.VolumePerCrew, (double) Requires[i].value, results[i]);
-                        break;
                     case Require.SunAngleMin:
                         TestReq((c, r) => c >= r, vd.EnvSunBodyAngle, (double) Requires[i].value, results[i]);
                         break;
@@ -277,10 +268,6 @@ namespace Kerbalism.Science
                         break;
                     case Require.Sunlight:
                         TestReq(vd.EnvSunlightFactor, results[i]);
-                        break;
-
-                    case Require.Greenhouse:
-                        TestReq(() => vd.Greenhouses.Count > 0, results[i]);
                         break;
                     case Require.AbsoluteZero:
                         TestReq(() => vd.EnvTemperature < 30.0, results[i]);
@@ -459,8 +446,6 @@ namespace Kerbalism.Science
                 case Require.AltitudeMax:
                 case Require.RadiationMin:
                 case Require.RadiationMax:
-                case Require.VolumePerCrewMin:
-                case Require.VolumePerCrewMax:
                 case Require.AtmosphereAltMin:
                 case Require.AtmosphereAltMax:
                 case Require.SunAngleMin:
@@ -578,9 +563,6 @@ namespace Kerbalism.Science
                 case Require.RadiationMin:
                 case Require.RadiationMax:
                     return Lib.HumanReadableRadiation((double) reqValue);
-                case Require.VolumePerCrewMin:
-                case Require.VolumePerCrewMax:
-                    return Lib.HumanReadableVolume((double) reqValue);
                 case Require.SurfaceSpeedMin:
                 case Require.SurfaceSpeedMax:
                 case Require.VerticalSpeedMin:
@@ -640,8 +622,6 @@ namespace Kerbalism.Science
                 case Require.AltitudeMax: return Local.ExperimentReq_AltitudeMax; //"Max. altitude "
                 case Require.RadiationMin: return Local.ExperimentReq_RadiationMin; //"Min. radiation "
                 case Require.RadiationMax: return Local.ExperimentReq_RadiationMax; //"Max. radiation "
-                case Require.VolumePerCrewMin: return Local.ExperimentReq_VolumePerCrewMin; //"Min. vol./crew "
-                case Require.VolumePerCrewMax: return Local.ExperimentReq_VolumePerCrewMax; //"Max. vol./crew "
                 case Require.SunAngleMin: return Local.ExperimentReq_SunAngleMin; //"Min sun-surface angle"
                 case Require.SunAngleMax: return Local.ExperimentReq_SunAngleMax; //"Max sun-surface angle"
                 case Require.SurfaceSpeedMin: return Local.ExperimentReq_SurfaceSpeedMin; //"Min. surface speed "
@@ -693,7 +673,6 @@ namespace Kerbalism.Science
                 case Require.InterStellar:
                 case Require.Shadow:
                 case Require.Sunlight:
-                case Require.Greenhouse:
                 default:
                     return req.ToString();
             }

@@ -33,14 +33,9 @@ namespace Kerbalism.Planner
 
             // special panels
             // - stress & radiation panels require that a rule using the living_space/radiation modifier exist (current limitation)
-            if (Features.LivingSpace && Profile.Profile.rules.Find(k => k.modifiers.Contains("living_space")) != null)
-                panel_special.Add("qol");
             if (Features.Radiation && Profile.Profile.rules.Find(k => k.modifiers.Contains("radiation")) != null)
                 panel_special.Add("radiation");
 
-            // environment panels
-            if (Features.Pressure || Features.Poisoning)
-                panel_environment.Add("habitat");
             panel_environment.Add("environment");
         }
 
@@ -178,18 +173,12 @@ namespace Kerbalism.Planner
                         case "qol":
                             AddSubPanelStress(panel);
                             break;
-                        case "radiation":
-                            AddSubPanelRadiation(panel);
-                            break;
                     }
                 }
 
                 // add environment panel
                 switch (panel_environment[environment_index])
                 {
-                    case "habitat":
-                        AddSubPanelHabitat(panel);
-                        break;
                     case "environment":
                         AddSubPanelEnvironment(panel);
                         break;
@@ -359,8 +348,6 @@ namespace Kerbalism.Planner
                 env_analyzer.body.atmosphere && env_analyzer.landed
                     ? Local.Planner_atmospheric
                     : flux_tooltip); //"temperature""atmospheric"
-            p.AddContent(Local.Planner_difference, Lib.HumanReadableTemp(env_analyzer.temp_diff),
-                Local.Planner_difference_desc); //"difference""difference between external and survival temperature"
             p.AddContent(Local.Planner_atmosphere,
                 env_analyzer.body.atmosphere ? Local.Planner_atmosphere_yes : Local.Planner_atmosphere_no,
                 atmosphere_tooltip); //"atmosphere""yes""no"
@@ -440,198 +427,10 @@ namespace Kerbalism.Planner
                     enforceUpdate = true;
                 });
 
-            // render living space data
-            // generate details tooltips
-            string living_space_tooltip = Lib.BuildString
-            (
-                Local.Planner_volumepercapita, "<b>\t",
-                Lib.HumanReadableVolume(vessel_analyzer.volume / Math.Max(vessel_analyzer.crew_count, 1)),
-                "</b>\n", //"volume per-capita:
-                Local.Planner_ideallivingspace, "<b>\t",
-                Lib.HumanReadableVolume(PreferencesComfort.Instance.livingSpace), "</b>" //"ideal living space:
-            );
-            p.AddContent(Local.Planner_livingspace, Habitat.Living_space_to_string(vessel_analyzer.living_space),
-                living_space_tooltip); //"living space"
-
-            // render comfort data
-            if (rule.modifiers.Contains("comfort"))
-            {
-                p.AddContent(Local.Planner_comfort, vessel_analyzer.comforts.Summary(),
-                    vessel_analyzer.comforts.Tooltip()); //"comfort"
-            }
-            else
-            {
-                p.AddContent(Local.Planner_comfort, "n/a"); //"comfort"
-            }
-
-            // render pressure data
-            if (rule.modifiers.Contains("pressure"))
-            {
-                string pressure_tooltip = vessel_analyzer.pressurized
-                    ? Local
-                        .Planner_analyzerpressurized1 //"Free roaming in a pressurized environment is\nvastly superior to living in a suit."
-                    : Local
-                        .Planner_analyzerpressurized2; //"Being forced inside a suit all the time greatly\nreduces the crews quality of life.\nThe worst part is the diaper."
-                p.AddContent(Local.Planner_pressurized,
-                    vessel_analyzer.pressurized ? Local.Planner_pressurized_yes : Local.Planner_pressurized_no,
-                    pressure_tooltip); //"pressurized""yes""no"
-            }
-            else
-            {
-                p.AddContent(Local.Planner_pressurized, "n/a"); //"pressurized"
-            }
-
             // render life estimate
             double mod = Modifiers.Evaluate(env_analyzer, vessel_analyzer, resource_sim, rule.modifiers);
             p.AddContent(Local.Planner_lifeestimate,
                 Lib.HumanReadableDuration(rule.fatal_threshold / (rule.degeneration * mod))); //"duration"
-        }
-
-        ///<summary> Add radiation sub-panel, including tooltips </summary>
-        private static void AddSubPanelRadiation(Panel p)
-        {
-            // get first radiation rule
-            // - guaranteed to exist, as this panel is not rendered if it doesn't
-            // - even without crew, it is safe to evaluate the modifiers that use it
-            Rule rule = Profile.Profile.rules.Find(k => k.modifiers.Contains("radiation"));
-
-            // detect if it use shielding
-            bool use_shielding = rule.modifiers.Contains("shielding");
-
-            // calculate various radiation levels
-            double[] levels = new[]
-            {
-                Math.Max(Radiation.Nominal, (env_analyzer.surface_rad + vessel_analyzer.emitted)), // surface
-                Math.Max(Radiation.Nominal,
-                    (env_analyzer.magnetopause_rad + vessel_analyzer.emitted)), // inside magnetopause
-                Math.Max(Radiation.Nominal, (env_analyzer.inner_rad + vessel_analyzer.emitted)), // inside inner belt
-                Math.Max(Radiation.Nominal, (env_analyzer.outer_rad + vessel_analyzer.emitted)), // inside outer belt
-                Math.Max(Radiation.Nominal, (env_analyzer.heliopause_rad + vessel_analyzer.emitted)), // interplanetary
-                Math.Max(Radiation.Nominal, (env_analyzer.extern_rad + vessel_analyzer.emitted)), // interstellar
-                Math.Max(Radiation.Nominal, (env_analyzer.storm_rad + vessel_analyzer.emitted)) // storm
-            };
-
-            // evaluate modifiers (except radiation)
-            List<string> modifiers_except_radiation = new List<string>();
-            foreach (string s in rule.modifiers)
-            {
-                if (s != "radiation") modifiers_except_radiation.Add(s);
-            }
-
-            double mod = Modifiers.Evaluate(env_analyzer, vessel_analyzer, resource_sim, modifiers_except_radiation);
-
-            // calculate life expectancy at various radiation levels
-            double[] estimates = new double[7];
-            for (int i = 0; i < 7; ++i)
-            {
-                estimates[i] = rule.fatal_threshold / (rule.degeneration * mod * levels[i]);
-            }
-
-            // generate tooltip
-            RadiationModel mf = Radiation.Info(env_analyzer.body).model;
-            string tooltip = Lib.BuildString
-            (
-                "<align=left />",
-                String.Format("{0,-20}\t<b>{1}</b>\n", Local.Planner_surface,
-                    Lib.HumanReadableDuration(estimates[0])), //"surface"
-                mf.has_pause
-                    ? String.Format("{0,-20}\t<b>{1}</b>\n", Local.Planner_magnetopause,
-                        Lib.HumanReadableDuration(estimates[1]))
-                    : "", //"magnetopause"
-                mf.has_inner
-                    ? String.Format("{0,-20}\t<b>{1}</b>\n", Local.Planner_innerbelt,
-                        Lib.HumanReadableDuration(estimates[2]))
-                    : "", //"inner belt"
-                mf.has_outer
-                    ? String.Format("{0,-20}\t<b>{1}</b>\n", Local.Planner_outerbelt,
-                        Lib.HumanReadableDuration(estimates[3]))
-                    : "", //"outer belt"
-                String.Format("{0,-20}\t<b>{1}</b>\n", Local.Planner_interplanetary,
-                    Lib.HumanReadableDuration(estimates[4])), //"interplanetary"
-                String.Format("{0,-20}\t<b>{1}</b>\n", Local.Planner_interstellar,
-                    Lib.HumanReadableDuration(estimates[5])), //"interstellar"
-                String.Format("{0,-20}\t<b>{1}</b>", Local.Planner_storm,
-                    Lib.HumanReadableDuration(estimates[6])) //"storm"
-            );
-
-            // render the panel
-            p.AddSection(Local.Planner_RADIATION, string.Empty, //"RADIATION"
-                () =>
-                {
-                    p.Prev(ref special_index, panel_special.Count);
-                    enforceUpdate = true;
-                },
-                () =>
-                {
-                    p.Next(ref special_index, panel_special.Count);
-                    enforceUpdate = true;
-                });
-            p.AddContent(Local.Planner_surface,
-                Lib.HumanReadableRadiation(env_analyzer.surface_rad + vessel_analyzer.emitted), tooltip); //"surface"
-            p.AddContent(Local.Planner_orbit, Lib.HumanReadableRadiation(env_analyzer.magnetopause_rad),
-                tooltip); //"orbit"
-            if (vessel_analyzer.emitted >= 0.0)
-                p.AddContent(Local.Planner_emission, Lib.HumanReadableRadiation(vessel_analyzer.emitted),
-                    tooltip); //"emission"
-            else
-                p.AddContent(Local.Planner_activeshielding, Lib.HumanReadableRadiation(-vessel_analyzer.emitted),
-                    tooltip); //"active shielding"
-            p.AddContent(Local.Planner_shielding,
-                rule.modifiers.Contains("shielding") ? Habitat.Shielding_to_string(vessel_analyzer.shielding) : "N/A",
-                tooltip); //"shielding"
-        }
-
-        ///<summary> Add habitat sub-panel, including tooltips </summary>
-        private static void AddSubPanelHabitat(Panel p)
-        {
-            SimulatedResource atmo_res = resource_sim.Resource("Atmosphere");
-            SimulatedResource waste_res = resource_sim.Resource("WasteAtmosphere");
-
-            // generate tooltips
-            string atmo_tooltip = atmo_res.Tooltip();
-            string waste_tooltip = waste_res.Tooltip(true);
-
-            // generate status string for scrubbing
-            string waste_status = !Features.Poisoning //< feature disabled
-                ? "n/a"
-                : waste_res.produced <= double.Epsilon //< unnecessary
-                    ? Local.Planner_scrubbingunnecessary //"not required"
-                    : waste_res.consumed <= double.Epsilon //< no scrubbing
-                        ? Lib.Color(Local.Planner_noscrubbing, Lib.Kolor.Orange) //"none"
-                        : waste_res.produced > waste_res.consumed * 1.001 //< insufficient scrubbing
-                            ? Lib.Color(Local.Planner_insufficientscrubbing, Lib.Kolor.Yellow) //"inadequate"
-                            : Lib.Color(Local.Planner_sufficientscrubbing,
-                                Lib.Kolor.Green); //"good"                    //< sufficient scrubbing
-
-            // generate status string for pressurization
-            string atmo_status = !Features.Pressure //< feature disabled
-                ? "n/a"
-                : atmo_res.consumed <= double.Epsilon //< unnecessary
-                    ? Local.Planner_pressurizationunnecessary //"not required"
-                    : atmo_res.produced <= double.Epsilon //< no pressure control
-                        ? Lib.Color(Local.Planner_nopressurecontrol, Lib.Kolor.Orange) //"none"
-                        : atmo_res.consumed > atmo_res.produced * 1.001 //< insufficient pressure control
-                            ? Lib.Color(Local.Planner_insufficientpressurecontrol, Lib.Kolor.Yellow) //"inadequate"
-                            : Lib.Color(Local.Planner_sufficientpressurecontrol,
-                                Lib.Kolor.Green); //"good"                    //< sufficient pressure control
-
-            p.AddSection(Local.Planner_HABITAT, string.Empty, //"HABITAT"
-                () =>
-                {
-                    p.Prev(ref environment_index, panel_environment.Count);
-                    enforceUpdate = true;
-                },
-                () =>
-                {
-                    p.Next(ref environment_index, panel_environment.Count);
-                    enforceUpdate = true;
-                });
-            p.AddContent(Local.Planner_volume, Lib.HumanReadableVolume(vessel_analyzer.volume),
-                Local.Planner_volume_tip); //"volume""volume of enabled habitats"
-            p.AddContent(Local.Planner_habitatssurface, Lib.HumanReadableSurface(vessel_analyzer.surface),
-                Local.Planner_habitatssurface_tip); //"surface""surface of enabled habitats"
-            p.AddContent(Local.Planner_scrubbing, waste_status, waste_tooltip); //"scrubbing"
-            p.AddContent(Local.Planner_pressurization, atmo_status, atmo_tooltip); //"pressurization"
         }
 
         #endregion

@@ -84,27 +84,24 @@ namespace Kerbalism
         public enum Module_type
         {
             Experiment = 1,
-            Greenhouse,
-            GravityRing,
-            Harvester,
-            Laboratory,
-            Command,
-            Generator,
-            Converter,
-            Drill,
-            AsteroidDrill,
-            StockLab,
-            Light,
-            Scanner,
-            FissionGenerator,
-            RadioisotopeGenerator,
-            CryoTank,
-            Unknown,
-            FNGenerator,
-            NonRechargeBattery,
-            KerbalismProcess,
-            SolarPanelFixer,
-            KerbalismSentinel,
+            Harvester = 4,
+            Laboratory = 5,
+            Command = 6,
+            Generator = 7,
+            Converter = 8,
+            Drill = 9,
+            AsteroidDrill = 10,
+            StockLab = 11,
+            Light = 12,
+            Scanner = 13 ,
+            FissionGenerator = 14,
+            RadioisotopeGenerator = 15,
+            CryoTank = 16,
+            Unknown = 17,
+            FNGenerator = 18,
+            KerbalismProcess = 20,
+            SolarPanelFixer = 21,
+            KerbalismSentinel = 22,
 
             /// <summary>Module implementing the kerbalism background API</summary>
             APIModule
@@ -115,8 +112,6 @@ namespace Kerbalism
             switch (module_name)
             {
                 case "Experiment": return Module_type.Experiment;
-                case "Greenhouse": return Module_type.Greenhouse;
-                case "GravityRing": return Module_type.GravityRing;
                 case "Harvester": return Module_type.Harvester;
                 case "Laboratory": return Module_type.Laboratory;
                 case "ModuleCommand": return Module_type.Command;
@@ -175,12 +170,6 @@ namespace Kerbalism
                     case Module_type.Experiment:
                         (e.module_prefab as Experiment).BackgroundUpdate(v, vd, e.m, ec, resources, elapsed_s);
                         break; // experiments use the prefab as a singleton instead of a static method
-                    case Module_type.Greenhouse:
-                        Greenhouse.BackgroundUpdate(v, e.m, e.module_prefab as Greenhouse, vd, resources, elapsed_s);
-                        break;
-                    case Module_type.GravityRing:
-                        GravityRing.BackgroundUpdate(v, e.p, e.m, e.module_prefab as GravityRing, ec, elapsed_s);
-                        break;
                     case Module_type.Harvester:
                         Harvester.BackgroundUpdate(v, e.m, e.module_prefab as Harvester, elapsed_s);
                         break; // Kerbalism ground and air harvester module

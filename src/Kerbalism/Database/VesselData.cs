@@ -164,20 +164,10 @@ namespace Kerbalism.Database
 
         double temperature;
 
-        /// <summary> [environment] difference between environment temperature and survival temperature</summary>//
-        public double EnvTempDiff => tempDiff;
-
-        double tempDiff;
-
         /// <summary> [environment] radiation at vessel position</summary>
         public double EnvRadiation => radiation;
 
         double radiation;
-
-        /// <summary> [environment] radiation effective for habitats/EVAs</summary>
-        public double EnvHabitatRadiation => shieldedRadiation;
-
-        double shieldedRadiation;
 
         /// <summary> [environment] true if vessel is inside a magnetopause (except the heliosphere)</summary>
         public bool EnvMagnetosphere => magnetosphere;
@@ -273,11 +263,6 @@ namespace Kerbalism.Database
         /// <summary> [environment] true if the vessel is currently in shadow, or least 90% of the time when in analytic mode</summary>
         // this threshold is also used to ignore light coming from distant/weak stars
         public bool EnvInFullShadow => sunlightFactor < 0.1;
-
-        /// <summary> List of all habitats and their relevant sun shielding parts </summary>
-        public VesselHabitatInfo EnvHabitatInfo => habitatInfo;
-
-        VesselHabitatInfo habitatInfo;
 
         /// <summary> [environment] List of all stars/suns and the related data/calculations for the current vessel</summary>
         public List<SunInfo> EnvSunsInfo => sunsInfo;
@@ -455,56 +440,6 @@ namespace Kerbalism.Database
 
         ConnectionInfo connection;
 
-        /// <summary>enabled volume in m^3</summary>
-        public double Volume => volume;
-
-        double volume;
-
-        /// <summary>enabled surface in m^2</summary>
-        public double Surface => surface;
-
-        double surface;
-
-        /// <summary>normalized pressure</summary>
-        public double Pressure => pressure;
-
-        double pressure;
-
-        /// <summary>number of EVA's using available Nitrogen</summary>
-        public uint Evas => evas;
-
-        uint evas;
-
-        /// <summary>waste atmosphere amount versus total atmosphere amount</summary>
-        public double Poisoning => poisoning;
-
-        double poisoning;
-
-        /// <summary>shielding level</summary>
-        public double Shielding => shielding;
-
-        double shielding;
-
-        /// <summary>living space factor</summary>
-        public double LivingSpace => livingSpace;
-
-        double livingSpace;
-
-        /// <summary>Available volume per crew</summary>
-        public double VolumePerCrew => volumePerCrew;
-
-        double volumePerCrew;
-
-        /// <summary>comfort info</summary>
-        public Comforts Comforts => comforts;
-
-        Comforts comforts;
-
-        /// <summary>some data about greenhouses</summary>
-        public List<Greenhouse.Data> Greenhouses => greenhouses;
-
-        List<Greenhouse.Data> greenhouses;
-
         /// <summary>true if vessel is powered</summary>
         public bool Powered => powered;
 
@@ -674,7 +609,6 @@ namespace Kerbalism.Database
                 return;
 
             resourceUpdateDelegates = null;
-            habitatInfo = new VesselHabitatInfo(null);
             EvaluateStatus();
             CommHandler.ResetPartTransmitters();
 
@@ -857,7 +791,6 @@ namespace Kerbalism.Database
             isSerenityGroundController = pv != null && pv.vesselType == VesselType.DeployedScienceController;
 
             stormData = new StormData(null);
-            habitatInfo = new VesselHabitatInfo(null);
             computer = new Computer(null);
             supplies = new Dictionary<string, SupplyData>();
             dumpValves = new Dictionary<Process, DumpSpecs.ActiveValve>();
@@ -893,8 +826,7 @@ namespace Kerbalism.Database
             solarPanelsAverageExposure = Lib.ConfigValue(node, "solarPanelsAverageExposure", -1.0);
             scienceTransmitted = Lib.ConfigValue(node, "scienceTransmitted", 0.0);
 
-            stormData = new StormData(node.GetNode("StormData"));
-            habitatInfo = new VesselHabitatInfo(node.GetNode("SunShielding"));
+            stormData = new StormData(node.GetNode("StormData")); ;
             computer = new Computer(node.GetNode("computer"));
 
             supplies = new Dictionary<string, SupplyData>();
@@ -987,8 +919,6 @@ namespace Kerbalism.Database
                 node.AddValue("scansat_id", id.ToString());
             }
 
-            EnvHabitatInfo.Save(node.AddNode("SunShielding"));
-
             ConfigNode partsNode = node.AddNode("parts");
             foreach (PartData partData in parts.Values)
             {
@@ -1032,24 +962,6 @@ namespace Kerbalism.Database
 
             // communications info
             CommHandler.UpdateConnection(connection);
-
-            // habitat data
-            habitatInfo.Update(Vessel);
-            volume = Habitat.Tot_volume(Vessel);
-            surface = Habitat.Tot_surface(Vessel);
-            pressure = Math.Min(Habitat.Pressure(Vessel), habitatInfo.MaxPressure);
-
-            evas = (uint) (Math.Max(0, ResourceCache.GetResource(Vessel, "Nitrogen").Amount - 330) /
-                           Settings.LifeSupportAtmoLoss);
-            poisoning = Habitat.Poisoning(Vessel);
-            shielding = Habitat.Shielding(Vessel);
-            livingSpace = Habitat.Living_space(Vessel);
-            volumePerCrew = Habitat.Volume_per_crew(Vessel);
-            comforts = new Comforts(Vessel, EnvLanded, crewCount > 1,
-                connection.linked && connection.rate > double.Epsilon);
-
-            // data about greenhouses
-            greenhouses = Greenhouse.Greenhouses(Vessel);
 
             Drive.GetCapacity(this, out drivesFreeSpace, out drivesCapacity);
 
@@ -1104,16 +1016,13 @@ namespace Kerbalism.Database
             UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.VesselData.Temperature");
             temperature = Sim.Temperature(Vessel, position, solarFluxTotal, out albedoFlux, out bodyFlux,
                 out totalFlux);
-            tempDiff = Sim.TempDiff(EnvTemperature, Vessel.mainBody, EnvLanded);
-            UnityEngine.Profiling.Profiler.EndSample();
-
             // radiation
             UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.VesselData.Radiation");
             gammaTransparency = Sim.GammaTransparency(Vessel.mainBody, Vessel.altitude);
 
             bool new_innerBelt, new_outerBelt, new_magnetosphere;
             radiation = Radiation.Compute(Vessel, position, EnvGammaTransparency, mainSun.SunlightFactor, out blackout,
-                out new_magnetosphere, out new_innerBelt, out new_outerBelt, out interstellar, out shieldedRadiation);
+                out new_magnetosphere, out new_innerBelt, out new_outerBelt, out interstellar);
 
             if (new_innerBelt != innerBelt || new_outerBelt != outerBelt || new_magnetosphere != magnetosphere)
             {
@@ -1122,7 +1031,6 @@ namespace Kerbalism.Database
                 magnetosphere = new_magnetosphere;
                 if (Evaluated) API.OnRadiationFieldChanged.Notify(Vessel, innerBelt, outerBelt, magnetosphere);
             }
-
             UnityEngine.Profiling.Profiler.EndSample();
 
             thermosphere = Sim.InsideThermosphere(Vessel);

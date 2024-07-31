@@ -9,16 +9,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 		KSPCommon.props = KSPCommon.props
+		src\Kerbalism\.ksplocalizer.settings = src\Kerbalism\.ksplocalizer.settings
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Localization", "Localization", "{C39748D3-9B9D-4BC8-9F3D-7894152C140D}"
 	ProjectSection(SolutionItems) = preProject
-		GameData\Kerbalism\Localization\de.cfg = GameData\Kerbalism\Localization\de.cfg
 		GameData\Kerbalism\Localization\en-us.cfg = GameData\Kerbalism\Localization\en-us.cfg
-		GameData\Kerbalism\Localization\es-es.cfg = GameData\Kerbalism\Localization\es-es.cfg
-		GameData\Kerbalism\Localization\pt-br.cfg = GameData\Kerbalism\Localization\pt-br.cfg
-		GameData\Kerbalism\Localization\ru.cfg = GameData\Kerbalism\Localization\ru.cfg
-		GameData\Kerbalism\Localization\zh-cn.cfg = GameData\Kerbalism\Localization\zh-cn.cfg
 	EndProjectSection
 EndProject
 Global

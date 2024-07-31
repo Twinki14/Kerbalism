@@ -31,14 +31,6 @@ namespace Kerbalism.System
             SpaceWeather = Lib.ConfigValue(cfg, "SpaceWeather", false);
             Automation = Lib.ConfigValue(cfg, "Automation", false);
 
-            // pressure
-            PressureFactor = Lib.ConfigValue(cfg, "PressureFactor", 10.0);
-            PressureThreshold = Lib.ConfigValue(cfg, "PressureThreshold", 0.9);
-
-            // poisoning
-            PoisoningFactor = Lib.ConfigValue(cfg, "PoisoningFactor", 0.0);
-            PoisoningThreshold = Lib.ConfigValue(cfg, "PoisoningThreshold", 0.02);
-
             // signal
             UnlinkedControl = Lib.ConfigEnum(cfg, "UnlinkedControl", UnlinkedCtrl.none);
             DataRateMinimumBitsPerSecond = Lib.ConfigValue(cfg, "DataRateMinimumBitsPerSecond", 1.0f);
@@ -69,18 +61,6 @@ namespace Kerbalism.System
             KerbalBreakdownReputationPenalty = Lib.ConfigValue(cfg, "KerbalBreakdownReputationPenalty", 30f);
 
             // save game settings presets
-            LifeSupportAtmoLoss = Lib.ConfigValue(cfg, "LifeSupportAtmoLoss", 50);
-            LifeSupportSurvivalTemperature = Lib.ConfigValue(cfg, "LifeSupportSurvivalTemperature", 295);
-            LifeSupportSurvivalRange = Lib.ConfigValue(cfg, "LifeSupportSurvivalRange", 5);
-
-            ComfortLivingSpace = Lib.ConfigValue(cfg, "ComfortLivingSpace", 20);
-            ComfortFirmGround = Lib.ConfigValue(cfg, "ComfortFirmGround", 0.1f);
-            ComfortExercise = Lib.ConfigValue(cfg, "ComfortExercise", 0.2f);
-            ComfortNotAlone = Lib.ConfigValue(cfg, "ComfortNotAlone", 0.3f);
-            ComfortCallHome = Lib.ConfigValue(cfg, "ComfortCallHome", 0.2f);
-            ComfortPanorama = Lib.ConfigValue(cfg, "ComfortPanorama", 0.1f);
-            ComfortPlants = Lib.ConfigValue(cfg, "ComfortPlants", 0.1f);
-
             StormFrequency = Lib.ConfigValue(cfg, "StormFrequency", 0.4f);
             StormRadiation = Lib.ConfigValue(cfg, "StormRadiation", 5.0f);
             StormDurationHours = Lib.ConfigValue(cfg, "StormDurationHours", 2);
@@ -100,9 +80,6 @@ namespace Kerbalism.System
 
             UseSamplingSunFactor = Lib.ConfigValue(cfg, "UseSamplingSunFactor", false);
             UseResourcePriority = Lib.ConfigValue(cfg, "UseResourcePriority", false);
-
-            // debug / logging
-            VolumeAndSurfaceLogging = Lib.ConfigValue(cfg, "VolumeAndSurfaceLogging", false);
 
             loaded = true;
         }
@@ -132,14 +109,7 @@ namespace Kerbalism.System
         public static bool Automation; // control vessel components using scripts
 
         // pressure
-        public static double PressureFactor; // pressurized modifier value for vessels below the threshold
         public static double PressureThreshold; // level of atmosphere resource that determine pressurized status
-
-        // poisoning
-        public static double PoisoningFactor; // poisoning modifier value for vessels below threshold
-
-        public static double
-            PoisoningThreshold; // level of waste atmosphere resource that determine co2 poisoning status
 
         // signal
         public static UnlinkedCtrl
@@ -201,18 +171,6 @@ namespace Kerbalism.System
 
 
         // presets for save game preferences
-
-        public static int LifeSupportAtmoLoss;
-        public static int LifeSupportSurvivalTemperature;
-        public static int LifeSupportSurvivalRange;
-        public static int ComfortLivingSpace;
-        public static float ComfortFirmGround;
-        public static float ComfortExercise;
-        public static float ComfortNotAlone;
-        public static float ComfortCallHome;
-        public static float ComfortPanorama;
-        public static float ComfortPlants;
-
         public static float StormFrequency;
         public static int StormDurationHours;
         public static float StormEjectionSpeed;
@@ -233,9 +191,6 @@ namespace Kerbalism.System
 
         public static bool UseSamplingSunFactor;
         public static bool UseResourcePriority;
-
-        // debug / logging
-        public static bool VolumeAndSurfaceLogging;
 
         public static bool loaded { get; private set; } = false;
     }

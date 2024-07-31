@@ -211,41 +211,6 @@ namespace Kerbalism.System
         //Stress Breakdown Probability--Probability of one stress induced mistake per year
         public float stressBreakdownRate = 0.25f;
 
-        [GameParameters.CustomIntParameterUI("#KERBALISM_IdealLivingSpace", minValue = 5, maxValue = 200,
-            toolTip = "#KERBALISM_IdealLivingSpace_desc")]
-        //Ideal Living Space--Ideal living space per-capita in m^3
-        public int livingSpace = Settings.ComfortLivingSpace;
-
-        [GameParameters.CustomFloatParameterUI("#KERBALISM_FirmGroundFactor", minValue = 0, maxValue = 1,
-            displayFormat = "F2", toolTip = "#KERBALISM_FirmGroundFactor_desc")]
-        //Firm Ground Factor--Having something to walk on
-        public float firmGround = Settings.ComfortFirmGround;
-
-        [GameParameters.CustomFloatParameterUI("#KERBALISM_ExerciseFactor", minValue = 0, maxValue = 1,
-            displayFormat = "F2", toolTip = "#KERBALISM_ExerciseFactor_desc")]
-        //Exercise Factor--Having a treadmill
-        public float exercise = Settings.ComfortExercise;
-
-        [GameParameters.CustomFloatParameterUI("#KERBALISM_SocialFactor", minValue = 0, maxValue = 1,
-            displayFormat = "F2", toolTip = "#KERBALISM_SocialFactor_desc")]
-        //Social Factor--Having more than one crew on a vessel
-        public float notAlone = Settings.ComfortNotAlone;
-
-        [GameParameters.CustomFloatParameterUI("#KERBALISM_CallHomeFactor", minValue = 0, maxValue = 1,
-            displayFormat = "F2", toolTip = "#KERBALISM_CallHomeFactor_desc")]
-        //Call Home Factor---Having a way to communicate with Kerbin
-        public float callHome = Settings.ComfortCallHome;
-
-        [GameParameters.CustomFloatParameterUI("#KERBALISM_PanoramaFactor", minValue = 0, maxValue = 1,
-            displayFormat = "F2", toolTip = "#KERBALISM_PanoramaFactor_desc")]
-        //Panorama Factor--Comfort factor for having a panorama window
-        public float panorama = Settings.ComfortPanorama;
-
-        [GameParameters.CustomFloatParameterUI("#KERBALISM_PlantsFactor", minValue = 0, maxValue = 1,
-            displayFormat = "F2", toolTip = "#KERBALISM_PlantsFactor_desc")]
-        //Plants Factor--There is some comfort in tending to plants
-        public float plants = Settings.ComfortPlants;
-
         public override GameParameters.GameMode GameMode
         {
             get { return GameParameters.GameMode.ANY; }

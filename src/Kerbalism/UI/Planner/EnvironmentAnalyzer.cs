@@ -22,7 +22,6 @@ namespace Kerbalism.Planner
             body_flux = Sim.BodyFlux(body, altitude);
             total_flux = solar_flux + albedo_flux + body_flux + Sim.BackgroundFlux();
             temperature = !landed || !body.atmosphere ? Sim.BlackBodyTemperature(total_flux) : body.GetTemperature(0.0);
-            temp_diff = Sim.TempDiff(temperature, body, landed);
             orbital_period = Sim.OrbitalPeriod(body, altitude);
             shadow_period = Sim.ShadowPeriod(body, altitude);
             shadow_time = shadow_period / orbital_period;
@@ -88,7 +87,6 @@ namespace Kerbalism.Planner
         public double body_flux; // infrared radiative flux from the body
         public double total_flux; // total flux at vessel position
         public double temperature; // vessel temperature
-        public double temp_diff; // average difference from survival temperature
         public double orbital_period; // length of orbit
         public double shadow_period; // length of orbit in shadow
         public double shadow_time; // proportion of orbit that is in shadow

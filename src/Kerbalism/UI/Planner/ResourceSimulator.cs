@@ -136,12 +136,6 @@ namespace Kerbalism.Planner
                     {
                         switch (m.moduleName)
                         {
-                            case "Greenhouse":
-                                Process_greenhouse(m as Greenhouse, env, va);
-                                break;
-                            case "GravityRing":
-                                Process_ring(m as GravityRing);
-                                break;
                             case "Harvester":
                                 Process_harvester(m as Harvester, va);
                                 break;
@@ -388,81 +382,6 @@ namespace Kerbalism.Planner
         public void Process_process(List<Part> parts, Process pr, EnvironmentAnalyzer env, VesselAnalyzer va)
         {
             Process_process_vessel_wide(pr, env, va);
-        }
-
-        void Process_greenhouse(Greenhouse g, EnvironmentAnalyzer env, VesselAnalyzer va)
-        {
-            // skip disabled greenhouses
-            if (!g.active)
-                return;
-
-            // shortcut to resources
-            SimulatedResource ec = Resource("ElectricCharge");
-            SimulatedResource res = Resource(g.crop_resource);
-
-            // calculate natural and artificial lighting
-            double natural = env.solar_flux;
-            double artificial = Math.Max(g.light_tolerance - natural, 0.0);
-
-            // if lamps are on and artificial lighting is required
-            if (artificial > 0.0)
-            {
-                // consume ec for the lamps
-                ec.Consume(g.ec_rate * (artificial / g.light_tolerance), "greenhouse");
-            }
-
-            // execute recipe
-            SimulatedRecipe recipe = new SimulatedRecipe(g.part, "greenhouse");
-            foreach (ModuleResource input in g.resHandler.inputResources)
-            {
-                // WasteAtmosphere is primary combined input
-                if (g.WACO2 && input.name == "WasteAtmosphere")
-                    recipe.Input(input.name, env.breathable ? 0.0 : input.rate, "CarbonDioxide");
-                // CarbonDioxide is secondary combined input
-                else if (g.WACO2 && input.name == "CarbonDioxide")
-                    recipe.Input(input.name, env.breathable ? 0.0 : input.rate, "");
-                // if atmosphere is breathable disable WasteAtmosphere / CO2
-                else if (!g.WACO2 && (input.name == "CarbonDioxide" || input.name == "WasteAtmosphere"))
-                    recipe.Input(input.name, env.breathable ? 0.0 : input.rate, "");
-                else
-                    recipe.Input(input.name, input.rate);
-            }
-
-            foreach (ModuleResource output in g.resHandler.outputResources)
-            {
-                // if atmosphere is breathable disable Oxygen
-                if (output.name == "Oxygen")
-                    recipe.Output(output.name, env.breathable ? 0.0 : output.rate, true);
-                else
-                    recipe.Output(output.name, output.rate, true);
-            }
-
-            recipes.Add(recipe);
-
-            // determine environment conditions
-            bool lighting = natural + artificial >= g.light_tolerance;
-            bool pressure = va.pressurized || g.pressure_tolerance <= double.Epsilon;
-            bool radiation = (env.landed ? env.surface_rad : env.magnetopause_rad) * (1.0 - va.shielding) <
-                             g.radiation_tolerance;
-
-            // if all conditions apply
-            // note: we are assuming the inputs are satisfied, we can't really do otherwise here
-            if (lighting && pressure && radiation)
-            {
-                // produce food
-                res.Produce(g.crop_size * g.crop_rate, "greenhouse");
-
-                // add harvest info
-                res.harvests.Add(Lib.BuildString(g.crop_size.ToString("F0"), " in ",
-                    Lib.HumanReadableDuration(1.0 / g.crop_rate)));
-            }
-        }
-
-
-        void Process_ring(GravityRing ring)
-        {
-            if (ring.deployed)
-                Resource("ElectricCharge").Consume(ring.ec_rate, "gravity ring");
         }
 
         void Process_harvester(Harvester harvester, VesselAnalyzer va)

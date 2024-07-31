@@ -459,22 +459,6 @@ namespace Kerbalism
             }
         }
 
-        void Problem_greenhouses(Vessel v, List<Greenhouse.Data> greenhouses, ref List<Texture2D> icons,
-            ref List<string> tooltips)
-        {
-            if (greenhouses.Count == 0) return;
-
-            foreach (Greenhouse.Data greenhouse in greenhouses)
-            {
-                if (greenhouse.issue.Length > 0)
-                {
-                    if (!icons.Contains(Textures.plant_yellow)) icons.Add(Textures.plant_yellow);
-                    tooltips.Add(Lib.BuildString(Local.Monitor_Greenhouse, " <b>", greenhouse.issue,
-                        "</b>")); //"Greenhouse:"
-                }
-            }
-        }
-
         void Problem_kerbals(List<ProtoCrewMember> crew, ref List<Texture2D> icons, ref List<string> tooltips)
         {
             UInt32 health_severity = 0;
@@ -509,46 +493,6 @@ namespace Kerbalism
             else if (health_severity == 2) icons.Add(Textures.health_red);
             if (stress_severity == 1) icons.Add(Textures.brain_yellow);
             else if (stress_severity == 2) icons.Add(Textures.brain_red);
-        }
-
-        void Problem_radiation(VesselData vd, ref List<Texture2D> icons, ref List<string> tooltips)
-        {
-            string radiation_str = Lib.BuildString(" (<i>", (vd.EnvHabitatRadiation * 60.0 * 60.0).ToString("F3"),
-                " rad/h)</i>");
-            if (vd.EnvHabitatRadiation > 1.0 / 3600.0)
-            {
-                icons.Add(Textures.radiation_red);
-                tooltips.Add(Lib.BuildString(Local.Monitor_ExposedRadiation1,
-                    radiation_str)); //"Exposed to extreme radiation"
-            }
-            else if (vd.EnvHabitatRadiation > 0.15 / 3600.0)
-            {
-                icons.Add(Textures.radiation_yellow);
-                tooltips.Add(Lib.BuildString(Local.Monitor_ExposedRadiation2,
-                    radiation_str)); //"Exposed to intense radiation"
-            }
-            else if (vd.EnvHabitatRadiation > 0.0195 / 3600.0)
-            {
-                icons.Add(Textures.radiation_yellow);
-                tooltips.Add(Lib.BuildString(Local.Monitor_ExposedRadiation3,
-                    radiation_str)); //"Exposed to moderate radiation"
-            }
-        }
-
-        void Problem_poisoning(VesselData vd, ref List<Texture2D> icons, ref List<string> tooltips)
-        {
-            string poisoning_str = Lib.BuildString(Local.Monitor_CO2level, " <b>", Lib.HumanReadablePerc(vd.Poisoning),
-                "</b>"); //CO2 level in internal atmosphere:
-            if (vd.Poisoning >= Settings.PoisoningThreshold)
-            {
-                icons.Add(Textures.recycle_red);
-                tooltips.Add(poisoning_str);
-            }
-            else if (vd.Poisoning > Settings.PoisoningThreshold / 1.25)
-            {
-                icons.Add(Textures.recycle_yellow);
-                tooltips.Add(poisoning_str);
-            }
         }
 
         void Problem_storm(Vessel v, ref List<Texture2D> icons, ref List<string> tooltips)
@@ -591,9 +535,6 @@ namespace Kerbalism
             if (Features.SpaceWeather) Problem_storm(v, ref problem_icons, ref problem_tooltips);
             if (crew.Count > 0 && Profile.Profile.rules.Count > 0)
                 Problem_kerbals(crew, ref problem_icons, ref problem_tooltips);
-            if (crew.Count > 0 && Features.Radiation) Problem_radiation(vd, ref problem_icons, ref problem_tooltips);
-            Problem_greenhouses(v, vd.Greenhouses, ref problem_icons, ref problem_tooltips);
-            if (Features.Poisoning) Problem_poisoning(vd, ref problem_icons, ref problem_tooltips);
 
             // choose problem icon
             const UInt64 problem_icon_time = 3;

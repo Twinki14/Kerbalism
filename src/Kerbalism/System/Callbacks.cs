@@ -165,9 +165,6 @@ namespace Kerbalism.System
 
         private void OnVesselModified(Vessel vessel)
         {
-            foreach (var emitter in vessel.FindPartModulesImplementing<Emitter>())
-                emitter.Recalculate();
-
             Cache.PurgeVesselCaches(vessel);
             //vessel.KerbalismData().UpdateOnVesselModified();
         }
@@ -208,10 +205,6 @@ namespace Kerbalism.System
                 // add resource to eva kerbal
                 data.to.RequestResource(res.resourceName, -quantity);
             }
-
-            // Airlock loss
-            resources.Consume(data.from.vessel, "Nitrogen", Settings.LifeSupportAtmoLoss,
-                global::Kerbalism.ResourceBroker.Generic);
 
             KerbalEVA kerbal = data.to.FindModuleImplementing<KerbalEVA>();
 

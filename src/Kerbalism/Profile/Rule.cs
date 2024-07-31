@@ -71,7 +71,7 @@ namespace Kerbalism.Profile
             ResourceInfo res = input.Length > 0 ? resources.GetResource(v, input) : null;
 
             // determine message variant
-            uint variant = vd.EnvTemperature < Settings.LifeSupportSurvivalTemperature ? 0 : 1u;
+            uint variant = 1u;
 
             // get product of all environment modifiers
             double k = Modifiers.Evaluate(v, vd, resources, modifiers);

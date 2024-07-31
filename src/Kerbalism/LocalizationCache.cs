@@ -277,7 +277,6 @@ namespace Kerbalism
         // PartModules PAW UI Groups
         ////////////////////////////////////////////////////////////////////
         public static string Group_Science = GetLoc("Group_Science"); // "Science"
-        public static string Group_Greenhouse = GetLoc("Group_Greenhouse"); // "Greenhouse"
         public static string Group_Habitat = GetLoc("Group_Habitat"); // "Habitat"
         public static string Group_Radiation = GetLoc("Group_Radiation"); // "Radiation"
         public static string Group_Configuration = GetLoc("Group_Configuration"); // "Configuration"
@@ -345,11 +344,9 @@ namespace Kerbalism
         public static string Brokers_Light = GetLoc("Brokers_Light"); // "light"
         public static string Brokers_Boiloff = GetLoc("Brokers_Boiloff"); // "boiloff"
         public static string Brokers_Cryotank = GetLoc("Brokers_Cryotank"); // "cryo tank"
-        public static string Brokers_Greenhouse = GetLoc("Brokers_Greenhouse"); // "greenhouse"
         public static string Brokers_Deploy = GetLoc("Brokers_Deploy"); // "deploy"
         public static string Brokers_Experiment = GetLoc("Brokers_Experiment"); // "experiment"
         public static string Brokers_Command = GetLoc("Brokers_Command"); // "command"
-        public static string Brokers_GravityRing = GetLoc("Brokers_GravityRing"); // "gravity ring"
         public static string Brokers_Scanner = GetLoc("Brokers_Scanner"); // "scanner"
         public static string Brokers_Laboratory = GetLoc("Brokers_Laboratory"); // "laboratory"
         public static string Brokers_CommsIdle = GetLoc("Brokers_CommsIdle"); // "comms (idle)"
@@ -391,16 +388,6 @@ namespace Kerbalism
         public static string
             Contracts_orbitComplete =
                 GetLoc("Contracts_orbitComplete"); // "The mission was a success, albeit the Kerbal is a bit bored. We have plenty of data about long-term permanence in space."
-
-        public static string Contracts_foodTitle = GetLoc("Contracts_foodTitle"); // "Harvest food in space"
-
-        public static string
-            Contracts_foodDesc =
-                GetLoc("Contracts_foodDesc"); // ""Now that we got the technology to grow food in space, we should probably test it. Harvest food from a greenhouse in space."
-
-        public static string
-            Contracts_foodComplete =
-                GetLoc("Contracts_foodComplete"); // "We harvested food in space, and our scientists says it is actually delicious."
 
         public static string Contracts_sampleTitle = GetLoc("Contracts_sampleTitle"); // "Analyze samples in space"
 
@@ -477,18 +464,6 @@ namespace Kerbalism
         public static string Monitor_CFG = GetLoc("Monitor_CFG"); // "CFG"
         public static string Monitor_CFG_desc = GetLoc("Monitor_CFG_desc"); // "Configure the vessel"
         public static string Monitor_Inshadow = GetLoc("Monitor_Inshadow"); // "In shadow"
-        public static string Monitor_Greenhouse = GetLoc("Monitor_Greenhouse"); // "Greenhouse:"
-
-        public static string
-            Monitor_ExposedRadiation1 = GetLoc("Monitor_ExposedRadiation1"); // "Exposed to extreme radiation"
-
-        public static string
-            Monitor_ExposedRadiation2 = GetLoc("Monitor_ExposedRadiation2"); // "Exposed to intense radiation"
-
-        public static string
-            Monitor_ExposedRadiation3 = GetLoc("Monitor_ExposedRadiation3"); // "Exposed to moderate radiation"
-
-        public static string Monitor_CO2level = GetLoc("Monitor_CO2level"); // "CO2 level in internal atmosphere:"
 
         public static string
             Monitor_ejectionincoming = GetLoc("Monitor_ejectionincoming"); // "Coronal mass ejection incoming"
@@ -628,17 +603,6 @@ namespace Kerbalism
         public static string DevManager_NameTabDriveFull = GetLoc("DevManager_NameTabDriveFull"); // "drive full"
         public static string DevManager_NameTabDriveEmpty = GetLoc("DevManager_NameTabDriveEmpty"); // "drive empty"
 
-        ////////////////////////////////////////////////////////////////////
-        // Telemetry/Planner UI : Comfort
-        ////////////////////////////////////////////////////////////////////
-        public static string Comfort_firmground = GetLoc("Comfort_firmground"); // "firm ground"
-        public static string Comfort_exercise = GetLoc("Comfort_exercise"); // "exercise"
-        public static string Comfort_notalone = GetLoc("Comfort_notalone"); // "not alone"
-        public static string Comfort_callhome = GetLoc("Comfort_callhome"); // "call home"
-        public static string Comfort_panorama = GetLoc("Comfort_panorama"); // "panorama"
-        public static string Comfort_factor = GetLoc("Comfort_factor"); // "factor"
-        public static string Comfort_plants = GetLoc("Comfort_plants"); // "plants"
-
         public static string
             Configure_noconfigure = GetLoc("Configure_noconfigure"); // "Can't reconfigure the component"
 
@@ -770,12 +734,6 @@ namespace Kerbalism
         public static string TELEMETRY_full = GetLoc("TELEMETRY_full"); // "(full)"
         public static string TELEMETRY_VITALS = GetLoc("TELEMETRY_VITALS"); // "VITALS"
         public static string TELEMETRY_HYBERNATED = GetLoc("TELEMETRY_HYBERNATED"); // "HYBERNATED"
-        public static string TELEMETRY_GREENHOUSE = GetLoc("TELEMETRY_GREENHOUSE"); // "GREENHOUSE"
-        public static string TELEMETRY_readytoharvest = GetLoc("TELEMETRY_readytoharvest"); // "ready to harvest"
-        public static string TELEMETRY_growing = GetLoc("TELEMETRY_growing"); // "growing"
-        public static string TELEMETRY_timetoharvest = GetLoc("TELEMETRY_timetoharvest"); // "time to harvest"
-        public static string TELEMETRY_growth = GetLoc("TELEMETRY_growth"); // "growth"
-        public static string TELEMETRY_naturallighting = GetLoc("TELEMETRY_naturallighting"); // "natural lighting"
 
         public static string
             TELEMETRY_artificiallighting = GetLoc("TELEMETRY_artificiallighting"); // "artificial lighting"
@@ -1077,83 +1035,6 @@ namespace Kerbalism
             Module_Experiment_Message9 = GetLoc("Module_Experiment_Message9"); // "Ready for the next bit of science"
 
         ////////////////////////////////////////////////////////////////////
-        // Module : Greenhouse
-        ////////////////////////////////////////////////////////////////////
-        public static ParamString Greenhouse_msg_1 = new ParamString("Greenhouse_msg_1"); // "On <<1>> "
-        public static ParamString Greenhouse_msg_2 = new ParamString("Greenhouse_msg_2"); // "harvest produced <<1>>"
-
-        public static ParamString
-            Greenhouse_msg_3 = new ParamString("Greenhouse_msg_3"); // "emergency harvest produced <<1>>"
-
-        public static ParamString
-            Greenhouse_resoucesmissing = new ParamString("Greenhouse_resoucesmissing"); // "missing <<1>>"
-
-        public static string Greenhouse = GetLoc("Greenhouse"); // "Greenhouse"
-        public static string Greenhouse_Action = GetLoc("Greenhouse_Action"); // "Enable/Disable Greenhouse"
-        public static string Greenhouse_EmergencyHarvest = GetLoc("Greenhouse_EmergencyHarvest"); // "Emergency Harvest"
-        public static string Greenhouse_Harvest = GetLoc("Greenhouse_Harvest"); // "Harvest"
-
-        public static string
-            Greenhouse_status_artificial = GetLoc("Greenhouse_status_artificial"); // "Artificial lighting"
-
-        public static string Greenhouse_status_natural = GetLoc("Greenhouse_status_natural"); // "Natural lighting"
-        public static string Greenhouse_status_tta = GetLoc("Greenhouse_status_tta"); // "Time to harvest"
-        public static string Greenhouse_Greenhouse = GetLoc("Greenhouse_Greenhouse"); // "Greenhouse"
-
-        public static string
-            Greenhouse_desc =
-                GetLoc("Greenhouse_desc"); // "Grow crops in space and on the surface of celestial bodies, even far from the sun."
-
-        public static string Greenhouse_disabled = GetLoc("Greenhouse_disabled"); // "disabled"
-        public static string Greenhouse_enabled = GetLoc("Greenhouse_enabled"); // "enabled"
-        public static string Greenhouse_issue1 = GetLoc("Greenhouse_issue1"); // "insufficient lighting"
-        public static string Greenhouse_issue2 = GetLoc("Greenhouse_issue2"); // "insufficient pressure"
-        public static string Greenhouse_issue3 = GetLoc("Greenhouse_issue3"); // "excessive radiation"
-        public static string Greenhouse_info1 = GetLoc("Greenhouse_info1"); // "Harvest size"
-        public static string Greenhouse_info2 = GetLoc("Greenhouse_info2"); // "Harvest time"
-        public static string Greenhouse_info3 = GetLoc("Greenhouse_info3"); // "Lighting tolerance"
-        public static string Greenhouse_info4 = GetLoc("Greenhouse_info4"); // "Pressure tolerance"
-        public static string Greenhouse_info5 = GetLoc("Greenhouse_info5"); // "Radiation tolerance"
-        public static string Greenhouse_info6 = GetLoc("Greenhouse_info6"); // "Lamps EC rate"
-        public static string Greenhouse_info7 = GetLoc("Greenhouse_info7"); // "Required resources"
-        public static string Greenhouse_CarbonDioxide = GetLoc("Greenhouse_CarbonDioxide"); // "CarbonDioxide"
-
-        public static string
-            Greenhouse_CarbonDioxide_desc =
-                GetLoc("Greenhouse_CarbonDioxide_desc"); // "Crops can also use the CO2 in the atmosphere without a scrubber."
-
-        public static string Greenhouse_Byproducts = GetLoc("Greenhouse_Byproducts"); // "By-products"
-
-        ////////////////////////////////////////////////////////////////////
-        // Module : Habitat
-        ////////////////////////////////////////////////////////////////////
-        public static ParamString
-            Habitat_postmsg =
-                new ParamString("Habitat_postmsg"); // "Can't disable <b><<1>> habitat</b> while crew is inside"
-
-        public static string Habitat = GetLoc("Habitat"); // "Habitat"
-        public static string Habitat_Action = GetLoc("Habitat_Action"); // "Enable/Disable Habitat"
-        public static string Habitat_Surface = GetLoc("Habitat_Surface"); // "Surface"
-        public static string Habitat_Volume = GetLoc("Habitat_Volume"); // "Volume"
-        public static string Habitat_pressurizing = GetLoc("Habitat_pressurizing"); // "pressurizing..."
-        public static string Habitat_depressurizing = GetLoc("Habitat_depressurizing"); // "depressurizing..."
-        public static string Habitat_inflating = GetLoc("Habitat_inflating"); // "inflating..."
-        public static string Habitat_deflating = GetLoc("Habitat_deflating"); // "deflating..."
-        public static string Habitat_info1 = GetLoc("Habitat_info1"); // "Volume"
-        public static string Habitat_info2 = GetLoc("Habitat_info2"); // "Surface"
-        public static string Habitat_info3 = GetLoc("Habitat_info3"); // "Pressurized"
-        public static string Habitat_yes = GetLoc("Habitat_yes"); // "yes"
-        public static string Habitat_no = GetLoc("Habitat_no"); // "no"
-        public static string Habitat_none = GetLoc("Habitat_none"); // "none"
-        public static string Habitat_info4 = GetLoc("Habitat_info4"); // "Inflatable"
-        public static string Habitat_info5 = GetLoc("Habitat_info5"); // "Added mass per crew"
-        public static string Habitat_Summary1 = GetLoc("Habitat_Summary1"); // "ideal"
-        public static string Habitat_Summary2 = GetLoc("Habitat_Summary2"); // "good"
-        public static string Habitat_Summary3 = GetLoc("Habitat_Summary3"); // "modest"
-        public static string Habitat_Summary4 = GetLoc("Habitat_Summary4"); // "poor"
-        public static string Habitat_Summary5 = GetLoc("Habitat_Summary5"); // "cramped"
-
-        ////////////////////////////////////////////////////////////////////
         // Module : HardDrive
         ////////////////////////////////////////////////////////////////////
         public static string HardDrive = GetLoc("HardDrive"); // "Hard Drive"
@@ -1173,16 +1054,6 @@ namespace Kerbalism
         public static string HardDrive_info1 = GetLoc("HardDrive_info1"); // "File capacity"
         public static string HardDrive_info2 = GetLoc("HardDrive_info2"); // "Sample capacity"
         public static string HardDrive_Capacityunlimited = GetLoc("HardDrive_Capacityunlimited"); // "unlimited"
-
-        ////////////////////////////////////////////////////////////////////
-        // Module : GravityRing
-        ////////////////////////////////////////////////////////////////////
-        public static string GravityRing_Action = GetLoc("GravityRing_Action"); // "Deploy/Retract Ring"
-        public static string GravityRing_Toggle = GetLoc("GravityRing_Toggle"); // "Deploy"
-        public static string GravityRing_yes = GetLoc("GravityRing_yes"); // "yes"
-        public static string GravityRing_no = GetLoc("GravityRing_no"); // "no"
-        public static string GravityRing_info1 = GetLoc("GravityRing_info1"); // "bonus"
-        public static string GravityRing_info2 = GetLoc("GravityRing_info2"); // "deployable"
 
         ////////////////////////////////////////////////////////////////////
         // Module : Harvester
@@ -1267,18 +1138,6 @@ namespace Kerbalism
         public static string Laboratory_Nostorage = GetLoc("Laboratory_Nostorage"); // "No storage available"
 
         ////////////////////////////////////////////////////////////////////
-        // Module : PassiveShield
-        ////////////////////////////////////////////////////////////////////
-        public static string PassiveShield_Sandbags = GetLoc("PassiveShield_Sandbags"); // "Sandbags"
-        public static string PassiveShield_fill = GetLoc("PassiveShield_fill"); // "fill"
-        public static string PassiveShield_empty = GetLoc("PassiveShield_empty"); // "empty"
-        public static string PassiveShield_stowed = GetLoc("PassiveShield_stowed"); // "stowed"
-        public static string PassiveShield_absorbing = GetLoc("PassiveShield_absorbing"); // "absorbing"
-
-        public static string
-            PassiveShield_MessagePost = GetLoc("PassiveShield_MessagePost"); // "I don't know how this works!"
-
-        ////////////////////////////////////////////////////////////////////
         // Module : PlannerController
         ////////////////////////////////////////////////////////////////////
         public static string PlannerController_yes = GetLoc("PlannerController_yes"); // "yes"
@@ -1310,8 +1169,6 @@ namespace Kerbalism
         public static string Sensor_solarflux = GetLoc("Sensor_solarflux"); // "solar flux"
         public static string Sensor_albedoflux = GetLoc("Sensor_albedoflux"); // "albedo flux"
         public static string Sensor_bodyflux = GetLoc("Sensor_bodyflux"); // "body flux"
-        public static string Sensor_environment = GetLoc("Sensor_environment"); // "environment"
-        public static string Sensor_habitats = GetLoc("Sensor_habitats"); // "habitats"
         public static string Sensor_insideocean = GetLoc("Sensor_insideocean"); // "inside <b>ocean</b>"
         public static string Sensor_breathable = GetLoc("Sensor_breathable"); // "breathable"
         public static string Sensor_notbreathable = GetLoc("Sensor_notbreathable"); // "not breathable"
@@ -1331,25 +1188,6 @@ namespace Kerbalism
         public static string
             Sensor_info2 =
                 GetLoc("Sensor_info2"); // "On the other\nhand there seems to be plenty\nof useless positive graviolis around."
-
-        ////////////////////////////////////////////////////////////////////
-        // Module : Sickbay
-        ////////////////////////////////////////////////////////////////////
-        public static ParamString
-            Sickbay_cureEverybody =
-                new ParamString("Sickbay_cureEverybody"); // "<<1>>: dismiss <<2>>" //<<2>> -> patientName
-
-        public static ParamString
-            Sickbay_cureEverybody2 = new ParamString("Sickbay_cureEverybody2"); // "<<1>>: cure <<2>>"
-
-        public static string Sickbay_cure = GetLoc("Sickbay_cure"); // "cure"
-        public static string Sickbay_Start_Stop = GetLoc("Sickbay_Start_Stop"); // "Start/Stop"
-        public static string Sickbay_running = GetLoc("Sickbay_running"); // "running"
-        public static string Sickbay_stopped = GetLoc("Sickbay_stopped"); // "stopped"
-        public static string Sickbay_info1 = GetLoc("Sickbay_info1"); // "Cures"
-        public static string Sickbay_info2 = GetLoc("Sickbay_info2"); // "All kerbals in part"
-        public static string Sickbay_info3 = GetLoc("Sickbay_info3"); // "Capacity"
-        public static ParamString Sickbay_info4 = new ParamString("Sickbay_info4"); // "<<1>> Kerbals"
 
         ////////////////////////////////////////////////////////////////////
         // Module : SolarPanelFixer
@@ -1635,34 +1473,6 @@ namespace Kerbalism
         public static string Planner_RADIATION = GetLoc("Planner_RADIATION"); // "RADIATION"
         public static string Planner_orbit = GetLoc("Planner_orbit"); // "orbit"
         public static string Planner_emission = GetLoc("Planner_emission"); // "emission"
-        public static string Planner_activeshielding = GetLoc("Planner_activeshielding"); // "active shielding"
-
-        public static string Planner_shielding = GetLoc("Planner_shielding"); // "shielding"
-
-        public static string Planner_scrubbingunnecessary = GetLoc("Planner_scrubbingunnecessary"); // "not required"
-        public static string Planner_noscrubbing = GetLoc("Planner_noscrubbing"); // "none"
-        public static string Planner_insufficientscrubbing = GetLoc("Planner_insufficientscrubbing"); // "inadequate"
-        public static string Planner_sufficientscrubbing = GetLoc("Planner_sufficientscrubbing"); // "good"
-
-        public static string
-            Planner_pressurizationunnecessary = GetLoc("Planner_pressurizationunnecessary"); // "not required"
-
-        public static string Planner_nopressurecontrol = GetLoc("Planner_nopressurecontrol"); // "none"
-
-        public static string
-            Planner_insufficientpressurecontrol = GetLoc("Planner_insufficientpressurecontrol"); // "inadequate"
-
-        public static string Planner_sufficientpressurecontrol = GetLoc("Planner_sufficientpressurecontrol"); // "good"
-        public static string Planner_HABITAT = GetLoc("Planner_HABITAT"); // "HABITAT"
-        public static string Planner_volume = GetLoc("Planner_volume"); // "volume"
-        public static string Planner_volume_tip = GetLoc("Planner_volume_tip"); // "volume of enabled habitats"
-        public static string Planner_habitatssurface = GetLoc("Planner_habitatssurface"); // "surface"
-
-        public static string
-            Planner_habitatssurface_tip = GetLoc("Planner_habitatssurface_tip"); // "surface of enabled habitats"
-
-        public static string Planner_scrubbing = GetLoc("Planner_scrubbing"); // "scrubbing"
-        public static string Planner_pressurization = GetLoc("Planner_pressurization"); // "pressurization"
 
         ////////////////////////////////////////////////////////////////////
         // Automation > Devices
@@ -1916,12 +1726,6 @@ namespace Kerbalism
         public static string ExperimentReq_RadiationMin = GetLoc("ExperimentReq_RadiationMin"); // "Min. radiation "
         public static string ExperimentReq_RadiationMax = GetLoc("ExperimentReq_RadiationMax"); // "Max. radiation "
 
-        public static string
-            ExperimentReq_VolumePerCrewMin = GetLoc("ExperimentReq_VolumePerCrewMin"); // "Min. vol./crew "
-
-        public static string
-            ExperimentReq_VolumePerCrewMax = GetLoc("ExperimentReq_VolumePerCrewMax"); // "Max. vol./crew "
-
         public static string ExperimentReq_SunAngleMin = GetLoc("ExperimentReq_SunAngleMin"); // "Min sun-surface angle"
         public static string ExperimentReq_SunAngleMax = GetLoc("ExperimentReq_SunAngleMax"); // "Max sun-surface angle"
 
@@ -2025,7 +1829,6 @@ namespace Kerbalism
 
         //Statu Toggle
         public static string StatuToggle_info = GetLoc("StatuToggle_info"); // "info"
-        public static string StatuToggle_Habitat = GetLoc("StatuToggle_Habitat"); // "Habitat"
 
         public static ParamString
             StatuToggle_Simulate = new ParamString("StatuToggle_Simulate"); // "Simulate <<1>> in planner"

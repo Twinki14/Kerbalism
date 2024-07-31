@@ -685,8 +685,7 @@ namespace Kerbalism
         // return the total environent radiation at position specified
         public static double Compute(Vessel v, Vector3d position, double gamma_transparency, double sunlight,
             out bool blackout,
-            out bool magnetosphere, out bool inner_belt, out bool outer_belt, out bool interstellar,
-            out double shieldedRadiation)
+            out bool magnetosphere, out bool inner_belt, out bool outer_belt, out bool interstellar)
         {
             // prepare out parameters
             blackout = false;
@@ -694,7 +693,6 @@ namespace Kerbalism
             inner_belt = false;
             outer_belt = false;
             interstellar = false;
-            shieldedRadiation = 0.0;
 
             // no-op when Radiation is disabled
             if (!Features.Radiation) return 0.0;
@@ -813,8 +811,6 @@ namespace Kerbalism
 			if (v.loaded) Lib.Log("Radiation " + v + " from current main body: " + Lib.HumanReadableRadiation(radiation) + " gamma: " + Lib.HumanReadableRadiation(DistanceRadiation(RadiationR0(Info(v.mainBody)), v.altitude)));
 #endif
 
-            shieldedRadiation = radiation;
-
             // if there is a storm in progress
             if (Storm.InProgress(v))
             {
@@ -829,14 +825,12 @@ namespace Kerbalism
                     var strength = PreferencesRadiation.Instance.StormRadiation * sunlight * (activity + 0.5);
 
                     radiation += strength;
-                    shieldedRadiation += vd.EnvHabitatInfo.AverageHabitatRadiation(strength);
                 }
             }
 
             // add emitter radiation after atmosphere transparency
-            var emitterRadiation = Emitter.Total(v);
+            var emitterRadiation = 0;
             radiation += emitterRadiation;
-            shieldedRadiation += emitterRadiation;
 
 #if DEBUG_RADIATION
 			if (v.loaded) Lib.Log("Radiation " + v + " after emitters: " + Lib.HumanReadableRadiation(radiation) + " shielded " + Lib.HumanReadableRadiation(shieldedRadiation));
@@ -845,26 +839,16 @@ namespace Kerbalism
             // for EVAs, add the effect of nearby emitters
             if (v.isEVA)
             {
-                var nearbyEmitters = Emitter.Nearby(v);
+                var nearbyEmitters = 0;
                 radiation += nearbyEmitters;
-                shieldedRadiation += nearbyEmitters;
 #if DEBUG_RADIATION
 				if (v.loaded) Lib.Log("Radiation " + v + " nearby emitters " + Lib.HumanReadableRadiation(nearbyEmitters));
 #endif
             }
 
-            var passiveShielding = PassiveShield.Total(v);
-            shieldedRadiation -= passiveShielding;
-
-#if DEBUG_RADIATION
-			if (v.loaded) Lib.Log("Radiation " + v + " passiveShielding " + Lib.HumanReadableRadiation(passiveShielding));
-			if (v.loaded) Lib.Log("Radiation " + v + " before clamp: " + Lib.HumanReadableRadiation(radiation) + " shielded " + Lib.HumanReadableRadiation(shieldedRadiation));
-#endif
-
             // clamp radiation to positive range
             // note: we avoid radiation going to zero by using a small positive value
             radiation = Math.Max(radiation, Nominal);
-            shieldedRadiation = Math.Max(shieldedRadiation, Nominal);
 
 #if DEBUG_RADIATION
 			if (v.loaded) Lib.Log("Radiation " + v + " after clamp: " + Lib.HumanReadableRadiation(radiation) + " shielded " + Lib.HumanReadableRadiation(shieldedRadiation));

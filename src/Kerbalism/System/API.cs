@@ -154,13 +154,6 @@ namespace Kerbalism.System
             return v.KerbalismData().EnvRadiation;
         }
 
-        /// <summary>return amount of environment effective in the habitats of the given vessel</summary>
-        public static double HabitatRadiation(Vessel v)
-        {
-            if (!Features.Radiation) return 0.0;
-            return v.KerbalismData().EnvHabitatRadiation;
-        }
-
         /// <summary>return true if the vessel is inside the magnetopause of some body (except the sun)</summary>
         public static bool Magnetosphere(Vessel v)
         {
@@ -347,56 +340,6 @@ namespace Kerbalism.System
         {
             Storm.sun_observation_quality = Lib.Clamp(quality, 0.0f, 1.0f);
         }
-
-
-        // --- HABITAT --------------------------------------------------------------
-
-        // return volume of internal habitat in m^3
-        public static double Volume(Vessel v)
-        {
-            if (!Features.Habitat) return 0.0;
-            return v.KerbalismData().Volume;
-        }
-
-        // return surface of internal habitat in m^2
-        public static double Surface(Vessel v)
-        {
-            if (!Features.Habitat) return 0.0;
-            return v.KerbalismData().Surface;
-        }
-
-        // return normalized pressure of internal habitat
-        public static double Pressure(Vessel v)
-        {
-            if (!Features.Pressure) return 0.0;
-            return v.KerbalismData().Pressure;
-        }
-
-        // return level of co2 of internal habitat
-        public static double Poisoning(Vessel v)
-        {
-            if (!Features.Poisoning) return 0.0;
-            return v.KerbalismData().Poisoning;
-        }
-
-        // return proportion of radiation blocked by shielding
-        public static double Shielding(Vessel v)
-        {
-            return v.KerbalismData().Shielding;
-        }
-
-        // return living space factor
-        public static double LivingSpace(Vessel v)
-        {
-            return v.KerbalismData().LivingSpace;
-        }
-
-        // return comfort factor
-        public static double Comfort(Vessel v)
-        {
-            return v.KerbalismData().Comforts.factor;
-        }
-
 
         // --- RESOURCES ------------------------------------------------------------
 

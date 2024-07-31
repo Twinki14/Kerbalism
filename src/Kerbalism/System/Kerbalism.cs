@@ -361,9 +361,6 @@ namespace Kerbalism.System
                     CommsMessages.Update(v, vd, elapsed_s);
                     UnityEngine.Profiling.Profiler.EndSample();
 
-                    // Habitat equalization
-                    ResourceBalance.Equalizer(v);
-
                     UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.FixedUpdate.Loaded.Science");
                     // transmit science data
                     Science.Science.Update(v, vd, ec, elapsed_s);
@@ -573,17 +570,6 @@ namespace Kerbalism.System
             {
                 msg +=
                     "<color=#FF4500>Multiple configurations detected</color>\nHint: delete KerbalismConfig if you are using a custom config pack.\n\n";
-            }
-
-            if (Features.Habitat && Settings.CheckForCRP)
-            {
-                // check for CRP
-                var reslib = PartResourceLibrary.Instance.resourceDefinitions;
-                if (!reslib.Contains("Oxygen") || !reslib.Contains("Water") || !reslib.Contains("Shielding"))
-                {
-                    msg +=
-                        "<color=#FF4500>CommunityResourcePack (CRP) is not installed</color>\nYou REALLY need CRP for Kerbalism!\n\n";
-                }
             }
 
             if (incompatibleModsFound.Count > 0)
@@ -797,8 +783,6 @@ namespace Kerbalism.System
             partSequence.Add("kerbalism-solenoid-short-large");
             partSequence.Add("kerbalism-solenoid-long-large");
 
-            partSequence.Add("kerbalism-greenhouse");
-            partSequence.Add("kerbalism-gravityring");
             partSequence.Add("kerbalism-activeshield");
             partSequence.Add("kerbalism-chemicalplant");
 

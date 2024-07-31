@@ -61,23 +61,6 @@ namespace Kerbalism.Profile
                 // record output
                 outputs[output_res] = output_rate;
             }
-
-            cures = new Dictionary<string, double>();
-            foreach (string output in node.GetValues("cures"))
-            {
-                // get parameters
-                List<string> tok = Lib.Tokenize(output, '@');
-                if (tok.Count != 2) throw new Exception("malformed cure on process " + name);
-                string cure = tok[0];
-                double cure_rate = Lib.Parse.ToDouble(tok[1]);
-
-                // check that resource is specified
-                if (cure.Length == 0) throw new Exception("skipping resource-less process " + name);
-
-                // record cure
-                cures[cure] = cure_rate;
-            }
-
             // parse dump specs
             dump = new DumpSpecs(Lib.ConfigValue(node, "dump", "false"), Lib.ConfigValue(node, "dump_valve", "false"));
             defaultDumpValve = new DumpSpecs.ActiveValve(dump);
@@ -106,14 +89,6 @@ namespace Kerbalism.Profile
                 recipe.AddOutput(p.Key, p.Value * k * elapsed_s, dumpValve.Check(p.Key));
             }
 
-            foreach (var p in cures)
-            {
-                // TODO this assumes that the cure modifies always put the resource first
-                // works: modifier = _SickbayRDU,zerog works
-                // fails: modifier = zerog,_SickbayRDU
-                recipe.AddCure(p.Key, p.Value * k * elapsed_s, modifiers[0]);
-            }
-
             resources.AddRecipe(recipe);
         }
 
@@ -132,7 +107,6 @@ namespace Kerbalism.Profile
         public List<string> modifiers; // if specified, rates are influenced by the product of all environment modifiers
         public Dictionary<string, double> inputs; // input resources and rates
         public Dictionary<string, double> outputs; // output resources and rates
-        public Dictionary<string, double> cures; // cures and rates
         public DumpSpecs dump; // set of output resources that should dump overboard
         public DumpSpecs.ActiveValve defaultDumpValve;
         public int defaultDumpValveIndex;

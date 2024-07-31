@@ -5,7 +5,7 @@
   <IDType>ProjectBased</IDType>
   <NextProjectID>1000018</NextProjectID>
   <BaseCfgFile>refactor.cfg</BaseCfgFile>
-  <LanguageCodes>en-us,ru</LanguageCodes>
+  <LanguageCodes>en-us</LanguageCodes>
   <UseMultiCfgFiles>true</UseMultiCfgFiles>
   <UseMultiAndBaseCfgFiles>false</UseMultiAndBaseCfgFiles>
   <MultiCfgFile>GameData/Kerbalism/Localization/{LANGCODE}.cfg</MultiCfgFile>
@@ -18,7 +18,7 @@
       <AddLanguageCodePrefixToMultiFiles>true</AddLanguageCodePrefixToMultiFiles>
       <BaseCfgFile>refactor.cfg</BaseCfgFile>
       <MultiCfgFile>GameData/Kerbalism/Localization/{LANGCODE}.cfg</MultiCfgFile>
-      <LanguageCodes>en-us,ru</LanguageCodes>
+      <LanguageCodes>en-us</LanguageCodes>
     </LocalizerTemplateSettings>
   </Templates>
 </LocalizerProjectSettings>
