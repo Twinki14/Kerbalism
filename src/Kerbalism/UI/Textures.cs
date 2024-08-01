@@ -27,9 +27,7 @@ namespace Kerbalism
         internal static Texture2D small_folder;
         internal static Texture2D small_console;
         internal static Texture2D small_config;
-        internal static Texture2D small_search;
         internal static Texture2D small_notes;
-        internal static Texture2D small_wrench;
 
         internal static Texture2D file_scicolor;
         internal static Texture2D sample_scicolor;
@@ -49,33 +47,12 @@ namespace Kerbalism
         internal static Texture2D box_yellow;
         internal static Texture2D box_red;
 
-        internal static Texture2D wrench_white;
-        internal static Texture2D wrench_yellow;
-        internal static Texture2D wrench_red;
-
         internal static Texture2D signal_white;
         internal static Texture2D signal_yellow;
         internal static Texture2D signal_red;
 
-        internal static Texture2D recycle_yellow;
-        internal static Texture2D recycle_red;
-
-        internal static Texture2D radiation_yellow;
-        internal static Texture2D radiation_red;
-
-        internal static Texture2D health_white;
-        internal static Texture2D health_yellow;
-        internal static Texture2D health_red;
-
-        internal static Texture2D brain_white;
-        internal static Texture2D brain_yellow;
-        internal static Texture2D brain_red;
-
         internal static Texture2D storm_yellow;
         internal static Texture2D storm_red;
-
-        internal static Texture2D plant_white;
-        internal static Texture2D plant_yellow;
 
         internal static Texture2D station_black;
         internal static Texture2D station_white;
@@ -117,8 +94,6 @@ namespace Kerbalism
 
         internal static Texture2D KsmGuiTexCheckmark;
 
-        internal static Texture2D KsmGuiTexHeaderArrowsLeft;
-        internal static Texture2D KsmGuiTexHeaderArrowsRight;
         internal static Texture2D KsmGuiTexHeaderArrowsUp;
         internal static Texture2D KsmGuiTexHeaderArrowsDown;
 
@@ -172,9 +147,9 @@ namespace Kerbalism
             small_folder = GetTexture("small-folder");
             small_console = GetTexture("small-console");
             small_config = GetTexture("small-config");
-            small_search = GetTexture("small-search");
+            GetTexture("small-search");
             small_notes = GetTexture("small-notes");
-            small_wrench = GetTexture("small-wrench");
+            GetTexture("small-wrench");
 
             file_scicolor = GetTexture("icons8-file-scicolor");
             sample_scicolor = GetTexture("icons8-sample-scicolor");
@@ -194,33 +169,33 @@ namespace Kerbalism
             box_yellow = GetTexture("box-yellow");
             box_red = GetTexture("box-red");
 
-            wrench_white = GetTexture("wrench-white");
-            wrench_yellow = GetTexture("wrench-yellow");
-            wrench_red = GetTexture("wrench-red");
+            GetTexture("wrench-white");
+            GetTexture("wrench-yellow");
+            GetTexture("wrench-red");
 
             signal_white = GetTexture("signal-white");
             signal_yellow = GetTexture("signal-yellow");
             signal_red = GetTexture("signal-red");
 
-            recycle_yellow = GetTexture("recycle-yellow");
-            recycle_red = GetTexture("recycle-red");
+            GetTexture("recycle-yellow");
+            GetTexture("recycle-red");
 
-            radiation_yellow = GetTexture("radiation-yellow");
-            radiation_red = GetTexture("radiation-red");
+            GetTexture("radiation-yellow");
+            GetTexture("radiation-red");
 
-            health_white = GetTexture("health-white");
-            health_yellow = GetTexture("health-yellow");
-            health_red = GetTexture("health-red");
+            GetTexture("health-white");
+            GetTexture("health-yellow");
+            GetTexture("health-red");
 
-            brain_white = GetTexture("brain-white");
-            brain_yellow = GetTexture("brain-yellow");
-            brain_red = GetTexture("brain-red");
+            GetTexture("brain-white");
+            GetTexture("brain-yellow");
+            GetTexture("brain-red");
 
             storm_yellow = GetTexture("storm-yellow");
             storm_red = GetTexture("storm-red");
 
-            plant_white = GetTexture("plant-white");
-            plant_yellow = GetTexture("plant-yellow");
+            GetTexture("plant-white");
+            GetTexture("plant-yellow");
 
             station_black = GetTexture("vessels/station-black", 80, 80, 4f);
             station_white = GetTexture("vessels/station-white", 80, 80, 4f);
@@ -263,8 +238,8 @@ namespace Kerbalism
             KsmGuiTexCheckmark = Lib.GetTexture("ksm-gui/checkmark-20", 20, 20);
 
             KsmGuiTexHeaderClose = Lib.GetTexture("ksm-gui/i8-header-close-32", 32, 32);
-            KsmGuiTexHeaderArrowsLeft = Lib.GetTexture("ksm-gui/arrows-left-32", 32, 32);
-            KsmGuiTexHeaderArrowsRight = Lib.GetTexture("ksm-gui/arrows-right-32", 32, 32);
+            Lib.GetTexture("ksm-gui/arrows-left-32", 32, 32);
+            Lib.GetTexture("ksm-gui/arrows-right-32", 32, 32);
             KsmGuiTexHeaderArrowsUp = Lib.GetTexture("ksm-gui/arrows-up-32", 32, 32);
             KsmGuiTexHeaderArrowsDown = Lib.GetTexture("ksm-gui/arrows-down-32", 32, 32);
 

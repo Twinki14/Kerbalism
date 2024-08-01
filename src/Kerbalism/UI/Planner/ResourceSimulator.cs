@@ -180,23 +180,6 @@ namespace Kerbalism.Planner
                 }
             }
 
-            // execute all possible recipes
-            bool executing = true;
-            while (executing)
-            {
-                executing = false;
-                for (int i = 0; i < recipes.Count; ++i)
-                {
-                    SimulatedRecipe recipe = recipes[i];
-                    if (recipe.left > double.Epsilon)
-                    {
-                        executing |= recipe.Execute(this);
-                    }
-                }
-            }
-
-            recipes.Clear();
-
             // clamp all resources
             foreach (KeyValuePair<string, SimulatedResource> pair in resources)
                 pair.Value.Clamp();
@@ -495,6 +478,5 @@ namespace Kerbalism.Planner
         }
 
         Dictionary<string, SimulatedResource> resources = new Dictionary<string, SimulatedResource>();
-        List<SimulatedRecipe> recipes = new List<SimulatedRecipe>();
     }
 } // KERBALISM

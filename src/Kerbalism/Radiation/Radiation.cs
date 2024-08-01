@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Configuration;
-using System.Diagnostics;
 using System.Threading;
 using Kerbalism.Database;
-using Kerbalism.Modules;
 using Kerbalism.System;
 using UnityEngine;
-using KSP.Localization;
 using Space = Kerbalism.Utility.Space;
 
 

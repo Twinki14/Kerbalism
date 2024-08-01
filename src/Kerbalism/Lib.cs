@@ -11,7 +11,6 @@ using CommNet;
 using Kerbalism.Science;
 using Kerbalism.System;
 using Kerbalism.Utility;
-using KSP.Localization;
 using KSP.UI.Screens;
 using File = Kerbalism.Science.File;
 using Random = System.Random;

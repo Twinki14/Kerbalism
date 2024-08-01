@@ -82,7 +82,6 @@
     <Compile Include="Modules\Experiment.cs"/>
     <Compile Include="Modules\SolarPanelFixer.cs"/>
     <Compile Include="Patches\AsteroidAndCometSurfaceSample.cs"/>
-    <Compile Include="Profile\Modifiers.cs"/>
     <Compile Include="Renderer\LineRenderer.cs"/>
     <Compile Include="Renderer\ParticleMesh.cs"/>
     <Compile Include="Renderer\ParticleRenderer.cs"/>
@@ -123,7 +122,6 @@
     <Compile Include="UI\KsmGui\KsmGuiUpdate.cs"/>
     <Compile Include="UI\Planner\EnvironmentAnalyzer.cs"/>
     <Compile Include="UI\Planner\ResourceSimulator.cs"/>
-    <Compile Include="UI\Planner\SimulatedRecipe.cs"/>
     <Compile Include="UI\Planner\SimulatedResource.cs"/>
     <Compile Include="UI\Planner\SimulatedResourceView.cs"/>
     <Compile Include="UI\Planner\VesselAnalyzer.cs"/>

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using Kerbalism.Comms;
 using Kerbalism.Database;
-using Kerbalism.Modules;
 using Kerbalism.Profile;
 using Kerbalism.System;
 using Kerbalism.Utility;

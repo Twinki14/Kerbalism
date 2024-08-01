@@ -10,7 +10,6 @@ using System.Reflection;
 using Kerbalism.Database;
 using Kerbalism.External;
 using Kerbalism.Modules;
-using Kerbalism.Profile;
 
 namespace Kerbalism.System
 {

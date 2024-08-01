@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Kerbalism.Profile;
 
 namespace Kerbalism.System
 {
