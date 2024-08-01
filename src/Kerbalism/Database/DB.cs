@@ -249,27 +249,6 @@ namespace Kerbalism.Database
             return true;
         }
 
-        /// <summary>
-        /// Get the VesselData for this vessel. Will return null if that vessel isn't yet created in the DB, which can happen if this is called too early. <br/>
-        /// Typically it's safe to use from partmodules FixedUpdate() and OnStart(), but not in Awake() and probably not from Update()<br/>
-        /// Also, don't use this in a Foreach on FlightGlobals.Vessels, check the result of TryGetVesselData() instead
-        /// </summary>
-        public static VesselData GetVesselData(this Vessel vessel)
-        {
-            if (!vessels.TryGetValue(vessel.id, out VesselData vesselData))
-            {
-                Lib.LogStack($"Could not get VesselData for vessel {vessel.vesselName}");
-                return null;
-            }
-
-            return vesselData;
-        }
-
-        public static bool TryGetVesselData(this ProtoVessel protoVessel, out VesselData vesselData)
-        {
-            return vessels.TryGetValue(protoVessel.vesselID, out vesselData);
-        }
-
         #endregion
     }
 } // KERBALISM
