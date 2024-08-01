@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Kerbalism.Modules;
-using Kerbalism.Profile;
 using Kerbalism.System;
 using UnityEngine;
 
@@ -33,7 +31,7 @@ namespace Kerbalism.Planner
 
             // special panels
             // - stress & radiation panels require that a rule using the living_space/radiation modifier exist (current limitation)
-            if (Features.Radiation && Profile.Profile.rules.Find(k => k.modifiers.Contains("radiation")) != null)
+            if (Features.Radiation)
                 panel_special.Add("radiation");
 
             panel_environment.Add("environment");
@@ -164,17 +162,6 @@ namespace Kerbalism.Planner
                 // add resource panel
                 if (panel_resource.Count > 0)
                     AddSubPanelResource(panel, panel_resource[resource_index]);
-
-                // add special panel
-                if (panel_special.Count > 0)
-                {
-                    switch (panel_special[special_index])
-                    {
-                        case "qol":
-                            AddSubPanelStress(panel);
-                            break;
-                    }
-                }
 
                 // add environment panel
                 switch (panel_environment[environment_index])
@@ -406,33 +393,6 @@ namespace Kerbalism.Planner
             p.AddContent(Local.Planner_duration, Lib.HumanReadableDuration(res.Lifetime())); //"duration"
         }
 
-        ///<summary> Add stress sub-panel, including tooltips </summary>
-        private static void AddSubPanelStress(Panel p)
-        {
-            // get first living space rule
-            // - guaranteed to exist, as this panel is not rendered if it doesn't
-            // - even without crew, it is safe to evaluate the modifiers that use it
-            Rule rule = Profile.Profile.rules.Find(k => k.modifiers.Contains("living_space"));
-
-            // render title
-            p.AddSection(Local.Planner_STRESS, string.Empty, //"STRESS"
-                () =>
-                {
-                    p.Prev(ref special_index, panel_special.Count);
-                    enforceUpdate = true;
-                },
-                () =>
-                {
-                    p.Next(ref special_index, panel_special.Count);
-                    enforceUpdate = true;
-                });
-
-            // render life estimate
-            double mod = Modifiers.Evaluate(env_analyzer, vessel_analyzer, resource_sim, rule.modifiers);
-            p.AddContent(Local.Planner_lifeestimate,
-                Lib.HumanReadableDuration(rule.fatal_threshold / (rule.degeneration * mod))); //"duration"
-        }
-
         #endregion
 
         #region FIELDS_PROPERTIES
@@ -476,7 +436,6 @@ namespace Kerbalism.Planner
 
         // panel indexes
         private static int resource_index;
-        private static int special_index;
         private static int environment_index;
 
         // panel ui

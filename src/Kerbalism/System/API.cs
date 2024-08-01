@@ -91,38 +91,6 @@ namespace Kerbalism.System
             global::Kerbalism.Message.Post(msg);
         }
 
-        // kill a kerbal, even an EVA one
-        public static void Kill(Vessel v, ProtoCrewMember c)
-        {
-            if (!v.KerbalismData().IsSimulated) return;
-            if (!DB.ContainsKerbal(c.name)) return;
-            Misc.Kill(v, c);
-        }
-
-        // trigger an undesiderable event for the kerbal specified
-
-        // disable or re-enable all rules for the specified kerbal
-        public static void DisableKerbal(string k_name, bool disabled)
-        {
-            if (!DB.ContainsKerbal(k_name)) return;
-            DB.Kerbal(k_name).disabled = disabled;
-        }
-
-        // inject instant radiation dose to the specified kerbal (can use negative amounts)
-        public static void InjectRadiation(string k_name, double amount)
-        {
-            if (!DB.ContainsKerbal(k_name)) return;
-            KerbalData kd = DB.Kerbal(k_name);
-            foreach (Rule rule in Profile.Profile.rules)
-            {
-                if (rule.modifiers.Contains("radiation"))
-                {
-                    RuleData rd = kd.rules[rule.name];
-                    rd.problem = Math.Max(rd.problem + amount, 0.0);
-                }
-            }
-        }
-
 
         // --- ENVIRONMENT ----------------------------------------------------------
 

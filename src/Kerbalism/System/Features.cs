@@ -15,15 +15,6 @@ namespace Kerbalism.System
 
             // detect all modifiers in use by current profile
             HashSet<string> modifiers = new HashSet<string>();
-            foreach (Rule rule in Profile.Profile.rules)
-            {
-                foreach (string s in rule.modifiers) modifiers.Add(s);
-            }
-
-            foreach (Process process in Profile.Profile.processes)
-            {
-                foreach (string s in process.modifiers) modifiers.Add(s);
-            }
 
             // detect features from modifiers
             Radiation = modifiers.Contains("radiation");
@@ -49,7 +40,6 @@ namespace Kerbalism.System
 
         // features detected automatically from modifiers
         public static bool Radiation;
-        public static bool Shielding;
 
         // features detected in other ways
         public static bool Supplies;

@@ -10,27 +10,6 @@ namespace Kerbalism.Profile
         // node parsing
         private static void Nodeparse(ConfigNode profile_node)
         {
-            // parse all rules
-            foreach (ConfigNode rule_node in profile_node.GetNodes("Rule"))
-            {
-                try
-                {
-                    // parse rule
-                    Rule rule = new Rule(rule_node);
-
-                    // ignore duplicates
-                    if (rules.Find(k => k.name == rule.name) == null)
-                    {
-                        // add the rule
-                        rules.Add(rule);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Lib.Log("failed to load rule\n" + e.ToString(), Lib.LogLevel.Warning);
-                }
-            }
-
             // parse all supplies
             foreach (ConfigNode supply_node in profile_node.GetNodes("Supply"))
             {
@@ -49,27 +28,6 @@ namespace Kerbalism.Profile
                 catch (Exception e)
                 {
                     Lib.Log("failed to load supply\n" + e.ToString(), Lib.LogLevel.Warning);
-                }
-            }
-
-            // parse all processes
-            foreach (ConfigNode process_node in profile_node.GetNodes("Process"))
-            {
-                try
-                {
-                    // parse process
-                    Process process = new Process(process_node);
-
-                    // ignore duplicates
-                    if (processes.Find(k => k.name == process.name) == null)
-                    {
-                        // add the process
-                        processes.Add(process);
-                    }
-                }
-                catch (Exception e)
-                {
-                    Lib.Log("failed to load process\n" + e.ToString(), Lib.LogLevel.Warning);
                 }
             }
         }
@@ -108,9 +66,7 @@ namespace Kerbalism.Profile
         public static void Parse()
         {
             // initialize data
-            rules = new List<Rule>();
             supplies = new List<Supply>();
-            processes = new List<Process>();
 
             // if a profile is specified
             if (Settings.Profile.Length > 0)
@@ -136,12 +92,6 @@ namespace Kerbalism.Profile
                         Lib.Log("supplies:");
                         foreach (Supply supply in supplies) Lib.Log(Lib.BuildString("- ", supply.resource));
                         if (supplies.Count == 0) Lib.Log("- none");
-                        Lib.Log("rules:");
-                        foreach (Rule rule in rules) Lib.Log(Lib.BuildString("- ", rule.name));
-                        if (rules.Count == 0) Lib.Log("- none");
-                        Lib.Log("processes:");
-                        foreach (Process process in processes) Lib.Log(Lib.BuildString("- ", process.name));
-                        if (processes.Count == 0) Lib.Log("- none");
 
                         // we are done here
                         return;
@@ -161,18 +111,6 @@ namespace Kerbalism.Profile
             {
                 // this will just show warning messages if resources get low
                 supply.Execute(v, vd, resources);
-            }
-
-            // execute all rules
-            foreach (Rule rule in rules)
-            {
-                rule.Execute(v, vd, resources, elapsed_s);
-            }
-
-            // execute all processes
-            foreach (Process process in processes)
-            {
-                process.Execute(v, vd, resources, elapsed_s);
             }
         }
 
@@ -207,9 +145,6 @@ namespace Kerbalism.Profile
             }
         }
 
-
-        public static List<Rule> rules; // rules in the profile
         public static List<Supply> supplies; // supplies in the profile
-        public static List<Process> processes; // processes in the profile
     }
 } // KERBALISM

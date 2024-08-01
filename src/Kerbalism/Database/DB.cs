@@ -21,16 +21,6 @@ namespace Kerbalism.Database
             // get unique id (or generate one for new savegames)
             uid = Lib.ConfigValue(node, "uid", Lib.RandomInt(int.MaxValue));
 
-            // load kerbals data
-            kerbals = new Dictionary<string, KerbalData>();
-            if (node.HasNode("kerbals"))
-            {
-                foreach (var kerbal_node in node.GetNode("kerbals").GetNodes())
-                {
-                    kerbals.Add(From_safe_key(kerbal_node.name), new KerbalData(kerbal_node));
-                }
-            }
-
             // load the science database, has to be before vessels are loaded
             ScienceDB.Load(node);
 
@@ -131,13 +121,6 @@ namespace Kerbalism.Database
             // save unique id
             node.AddValue("uid", uid);
 
-            // save kerbals data
-            var kerbals_node = node.AddNode("kerbals");
-            foreach (var p in kerbals)
-            {
-                p.Value.Save(kerbals_node.AddNode(To_safe_key(p.Key)));
-            }
-
             // only persist vessels that exists in KSP own vessel persistence
             // this prevent creating junk data without going into the mess of using gameevents
             UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.DB.Save.Vessels");
@@ -175,16 +158,6 @@ namespace Kerbalism.Database
             ui.Save(node.AddNode("ui"));
         }
 
-
-        public static KerbalData Kerbal(string name)
-        {
-            if (!kerbals.ContainsKey(name))
-            {
-                kerbals.Add(name, new KerbalData());
-            }
-
-            return kerbals[name];
-        }
 
         public static VesselData KerbalismData(this Vessel vessel)
         {
@@ -232,51 +205,6 @@ namespace Kerbalism.Database
             return storms[name];
         }
 
-        public static Boolean ContainsKerbal(string name)
-        {
-            return kerbals.ContainsKey(name);
-        }
-
-        /// <summary>
-        /// Remove a Kerbal and his lifetime data from the database
-        /// </summary>
-        public static void KillKerbal(String name, bool reallyDead)
-        {
-            if (reallyDead)
-            {
-                kerbals.Remove(name);
-            }
-            else
-            {
-                // called when a vessel is destroyed. don't remove the kerbal just yet,
-                // check with the roster if the kerbal is dead or not
-                Kerbal(name).Recover();
-            }
-        }
-
-        /// <summary>
-        /// Resets all process data of a kerbal, except lifetime data
-        /// </summary>
-        public static void RecoverKerbal(string name)
-        {
-            if (ContainsKerbal(name))
-            {
-                if (Kerbal(name).eva_dead)
-                {
-                    kerbals.Remove(name);
-                }
-                else
-                {
-                    Kerbal(name).Recover();
-                }
-            }
-        }
-
-        public static Dictionary<string, KerbalData> Kerbals()
-        {
-            return kerbals;
-        }
-
         public static string To_safe_key(string key)
         {
             return key.Replace(" ", "___");
@@ -289,7 +217,6 @@ namespace Kerbalism.Database
 
         public static Version version; // savegame version
         public static int uid; // savegame unique id
-        private static Dictionary<string, KerbalData> kerbals; // store data per-kerbal
 
         private static Dictionary<Guid, VesselData>
             vessels = new Dictionary<Guid, VesselData>(); // store data per-vessel

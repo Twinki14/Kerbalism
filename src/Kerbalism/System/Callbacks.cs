@@ -206,12 +206,6 @@ namespace Kerbalism.System
                 data.to.RequestResource(res.resourceName, -quantity);
             }
 
-            KerbalEVA kerbal = data.to.FindModuleImplementing<KerbalEVA>();
-
-
-            // turn off headlamp light, to avoid stock bug that show them for a split second when going on eva
-            EVA.HeadLamps(kerbal, false);
-
             // execute script
             data.from.vessel.KerbalismData().computer.Execute(data.from.vessel, ScriptType.eva_out);
 
@@ -390,24 +384,6 @@ namespace Kerbalism.System
         {
             // note: this is called multiple times when a vessel is recovered
 
-            // for each crew member
-            foreach (ProtoCrewMember c in pv.GetVesselCrew())
-            {
-                // avoid creating kerbal data in db again,
-                // as this function may be called multiple times
-                if (!DB.ContainsKerbal(c.name))
-                    continue;
-
-                // set roster status of eva dead kerbals
-                if (DB.Kerbal(c.name).eva_dead)
-                {
-                    c.rosterStatus = ProtoCrewMember.RosterStatus.Dead;
-                }
-
-                // reset kerbal data of recovered kerbals
-                DB.RecoverKerbal(c.name);
-            }
-
             // purge the caches
             global::Kerbalism.ResourceCache.Purge(pv);
             Cache.PurgeVesselCaches(pv);
@@ -416,10 +392,6 @@ namespace Kerbalism.System
 
         void VesselTerminated(ProtoVessel pv)
         {
-            // forget all kerbals data
-            foreach (ProtoCrewMember c in pv.GetVesselCrew())
-                DB.KillKerbal(c.name, true);
-
             // purge the caches
             global::Kerbalism.ResourceCache.Purge(pv);
             Cache.PurgeVesselCaches(pv);
@@ -437,29 +409,6 @@ namespace Kerbalism.System
 
         void VesselDestroyed(Vessel v)
         {
-            // rescan the damn kerbals
-            // - vessel crew is empty at destruction time
-            // - we can't even use the flightglobal roster, because sometimes it isn't updated yet at this point
-            HashSet<string> kerbals_alive = new HashSet<string>();
-            HashSet<string> kerbals_dead = new HashSet<string>();
-            foreach (Vessel ov in FlightGlobals.Vessels)
-            {
-                foreach (ProtoCrewMember c in Lib.CrewList(ov))
-                    kerbals_alive.Add(c.name);
-            }
-
-            foreach (string key in DB.Kerbals().Keys)
-            {
-                if (!kerbals_alive.Contains(key))
-                    kerbals_dead.Add(key);
-            }
-
-            foreach (string n in kerbals_dead)
-            {
-                // we don't know if the kerbal really is dead, or if it is just not currently assigned to a mission
-                DB.KillKerbal(n, false);
-            }
-
             // purge the caches
             global::Kerbalism.ResourceCache.Purge(v); // works with loaded and unloaded vessels
             Cache.PurgeVesselCaches(v); // works with loaded and unloaded vessels

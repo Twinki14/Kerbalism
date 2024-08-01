@@ -288,7 +288,7 @@ namespace Kerbalism
             }
 
             // problem indicator
-            Indicator_problems(p, v, vd, crew);
+            Indicator_problems(p, v, vd);
 
             // battery indicator
             Indicator_ec(p, v, vd);
@@ -459,42 +459,6 @@ namespace Kerbalism
             }
         }
 
-        void Problem_kerbals(List<ProtoCrewMember> crew, ref List<Texture2D> icons, ref List<string> tooltips)
-        {
-            UInt32 health_severity = 0;
-            UInt32 stress_severity = 0;
-            foreach (ProtoCrewMember c in crew)
-            {
-                // get kerbal data
-                KerbalData kd = DB.Kerbal(c.name);
-
-                // skip disabled kerbals
-                if (kd.disabled) continue;
-
-                foreach (Rule r in Profile.Profile.rules)
-                {
-                    RuleData rd = kd.Rule(r.name);
-                    if (rd.problem > r.danger_threshold)
-                    {
-                        if (!r.breakdown) health_severity = Math.Max(health_severity, 2);
-                        else stress_severity = Math.Max(stress_severity, 2);
-                        tooltips.Add(Lib.BuildString(c.name, ": <b>", r.title, "</b>"));
-                    }
-                    else if (rd.problem > r.warning_threshold)
-                    {
-                        if (!r.breakdown) health_severity = Math.Max(health_severity, 1);
-                        else stress_severity = Math.Max(stress_severity, 1);
-                        tooltips.Add(Lib.BuildString(c.name, ": <b>", r.title, "</b>"));
-                    }
-                }
-            }
-
-            if (health_severity == 1) icons.Add(Textures.health_yellow);
-            else if (health_severity == 2) icons.Add(Textures.health_red);
-            if (stress_severity == 1) icons.Add(Textures.brain_yellow);
-            else if (stress_severity == 2) icons.Add(Textures.brain_red);
-        }
-
         void Problem_storm(Vessel v, ref List<Texture2D> icons, ref List<string> tooltips)
         {
             if (Storm.Incoming(v))
@@ -524,7 +488,7 @@ namespace Kerbalism
             }
         }
 
-        void Indicator_problems(Panel p, Vessel v, VesselData vd, List<ProtoCrewMember> crew)
+        void Indicator_problems(Panel p, Vessel v, VesselData vd)
         {
             // store problems icons & tooltips
             List<Texture2D> problem_icons = new List<Texture2D>();
@@ -533,8 +497,6 @@ namespace Kerbalism
             // detect problems
             Problem_sunlight(vd, ref problem_icons, ref problem_tooltips);
             if (Features.SpaceWeather) Problem_storm(v, ref problem_icons, ref problem_tooltips);
-            if (crew.Count > 0 && Profile.Profile.rules.Count > 0)
-                Problem_kerbals(crew, ref problem_icons, ref problem_tooltips);
 
             // choose problem icon
             const UInt64 problem_icon_time = 3;

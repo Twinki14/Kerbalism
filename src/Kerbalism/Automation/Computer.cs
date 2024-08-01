@@ -246,12 +246,6 @@ namespace Kerbalism.Automation
                 {
                     switch (m.moduleName)
                     {
-                        case "ProcessController":
-                            device = new ProcessDevice(m as ProcessController);
-                            break;
-                        case "Harvester":
-                            device = new HarvesterDevice(m as Harvester);
-                            break;
                         case "Laboratory":
                             device = new LaboratoryDevice(m as Laboratory);
                             break;
@@ -260,21 +254,6 @@ namespace Kerbalism.Automation
                             break;
                         case "SolarPanelFixer":
                             device = new PanelDevice(m as SolarPanelFixer);
-                            break;
-                        case "ModuleGenerator":
-                            device = new GeneratorDevice(m as ModuleGenerator);
-                            break;
-                        case "ModuleResourceConverter":
-                            device = new ConverterDevice(m as ModuleResourceConverter);
-                            break;
-                        case "ModuleKPBSConverter":
-                            device = new ConverterDevice(m as ModuleResourceConverter);
-                            break;
-                        case "FissionReactor":
-                            device = new ConverterDevice(m as ModuleResourceConverter);
-                            break;
-                        case "ModuleResourceHarvester":
-                            device = new DrillDevice(m as ModuleResourceHarvester);
                             break;
                         case "ModuleLight":
                             device = new LightDevice(m as ModuleLight);
@@ -342,12 +321,6 @@ namespace Kerbalism.Automation
                         // depending on module name
                         switch (m.moduleName)
                         {
-                            case "ProcessController":
-                                device = new ProtoProcessDevice(module_prefab as ProcessController, p, m);
-                                break;
-                            case "Harvester":
-                                device = new ProtoHarvesterDevice(module_prefab as Harvester, p, m);
-                                break;
                             case "Laboratory":
                                 device = new ProtoLaboratoryDevice(module_prefab as Laboratory, p, m);
                                 break;
@@ -356,17 +329,6 @@ namespace Kerbalism.Automation
                                 break;
                             case "SolarPanelFixer":
                                 device = new ProtoPanelDevice(module_prefab as SolarPanelFixer, p, m);
-                                break;
-                            case "ModuleGenerator":
-                                device = new ProtoGeneratorDevice(module_prefab as ModuleGenerator, p, m);
-                                break;
-                            case "ModuleResourceConverter":
-                            case "ModuleKPBSConverter":
-                            case "FissionReactor":
-                                device = new ProtoConverterDevice(module_prefab as ModuleResourceConverter, p, m);
-                                break;
-                            case "ModuleResourceHarvester":
-                                device = new ProtoDrillDevice(module_prefab as ModuleResourceHarvester, p, m);
                                 break;
                             case "ModuleLight":
                             case "ModuleColoredLensLight":

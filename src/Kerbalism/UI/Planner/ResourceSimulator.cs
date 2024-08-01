@@ -1,11 +1,8 @@
 using System;
-using System.Collections;
 using System.Reflection;
 using System.Collections.Generic;
 using Kerbalism.Modules;
-using Kerbalism.Profile;
 using Kerbalism.System;
-using Kerbalism.Utility;
 using ModuleWheels;
 
 namespace Kerbalism.Planner
@@ -95,21 +92,6 @@ namespace Kerbalism.Planner
                 }
             }
 
-            // process all rules
-            foreach (Rule r in Profile.Profile.rules)
-            {
-                if (r.input.Length > 0 && r.rate > 0.0)
-                {
-                    Process_rule(parts, r, env, va);
-                }
-            }
-
-            // process all processes
-            foreach (Process p in Profile.Profile.processes)
-            {
-                Process_process(parts, p, env, va);
-            }
-
             // process all modules
             foreach (Part p in parts)
             {
@@ -136,9 +118,6 @@ namespace Kerbalism.Planner
                     {
                         switch (m.moduleName)
                         {
-                            case "Harvester":
-                                Process_harvester(m as Harvester, va);
-                                break;
                             case "Laboratory":
                                 Process_laboratory(m as Laboratory);
                                 break;
@@ -147,18 +126,6 @@ namespace Kerbalism.Planner
                                 break;
                             case "ModuleCommand":
                                 Process_command(m as ModuleCommand);
-                                break;
-                            case "ModuleGenerator":
-                                Process_generator(m as ModuleGenerator, p);
-                                break;
-                            case "ModuleResourceConverter":
-                                Process_converter(m as ModuleResourceConverter, va);
-                                break;
-                            case "ModuleKPBSConverter":
-                                Process_converter(m as ModuleResourceConverter, va);
-                                break;
-                            case "ModuleResourceHarvester":
-                                Process_stockharvester(m as ModuleResourceHarvester, va);
                                 break;
                             case "ModuleScienceConverter":
                                 Process_stocklab(m as ModuleScienceConverter);
@@ -181,15 +148,6 @@ namespace Kerbalism.Planner
                                 break;
                             case "KerbalismScansat":
                                 Process_scanner(m as KerbalismScansat);
-                                break;
-                            case "FissionGenerator":
-                                Process_fission_generator(p, m);
-                                break;
-                            case "ModuleRadioisotopeGenerator":
-                                Process_radioisotope_generator(p, m);
-                                break;
-                            case "ModuleCryoTank":
-                                Process_cryotank(p, m);
                                 break;
                             case "ModuleRTAntennaPassive":
                                 Process_rtantenna(m);
@@ -318,87 +276,6 @@ namespace Kerbalism.Planner
             res.AddPartResources(p);
         }
 
-        /// <summary>process a rule and add/remove the resources from the simulator</summary>
-        private void Process_rule_inner_body(double k, Part p, Rule r, EnvironmentAnalyzer env, VesselAnalyzer va)
-        {
-            // deduce rate per-second
-            double rate = va.crew_count * (r.interval > 0.0 ? r.rate / r.interval : r.rate);
-
-            // prepare recipe
-            if (r.output.Length == 0)
-            {
-                Resource(r.input).Consume(rate * k, r.name);
-            }
-            else if (rate > double.Epsilon)
-            {
-                // - rules always dump excess overboard (because it is waste)
-                SimulatedRecipe recipe = new SimulatedRecipe(p, r.title);
-                recipe.Input(r.input, rate * k);
-                recipe.Output(r.output, rate * k * r.ratio, true);
-                recipes.Add(recipe);
-            }
-        }
-
-        /// <summary>determine if the resources involved are restricted to a part, and then process a rule</summary>
-        public void Process_rule(List<Part> parts, Rule r, EnvironmentAnalyzer env, VesselAnalyzer va)
-        {
-            // evaluate modifiers
-            double k = Modifiers.Evaluate(env, va, this, r.modifiers);
-            Process_rule_inner_body(k, null, r, env, va);
-        }
-
-        /// <summary>process the process and add/remove the resources from the simulator</summary>
-        private void Process_process_inner_body(double k, Part p, Process pr, EnvironmentAnalyzer env,
-            VesselAnalyzer va)
-        {
-            // prepare recipe
-            SimulatedRecipe recipe = new SimulatedRecipe(p, pr.title);
-            foreach (KeyValuePair<string, double> input in pr.inputs)
-            {
-                recipe.Input(input.Key, input.Value * k);
-            }
-
-            foreach (KeyValuePair<string, double> output in pr.outputs)
-            {
-                recipe.Output(output.Key, output.Value * k, pr.defaultDumpValve.Check(output.Key));
-            }
-
-            recipes.Add(recipe);
-        }
-
-        /// <summary>process the process and add/remove the resources from the simulator for the entire vessel at once</summary>
-        private void Process_process_vessel_wide(Process pr, EnvironmentAnalyzer env, VesselAnalyzer va)
-        {
-            // evaluate modifiers
-            double k = Modifiers.Evaluate(env, va, this, pr.modifiers);
-            Process_process_inner_body(k, null, pr, env, va);
-        }
-
-        /// <summary>
-        /// determine if the resources involved are restricted to a part, and then process
-        /// the process and add/remove the resources from the simulator
-        /// </summary>
-        /// <remarks>while rules are usually input or output only, processes transform input to output</remarks>
-        public void Process_process(List<Part> parts, Process pr, EnvironmentAnalyzer env, VesselAnalyzer va)
-        {
-            Process_process_vessel_wide(pr, env, va);
-        }
-
-        void Process_harvester(Harvester harvester, VesselAnalyzer va)
-        {
-            if (harvester.running && harvester.simulated_abundance > harvester.min_abundance)
-            {
-                SimulatedRecipe recipe = new SimulatedRecipe(harvester.part, "harvester");
-                if (harvester.ec_rate > double.Epsilon) recipe.Input("ElectricCharge", harvester.ec_rate);
-                recipe.Output(
-                    harvester.resource,
-                    Harvester.AdjustedRate(harvester, new CrewSpecs("Engineer@0"), va.crew,
-                        harvester.simulated_abundance),
-                    dump: false);
-                recipes.Add(recipe);
-            }
-        }
-
         void Process_laboratory(Laboratory lab)
         {
             // note: we are not checking if there is a scientist in the part
@@ -425,81 +302,6 @@ namespace Kerbalism.Planner
             {
                 Resource(res.name).Consume(res.rate, "command");
             }
-        }
-
-
-        void Process_generator(ModuleGenerator generator, Part p)
-        {
-            // skip launch clamps, that include a generator
-            if (Lib.PartName(p) == "launchClamp1")
-                return;
-
-            SimulatedRecipe recipe = new SimulatedRecipe(p, "generator");
-            foreach (ModuleResource res in generator.resHandler.inputResources)
-            {
-                recipe.Input(res.name, res.rate);
-            }
-
-            foreach (ModuleResource res in generator.resHandler.outputResources)
-            {
-                recipe.Output(res.name, res.rate, true);
-            }
-
-            recipes.Add(recipe);
-        }
-
-
-        void Process_converter(ModuleResourceConverter converter, VesselAnalyzer va)
-        {
-            // calculate experience bonus
-            float exp_bonus = converter.UseSpecialistBonus
-                ? converter.EfficiencyBonus * (converter.SpecialistBonusBase +
-                                               (converter.SpecialistEfficiencyFactor * (va.crew_engineer_maxlevel + 1)))
-                : 1.0f;
-
-            // use part name as recipe name
-            // - include crew bonus in the recipe name
-            string recipe_name = Lib.BuildString(converter.part.partInfo.title, " (efficiency: ",
-                Lib.HumanReadablePerc(exp_bonus), ")");
-
-            // generate recipe
-            SimulatedRecipe recipe = new SimulatedRecipe(converter.part, recipe_name);
-            foreach (ResourceRatio res in converter.inputList)
-            {
-                recipe.Input(res.ResourceName, res.Ratio * exp_bonus);
-            }
-
-            foreach (ResourceRatio res in converter.outputList)
-            {
-                recipe.Output(res.ResourceName, res.Ratio * exp_bonus, res.DumpExcess);
-            }
-
-            recipes.Add(recipe);
-        }
-
-
-        void Process_stockharvester(ModuleResourceHarvester harvester, VesselAnalyzer va)
-        {
-            // calculate experience bonus
-            float exp_bonus = harvester.UseSpecialistBonus
-                ? harvester.EfficiencyBonus * (harvester.SpecialistBonusBase +
-                                               (harvester.SpecialistEfficiencyFactor * (va.crew_engineer_maxlevel + 1)))
-                : 1.0f;
-
-            // use part name as recipe name
-            // - include crew bonus in the recipe name
-            string recipe_name = Lib.BuildString(harvester.part.partInfo.title, " (efficiency: ",
-                Lib.HumanReadablePerc(exp_bonus), ")");
-
-            // generate recipe
-            SimulatedRecipe recipe = new SimulatedRecipe(harvester.part, recipe_name);
-            foreach (ResourceRatio res in harvester.inputList)
-            {
-                recipe.Input(res.ResourceName, res.Ratio);
-            }
-
-            recipe.Output(harvester.ResourceName, harvester.Efficiency * exp_bonus, true);
-            recipes.Add(recipe);
         }
 
 
@@ -551,82 +353,6 @@ namespace Kerbalism.Planner
         void Process_scanner(KerbalismScansat m)
         {
             Resource("ElectricCharge").Consume(m.ec_rate, "scanner");
-        }
-
-
-        void Process_fission_generator(Part p, PartModule m)
-        {
-            double max_rate = Lib.ReflectionValue<float>(m, "PowerGeneration");
-
-            // get fission reactor tweakable, will default to 1.0 for other modules
-            ModuleResourceConverter reactor = p.FindModuleImplementing<ModuleResourceConverter>();
-            double tweakable =
-                reactor == null ? 1.0 : Lib.ReflectionValue<float>(reactor, "CurrentPowerPercent") * 0.01f;
-
-            Resource("ElectricCharge").Produce(max_rate * tweakable, "fission generator");
-        }
-
-
-        void Process_radioisotope_generator(Part p, PartModule m)
-        {
-            double max_rate = Lib.ReflectionValue<float>(m, "BasePower");
-
-            Resource("ElectricCharge").Produce(max_rate, "radioisotope generator");
-        }
-
-
-        void Process_cryotank(Part p, PartModule m)
-        {
-            // is cooling available
-            bool available = Lib.ReflectionValue<bool>(m, "CoolingEnabled");
-
-            // get list of fuels, do nothing if no fuels
-            IList fuels = Lib.ReflectionValue<IList>(m, "fuels");
-            if (fuels == null)
-                return;
-
-            // get cooling cost
-            double cooling_cost = Lib.ReflectionValue<float>(m, "CoolingCost");
-
-            string fuel_name = "";
-            double amount = 0.0;
-            double total_cost = 0.0;
-            double boiloff_rate = 0.0;
-
-            // calculate EC cost of cooling
-            foreach (object fuel in fuels)
-            {
-                fuel_name = Lib.ReflectionValue<string>(fuel, "fuelName");
-                // if fuel_name is null, don't do anything
-                if (fuel_name == null)
-                    continue;
-
-                // get amount in the part
-                amount = Lib.Amount(p, fuel_name);
-
-                // if there is some fuel
-                if (amount > double.Epsilon)
-                {
-                    // if cooling is enabled
-                    if (available)
-                    {
-                        // calculate ec consumption
-                        total_cost += cooling_cost * amount * 0.001;
-                    }
-                    // if cooling is disabled
-                    else
-                    {
-                        // get boiloff rate per-second
-                        boiloff_rate = Lib.ReflectionValue<float>(fuel, "boiloffRate") / 360000.0f;
-
-                        // let it boil off
-                        Resource(fuel_name).Consume(amount * boiloff_rate, "cryotank");
-                    }
-                }
-            }
-
-            // apply EC consumption
-            Resource("ElectricCharge").Consume(total_cost, "cryotank");
         }
 
         void Process_rtantenna(PartModule m)

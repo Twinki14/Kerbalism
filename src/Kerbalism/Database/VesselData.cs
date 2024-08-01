@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using Kerbalism.Automation;
 using Kerbalism.Comms;
 using Kerbalism.Modules;
-using Kerbalism.Profile;
 using Kerbalism.Science;
 using Kerbalism.System;
-using Kerbalism.Utility;
 
 namespace Kerbalism.Database
 {
@@ -22,7 +20,6 @@ namespace Kerbalism.Database
 
         public bool is_vessel; // true if this is a valid vessel
         public bool is_rescue; // true if this is a rescue mission vessel
-        public bool is_eva_dead;
 
         /// <summary>False in the following cases : asteroid, debris, flag, deployed ground part, dead eva, rescue</summary>
         public bool IsSimulated { get; private set; }
@@ -98,8 +95,6 @@ namespace Kerbalism.Database
         private Dictionary<string, SupplyData> supplies; // supplies data
         public List<uint> scansat_id; // used to remember scansat sensors that were disabled
         public double scienceTransmitted;
-
-        public Dictionary<Process, DumpSpecs.ActiveValve> dumpValves;
 
         // persist that so we don't have to do an expensive check every time
         public bool IsSerenityGroundController => isSerenityGroundController;
@@ -503,8 +498,8 @@ namespace Kerbalism.Database
 
             if (isInit)
             {
-                Lib.LogDebug("Init complete : IsSimulated={3}, is_vessel={0}, is_rescue={1}, is_eva_dead={2} ({4})",
-                    Lib.LogLevel.Message, is_vessel, is_rescue, is_eva_dead, IsSimulated, Vessel.vesselName);
+                Lib.LogDebug("Init complete : IsSimulated={2}, is_vessel={0}, is_rescue={1}, ({3})",
+                    Lib.LogLevel.Message, is_vessel, is_rescue, IsSimulated, Vessel.vesselName);
             }
         }
 
@@ -513,13 +508,7 @@ namespace Kerbalism.Database
             // determine if this is a valid vessel
             is_vessel = Lib.IsVessel(Vessel);
 
-            // determine if this is a rescue mission vessel
-            is_rescue = Misc.IsRescueMission(Vessel);
-
-            // dead EVA are not valid vessels
-            is_eva_dead = EVA.IsDeadEVA(Vessel);
-
-            return is_vessel && !is_rescue && !is_eva_dead;
+            return is_vessel;
         }
 
         /// <summary>
@@ -793,7 +782,6 @@ namespace Kerbalism.Database
             stormData = new StormData(null);
             computer = new Computer(null);
             supplies = new Dictionary<string, SupplyData>();
-            dumpValves = new Dictionary<Process, DumpSpecs.ActiveValve>();
             scansat_id = new List<uint>();
             filesTransmitted = new List<File>();
             vesselSituations = new VesselSituations(this);
@@ -836,25 +824,6 @@ namespace Kerbalism.Database
                 foreach (ConfigNode supply_node in suppliesNode.nodes)
                 {
                     supplies.Add(DB.From_safe_key(supply_node.name), new SupplyData(supply_node));
-                }
-            }
-
-            dumpValves = new Dictionary<Process, DumpSpecs.ActiveValve>();
-            ConfigNode dumpSpecsNode = node.GetNode("dump_specs");
-            if (dumpSpecsNode != null)
-            {
-                foreach (ConfigNode.Value dumpValue in node.GetNode("dump_specs").values)
-                {
-                    Process process = Profile.Profile.processes.Find(p => p.name == dumpValue.name);
-                    if (process == null || !int.TryParse(dumpValue.value, out int dumpIndex))
-                        continue;
-
-                    DumpSpecs.ActiveValve valve = new DumpSpecs.ActiveValve(process.dump)
-                    {
-                        ValveIndex = dumpIndex
-                    };
-
-                    dumpValves.Add(process, valve);
                 }
             }
 
@@ -906,12 +875,6 @@ namespace Kerbalism.Database
             foreach (var p in supplies)
             {
                 p.Value.Save(supplies_node.AddNode(DB.To_safe_key(p.Key)));
-            }
-
-            var dump_node = node.AddNode("dump_specs");
-            foreach (KeyValuePair<Process, DumpSpecs.ActiveValve> dumpSpec in dumpValves)
-            {
-                dump_node.AddValue(dumpSpec.Key.name, dumpSpec.Value.ValveIndex);
             }
 
             foreach (uint id in scansat_id)

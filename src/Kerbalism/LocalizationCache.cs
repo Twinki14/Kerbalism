@@ -338,7 +338,6 @@ namespace Kerbalism
         public static string Brokers_Others = GetLoc("Brokers_Others"); // "others"
         public static string Brokers_SolarPanel = GetLoc("Brokers_SolarPanel"); // "solar panel"
         public static string Brokers_KSPIEGenerator = GetLoc("Brokers_KSPIEGenerator"); // "KSPIE generator"
-        public static string Brokers_FissionReactor = GetLoc("Brokers_FissionReactor"); // "fission generator"
         public static string Brokers_RTG = GetLoc("Brokers_RTG"); // "radioisotope generator"
         public static string Brokers_ScienceLab = GetLoc("Brokers_ScienceLab"); // "science lab"
         public static string Brokers_Light = GetLoc("Brokers_Light"); // "light"
@@ -351,9 +350,6 @@ namespace Kerbalism
         public static string Brokers_Laboratory = GetLoc("Brokers_Laboratory"); // "laboratory"
         public static string Brokers_CommsIdle = GetLoc("Brokers_CommsIdle"); // "comms (idle)"
         public static string Brokers_CommsXmit = GetLoc("Brokers_CommsXmit"); // "comms (xmit)"
-        public static string Brokers_StockConverter = GetLoc("Brokers_StockConverter"); // "converter"
-        public static string Brokers_StockDrill = GetLoc("Brokers_StockDrill"); // "drill"
-        public static string Brokers_Harvester = GetLoc("Brokers_Harvester"); // "harvester"
 
         ////////////////////////////////////////////////////////////////////
         //Contracts
@@ -1056,42 +1052,6 @@ namespace Kerbalism
         public static string HardDrive_Capacityunlimited = GetLoc("HardDrive_Capacityunlimited"); // "unlimited"
 
         ////////////////////////////////////////////////////////////////////
-        // Module : Harvester
-        ////////////////////////////////////////////////////////////////////
-        public static ParamString
-            Harvester_generatedescription =
-                new ParamString("Harvester_generatedescription"); // "Extract <<1>> from <<2>>"
-
-        public static string Harvester_Action = GetLoc("Harvester_Action"); // "Start/Stop Harvester"
-        public static string Harvester_running = GetLoc("Harvester_running"); // "running"
-        public static string Harvester_stopped = GetLoc("Harvester_stopped"); // "stopped"
-        public static string Harvester_none = GetLoc("Harvester_none"); // "none"
-        public static string Harvester_land_valid = GetLoc("Harvester_land_valid"); // "no ground contact"
-        public static string Harvester_ocean_valid = GetLoc("Harvester_ocean_valid"); // "not in ocean"
-        public static string Harvester_atmo_valid = GetLoc("Harvester_atmo_valid"); // "not in atmosphere"
-        public static string Harvester_space_valid = GetLoc("Harvester_space_valid"); // "not in space"
-        public static string Harvester_pressurebelow = GetLoc("Harvester_pressurebelow"); // "pressure below threshold"
-
-        public static string
-            Harvester_abundancebelow =
-                GetLoc("Harvester_abundancebelow"); // "abundance below threshold"
-
-        public static string
-            Harvester_simulatedabundance = GetLoc("Harvester_simulatedabundance"); // "Simulate at abundance"
-
-        public static string Harvester_source1 = GetLoc("Harvester_source1"); // "the surface"
-        public static string Harvester_source2 = GetLoc("Harvester_source2"); // "the ocean"
-        public static string Harvester_source3 = GetLoc("Harvester_source3"); // "the atmosphere"
-        public static string Harvester_source4 = GetLoc("Harvester_source4"); // "space"
-        public static string Harvester_info1 = GetLoc("Harvester_info1"); // "type"
-        public static string Harvester_info2 = GetLoc("Harvester_info2"); // "resource"
-        public static string Harvester_info3 = GetLoc("Harvester_info3"); // "min abundance"
-        public static string Harvester_info4 = GetLoc("Harvester_info4"); // "min pressure"
-        public static string Harvester_info5 = GetLoc("Harvester_info5"); // "extraction rate"
-        public static string Harvester_info6 = GetLoc("Harvester_info6"); // "at abundance"
-        public static string Harvester_info7 = GetLoc("Harvester_info7"); // "ec consumption"
-
-        ////////////////////////////////////////////////////////////////////
         // Module : ScanSat
         ////////////////////////////////////////////////////////////////////
         public static ParamString
@@ -1142,16 +1102,6 @@ namespace Kerbalism
         ////////////////////////////////////////////////////////////////////
         public static string PlannerController_yes = GetLoc("PlannerController_yes"); // "yes"
         public static string PlannerController_no = GetLoc("PlannerController_no"); // "no"
-
-        ////////////////////////////////////////////////////////////////////
-        // Module : ProcessController
-        ////////////////////////////////////////////////////////////////////
-        public static string ProcessController_Start_Stop = GetLoc("ProcessController_Start_Stop"); // "Start/Stop"
-        public static string ProcessController_broken = GetLoc("ProcessController_broken"); // "broken"
-        public static string ProcessController_running = GetLoc("ProcessController_running"); // "running"
-        public static string ProcessController_stopped = GetLoc("ProcessController_stopped"); // "stopped"
-        public static string ProcessController_Dump = GetLoc("ProcessController_Dump"); // "Dump"
-        public static string ProcessController_info1 = GetLoc("ProcessController_info1"); // "Half-life"
 
         ////////////////////////////////////////////////////////////////////
         // Module : Sensor

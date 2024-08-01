@@ -36,11 +36,6 @@ namespace Kerbalism
             // get resources
             VesselResources resources = ResourceCache.Get(v);
 
-            // get crew
-            var crew = Lib.CrewList(v);
-
-            // draw the content
-            Render_crew(p, crew);
             if (Features.Science) Render_science(p, v, vd);
             Render_supplies(p, v, vd, resources);
             Render_environment(p, v, vd);
@@ -220,66 +215,6 @@ namespace Kerbalism
                 // finally, render resource supply
                 p.AddContent(label, Lib.HumanReadableDuration(res.DepletionTime()), rate_tooltip);
                 ++supplies;
-            }
-        }
-
-
-        static void Render_crew(Panel p, List<ProtoCrewMember> crew)
-        {
-            // do nothing if there isn't a crew, or if there are no rules
-            if (crew.Count == 0 || Profile.Profile.rules.Count == 0) return;
-
-            // panel section
-            p.AddSection(Local.TELEMETRY_VITALS); //"VITALS"
-
-            // for each crew
-            foreach (ProtoCrewMember kerbal in crew)
-            {
-                // get kerbal data from DB
-                KerbalData kd = DB.Kerbal(kerbal.name);
-
-                // analyze issues
-                UInt32 health_severity = 0;
-                UInt32 stress_severity = 0;
-
-                // generate tooltip
-                List<string> tooltips = new List<string>();
-                foreach (Rule r in Profile.Profile.rules)
-                {
-                    // get rule data
-                    RuleData rd = kd.Rule(r.name);
-
-                    // add to the tooltip
-                    tooltips.Add(Lib.BuildString("<b>", Lib.HumanReadablePerc(rd.problem / r.fatal_threshold), "</b>\t",
-                        r.title));
-
-                    // analyze issue
-                    if (rd.problem > r.danger_threshold)
-                    {
-                        if (!r.breakdown) health_severity = Math.Max(health_severity, 2);
-                        else stress_severity = Math.Max(stress_severity, 2);
-                    }
-                    else if (rd.problem > r.warning_threshold)
-                    {
-                        if (!r.breakdown) health_severity = Math.Max(health_severity, 1);
-                        else stress_severity = Math.Max(stress_severity, 1);
-                    }
-                }
-
-                string tooltip = Lib.BuildString("<align=left />", String.Join("\n", tooltips.ToArray()));
-
-                // generate kerbal name
-                string name = kerbal.name.ToLower().Replace(" kerman", string.Empty);
-
-                // render selectable title
-                p.AddContent(Lib.Ellipsis(name, Styles.ScaleStringLength(30)),
-                    kd.disabled ? Lib.Color(Local.TELEMETRY_HYBERNATED, Lib.Kolor.Cyan) : string.Empty); //"HYBERNATED"
-                p.AddRightIcon(
-                    health_severity == 0 ? Textures.health_white :
-                    health_severity == 1 ? Textures.health_yellow : Textures.health_red, tooltip);
-                p.AddRightIcon(
-                    stress_severity == 0 ? Textures.brain_white :
-                    stress_severity == 1 ? Textures.brain_yellow : Textures.brain_red, tooltip);
             }
         }
     }

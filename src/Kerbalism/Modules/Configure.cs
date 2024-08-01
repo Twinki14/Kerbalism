@@ -415,7 +415,7 @@ namespace Kerbalism.Modules
             {
                 // disable for dead eva kerbals
                 Vessel v = FlightGlobals.ActiveVessel;
-                if (v == null || EVA.IsDeadEVA(v)) return;
+                if (v == null) return;
 
                 // check trait
                 if (!reconfigure_cs.Check(v))

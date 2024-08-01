@@ -15,8 +15,6 @@ namespace Kerbalism
             SolarPanel,
             Harvester,
             RTG,
-            FuelCell,
-            ECLSS,
             VesselSystem,
             Kerbal,
             Comms,
@@ -34,21 +32,12 @@ namespace Kerbalism
         public static ResourceBroker KSPIEGenerator =
             GetOrCreate("KSPIEGenerator", BrokerCategory.Generator, Local.Brokers_KSPIEGenerator);
 
-        public static ResourceBroker FissionReactor =
-            GetOrCreate("FissionReactor", BrokerCategory.Converter, Local.Brokers_FissionReactor);
-
         public static ResourceBroker RTG = GetOrCreate("RTG", BrokerCategory.RTG, Local.Brokers_RTG);
 
         public static ResourceBroker ScienceLab =
             GetOrCreate("ScienceLab", BrokerCategory.Science, Local.Brokers_ScienceLab);
 
         public static ResourceBroker Light = GetOrCreate("Light", BrokerCategory.VesselSystem, Local.Brokers_Light);
-
-        public static ResourceBroker Boiloff =
-            GetOrCreate("Boiloff", BrokerCategory.VesselSystem, Local.Brokers_Boiloff);
-
-        public static ResourceBroker Cryotank =
-            GetOrCreate("Cryotank", BrokerCategory.VesselSystem, Local.Brokers_Cryotank);
 
         public static ResourceBroker Deploy = GetOrCreate("Deploy", BrokerCategory.VesselSystem, Local.Brokers_Deploy);
 
@@ -69,15 +58,6 @@ namespace Kerbalism
 
         public static ResourceBroker
             CommsXmit = GetOrCreate("CommsXmit", BrokerCategory.Comms, Local.Brokers_CommsXmit);
-
-        public static ResourceBroker StockConverter =
-            GetOrCreate("StockConverter", BrokerCategory.Converter, Local.Brokers_StockConverter);
-
-        public static ResourceBroker StockDrill =
-            GetOrCreate("Converter", BrokerCategory.Harvester, Local.Brokers_StockDrill);
-
-        public static ResourceBroker Harvester =
-            GetOrCreate("Harvester", BrokerCategory.Harvester, Local.Brokers_Harvester);
 
         public string Id { get; private set; }
         public BrokerCategory Category { get; private set; }

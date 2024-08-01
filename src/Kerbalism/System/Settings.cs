@@ -48,8 +48,6 @@ namespace Kerbalism.System
             // crew level
             LaboratoryCrewLevelBonus = Lib.ConfigValue(cfg, "LaboratoryCrewLevelBonus", 0.2);
             MaxLaborartoryBonus = Lib.ConfigValue(cfg, "MaxLaborartoryBonus", 2.0);
-            HarvesterCrewLevelBonus = Lib.ConfigValue(cfg, "HarvesterCrewLevelBonus", 0.1);
-            MaxHarvesterBonus = Lib.ConfigValue(cfg, "MaxHarvesterBonus", 2.0);
 
             // misc
             EnforceCoherency = Lib.ConfigValue(cfg, "EnforceCoherency", true);
@@ -147,11 +145,6 @@ namespace Kerbalism.System
             LaboratoryCrewLevelBonus; // factor for laboratory rate speed gain per crew level above minimum
 
         public static double MaxLaborartoryBonus; // max bonus to be gained by having skilled crew on a laboratory
-
-        public static double
-            HarvesterCrewLevelBonus; // factor for harvester speed gain per engineer level above minimum
-
-        public static double MaxHarvesterBonus; // max bonus to be gained by having skilled engineers on a mining rig
 
         // misc
         public static bool EnforceCoherency; // detect and avoid issues at high timewarp in external modules
