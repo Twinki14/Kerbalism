@@ -69,7 +69,6 @@ namespace Kerbalism.Planner
 			Lib.Log("Planner/EA: inner_rad " + Lib.HumanReadableRadiation(inner_rad, false));
 			Lib.Log("Planner/EA: outer_rad " + Lib.HumanReadableRadiation(outer_rad, false));
 			Lib.Log("Planner/EA: surface_rad " + Lib.HumanReadableRadiation(surface_rad, false));
-			Lib.Log("Planner/EA: storm_rad " + Lib.HumanReadableRadiation(storm_rad, false));
 #endif
         }
 

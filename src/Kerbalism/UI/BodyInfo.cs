@@ -74,25 +74,17 @@ namespace Kerbalism
                 double activity, cycle;
                 RadiationLevels(body, out inner, out outer, out pause, out activity, out cycle);
 
-                if (Storm.sun_observation_quality > 0.5 && activity > -1)
+                if (activity > -1)
                 {
-                    string title = Local.BodyInfo_solaractivity; //"solar activity"
-
-                    if (Storm.sun_observation_quality > 0.7)
-                    {
-                        title = Lib.BuildString(title, ": ",
-                            Lib.Color(Local.BodyInfo_stormcycle.Format(Lib.HumanReadableDuration(cycle)),
-                                Lib.Kolor.LightGrey)); // <<1>> cycle
-                    }
+                    var title = Lib.BuildString(Local.BodyInfo_solaractivity, ": ",
+                        Lib.Color(Local.BodyInfo_stormcycle.Format(Lib.HumanReadableDuration(cycle)),
+                            Lib.Kolor.LightGrey)); // <<1>> cycle
 
                     p.AddContent(title, Lib.HumanReadablePerc(activity));
                 }
 
-                if (Storm.sun_observation_quality > 0.8)
-                {
-                    p.AddContent(Local.BodyInfo_radiationonsurface,
-                        Lib.HumanReadableRadiation(surfaceRadiation)); //"radiation on surface:"
-                }
+                p.AddContent(Local.BodyInfo_radiationonsurface,
+                    Lib.HumanReadableRadiation(surfaceRadiation)); //"radiation on surface:"
 
                 p.AddContent(
                     Lib.BuildString(Local.BodyInfo_innerbelt, " ",

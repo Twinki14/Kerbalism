@@ -166,7 +166,6 @@
     <Compile Include="Utility\Serenity.cs"/>
     <Compile Include="Patches\VesselRecovery_OnVesselRecovered.cs"/>
     <Compile Include="Radiation\Radiation.cs"/>
-    <Compile Include="Radiation\Storm.cs"/>
     <Compile Include="Database\ResourceUpdateDelegate.cs"/>
     <Compile Include="Modules\IKerbalismModule.cs"/>
     <Compile Include="Patches\ModuleDataTransmitter_GetInfo.cs"/>

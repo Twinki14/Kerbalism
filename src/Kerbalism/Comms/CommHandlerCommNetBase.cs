@@ -121,6 +121,8 @@ namespace Kerbalism.Comms
                     nameof(CommNetVessel_OnNetworkPostUpdate_Prefix))));
         }
 
+        // TODO - Kerbalism - Forked Science
+        // TODO - Not sure if this was only needed for Storm related adjustments
         // ensure unloadedDoOnce is true for unloaded vessels
         private static void CommNetVessel_OnNetworkPreUpdate_Prefix(CommNetVessel __instance,
             ref bool ___unloadedDoOnce)
@@ -129,6 +131,8 @@ namespace Kerbalism.Comms
                 ___unloadedDoOnce = true;
         }
 
+        // TODO - Kerbalism - Forked Science
+        // TODO - Not sure if this was only needed for Storm related adjustments
         // ensure unloadedDoOnce is true for unloaded vessels
         private static void CommNetVessel_OnNetworkPostUpdate_Prefix(CommNetVessel __instance,
             ref bool ___unloadedDoOnce)

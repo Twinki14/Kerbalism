@@ -7,7 +7,7 @@ namespace Kerbalism.Comms
 {
     public class CommHandler
     {
-        private static bool CommNetStormPatchApplied = false;
+        private static bool CommNetPatchApplied = false;
 
         protected VesselData vd;
 
@@ -31,9 +31,9 @@ namespace Kerbalism.Comms
             // This said, this isn't ideal, and it would be cleaner to have a "commHandledByAPI"
             // bool that mods should set once and for all before any vessel exist.
 
-            if (!CommNetStormPatchApplied)
+            if (!CommNetPatchApplied)
             {
-                CommNetStormPatchApplied = true;
+                CommNetPatchApplied = true;
 
                 if (API.Comm.handlers.Count == 0 && !RemoteTech.Installed)
                 {
