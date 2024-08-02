@@ -65,7 +65,6 @@
     <Compile Include="LocalizationCache.cs"/>
     <Compile Include="Modules\AntennaDataTransmitterRemoteTech.cs"/>
     <Compile Include="Modules\KebalismSentinel.cs"/>
-    <Compile Include="Patches\RefillEVAPropellant.cs"/>
     <Compile Include="Science\SubjectData.cs"/>
     <Compile Include="Database\SupplyData.cs"/>
     <Compile Include="Database\UIData.cs"/>

@@ -8,11 +8,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using CommNet;
-using Kerbalism.Science;
 using Kerbalism.System;
 using Kerbalism.Utility;
 using KSP.UI.Screens;
-using File = Kerbalism.Science.File;
 using Random = System.Random;
 
 namespace Kerbalism
@@ -120,7 +118,7 @@ namespace Kerbalism
                         AssemblyLoader.loadedAssemblies.FirstOrDefault(p => p.name == "KerbalismBootstrap");
                     if (bootstrap != null && bootstrap.assembly != null)
                         kerbalismDevBuild = bootstrap.assembly.GetName().Version.Build;
-                    else Lib.Log("This is a dev build but KerbalismBootstrap wasn't found!", Lib.LogLevel.Error);
+                    else Log("This is a dev build but KerbalismBootstrap wasn't found!", LogLevel.Error);
                 }
 
                 return kerbalismDevBuild;
@@ -197,7 +195,7 @@ namespace Kerbalism
                 findpath = Path.GetFileName(gamedir);
                 gamedir = Path.GetDirectoryName(gamedir);
                 string[] paths =
-                    global::System.IO.Directory.GetDirectories(gamedir, findpath, SearchOption.AllDirectories);
+                    Directory.GetDirectories(gamedir, findpath, SearchOption.AllDirectories);
                 if (paths.Length > 0)
                     return true;
                 else
@@ -435,7 +433,7 @@ namespace Kerbalism
         public static string Ellipsis(string s, uint len)
         {
             len = Math.Max(len, 3u);
-            return s.Length <= len ? s : Lib.BuildString(s.Substring(0, (int) len - 3), "...");
+            return s.Length <= len ? s : BuildString(s.Substring(0, (int) len - 3), "...");
         }
 
         /// <summary> return string limited to len, with ... in the middle</summary>
@@ -444,7 +442,7 @@ namespace Kerbalism
             if (s.Length > len)
             {
                 len = (len - 3) / 2;
-                return Lib.BuildString(s.Substring(0, len), "...", s.Substring(s.Length - len));
+                return BuildString(s.Substring(0, len), "...", s.Substring(s.Length - len));
             }
 
             return s;
@@ -1047,7 +1045,7 @@ namespace Kerbalism
         public static string HumanReadableDistance(double distance)
         {
             if (distance == 0.0) return Local.Generic_NONE; //"none"
-            if (distance < 0.0) return Lib.BuildString("-", HumanReadableDistance(-distance));
+            if (distance < 0.0) return BuildString("-", HumanReadableDistance(-distance));
             if (distance < 1000.0) return BuildString(distance.ToString("F1"), " m");
             distance /= 1000.0;
             if (distance < 1000.0) return BuildString(distance.ToString("F1"), " Km");
@@ -1066,7 +1064,7 @@ namespace Kerbalism
         ///<summary> Pretty-print a speed (in meters/sec) </summary>
         public static string HumanReadableSpeed(double speed)
         {
-            return Lib.BuildString(HumanReadableDistance(speed), "/s");
+            return BuildString(HumanReadableDistance(speed), "/s");
         }
 
         ///<summary> Pretty-print temperature </summary>
@@ -1143,36 +1141,36 @@ namespace Kerbalism
             if (Settings.UseSIUnits)
                 return SIPressure(v);
 
-            return Lib.BuildString(v.ToString("F1"), " kPa");
+            return BuildString(v.ToString("F1"), " kPa");
         }
 
         ///<summary> Pretty-print volume (value is in m^3) </summary>
         public static string HumanReadableVolume(double v)
         {
-            return Lib.BuildString(v.ToString("F2"), " m³");
+            return BuildString(v.ToString("F2"), " m³");
         }
 
         ///<summary> Pretty-print surface (value is in m^2) </summary>
         public static string HumanReadableSurface(double v)
         {
-            return Lib.BuildString(v.ToString("F2"), " m²");
+            return BuildString(v.ToString("F2"), " m²");
         }
 
         ///<summary> Pretty-print mass </summary>
         public static string HumanReadableMass(double v)
         {
             if (v <= double.Epsilon) return "0 kg";
-            if (v > 1) return Lib.BuildString(v.ToString("F3"), " t");
+            if (v > 1) return BuildString(v.ToString("F3"), " t");
             v *= 1000;
-            if (v > 1) return Lib.BuildString(v.ToString("F2"), " kg");
+            if (v > 1) return BuildString(v.ToString("F2"), " kg");
             v *= 1000;
-            return Lib.BuildString(v.ToString("F2"), " g");
+            return BuildString(v.ToString("F2"), " g");
         }
 
         ///<summary> Pretty-print cost </summary>
         public static string HumanReadableCost(double v)
         {
-            return Lib.BuildString(v.ToString("F0"), " $");
+            return BuildString(v.ToString("F0"), " $");
         }
 
         ///<summary> Format a value to 2 decimal places, or return 'none' </summary>
@@ -1250,9 +1248,9 @@ namespace Kerbalism
 
         public static string HumanReadableSampleSize(int slots)
         {
-            if (slots <= 0) return Lib.BuildString(Local.Generic_NO, Local.Generic_SLOT); //"no "
+            if (slots <= 0) return BuildString(Local.Generic_NO, Local.Generic_SLOT); //"no "
 
-            return Lib.BuildString(slots.ToString(), " ", slots > 1 ? Local.Generic_SLOTS : Local.Generic_SLOT);
+            return BuildString(slots.ToString(), " ", slots > 1 ? Local.Generic_SLOTS : Local.Generic_SLOT);
         }
 
         public static int SampleSizeToSlots(double size)
@@ -1271,9 +1269,9 @@ namespace Kerbalism
         public static string HumanReadableScience(double value, bool compact = true)
         {
             if (compact)
-                return Lib.Color(value.ToString("F1"), Kolor.Science, true);
+                return Color(value.ToString("F1"), Kolor.Science, true);
             else
-                return Lib.Color(Lib.BuildString(value.ToString("F1"), " ", Local.SCIENCEARCHIVE_CREDITS),
+                return Color(BuildString(value.ToString("F1"), " ", Local.SCIENCEARCHIVE_CREDITS),
                     Kolor.Science); //CREDITS
         }
 
@@ -1349,9 +1347,9 @@ namespace Kerbalism
         /// <summary>For a given body, return the last parent body that is not a sun </summary>
         public static CelestialBody GetParentPlanet(CelestialBody body)
         {
-            if (Lib.IsSun(body)) return body;
+            if (IsSun(body)) return body;
             CelestialBody checkedBody = body;
-            while (!Lib.IsSun(checkedBody.referenceBody)) checkedBody = checkedBody.referenceBody;
+            while (!IsSun(checkedBody.referenceBody)) checkedBody = checkedBody.referenceBody;
             return checkedBody;
         }
 
@@ -1361,7 +1359,7 @@ namespace Kerbalism
         public static void DirectionAndDistance(CelestialBody from, CelestialBody to, out Vector3d direction,
             out double distance)
         {
-            Lib.DirectionAndDistance(from.position, to.position, out direction, out distance);
+            DirectionAndDistance(from.position, to.position, out direction, out distance);
             distance -= from.Radius + to.Radius;
         }
 
@@ -1371,7 +1369,7 @@ namespace Kerbalism
         public static void DirectionAndDistance(Vector3d from, CelestialBody to, out Vector3d direction,
             out double distance)
         {
-            Lib.DirectionAndDistance(from, to.position, out direction, out distance);
+            DirectionAndDistance(from, to.position, out direction, out distance);
             distance -= to.Radius;
         }
 
@@ -1524,17 +1522,6 @@ namespace Kerbalism
                     return false;
             }
 
-            // [disabled] when going to eva (and possibly other occasions), for a single update the vessel is not properly set
-            // this can be detected by vessel.distanceToSun being 0 (an impossibility otherwise)
-            // in this case, just wait a tick for the data being set by the game engine
-            // if (v.loaded && v.distanceToSun <= double.Epsilon)
-            //	return false;
-
-            //
-            //if (!v.loaded && v.protoVessel == null)
-            //	continue;
-
-            // the vessel is valid
             return true;
         }
 
@@ -1644,7 +1631,7 @@ namespace Kerbalism
         public static int CrewCount(Part part)
         {
             // outside of the editors, it is easy
-            if (!Lib.IsEditor())
+            if (!IsEditor())
             {
                 return part.protoModuleCrew.Count;
             }
@@ -1912,8 +1899,8 @@ namespace Kerbalism
             // if the resource is not known, log a warning and do nothing
             if (!reslib.Contains(res_name))
             {
-                Lib.Log(Lib.BuildString("error while adding ", res_name, ": the resource doesn't exist"),
-                    Lib.LogLevel.Error);
+                Log(BuildString("error while adding ", res_name, ": the resource doesn't exist"),
+                    LogLevel.Error);
                 return null;
             }
 
@@ -2035,105 +2022,6 @@ namespace Kerbalism
 
         #region SCIENCE DATA
 
-        ///<summary>return true if there is experiment data on the vessel</summary>
-        public static bool HasData(Vessel v)
-        {
-            // stock science system
-            if (!Features.Science)
-            {
-                // if vessel is loaded
-                if (v.loaded)
-                {
-                    // iterate over all science containers/experiments and return true if there is data
-                    return Lib.HasModule<IScienceDataContainer>(v, k => k.GetData().Length > 0);
-                }
-                // if not loaded
-                else
-                {
-                    // iterate over all science containers/experiments proto modules and return true if there is data
-                    return Lib.HasModule(v.protoVessel, "ModuleScienceContainer",
-                               k => k.moduleValues.GetNodes("ScienceData").Length > 0)
-                           || Lib.HasModule(v.protoVessel, "ModuleScienceExperiment",
-                               k => k.moduleValues.GetNodes("ScienceData").Length > 0);
-                }
-            }
-            // our own science system
-            else
-            {
-                foreach (var drive in Drive.GetDrives(v, true))
-                    if (drive.files.Count > 0)
-                        return true;
-                return false;
-            }
-        }
-
-        ///<summary>remove one experiment at random from the vessel</summary>
-        public static void RemoveData(Vessel v)
-        {
-            // stock science system
-            if (!Features.Science)
-            {
-                // if vessel is loaded
-                if (v.loaded)
-                {
-                    // get all science containers/experiments with data
-                    List<IScienceDataContainer> modules =
-                        Lib.FindModules<IScienceDataContainer>(v).FindAll(k => k.GetData().Length > 0);
-
-                    // remove a data sample at random
-                    if (modules.Count > 0)
-                    {
-                        IScienceDataContainer container = modules[Lib.RandomInt(modules.Count)];
-                        ScienceData[] data = container.GetData();
-                        container.DumpData(data[Lib.RandomInt(data.Length)]);
-                    }
-                }
-                // if not loaded
-                else
-                {
-                    // get all science containers/experiments with data
-                    var modules = new List<ProtoPartModuleSnapshot>();
-                    modules.AddRange(Lib.FindModules(v.protoVessel, "ModuleScienceContainer")
-                        .FindAll(k => k.moduleValues.GetNodes("ScienceData").Length > 0));
-                    modules.AddRange(Lib.FindModules(v.protoVessel, "ModuleScienceExperiment")
-                        .FindAll(k => k.moduleValues.GetNodes("ScienceData").Length > 0));
-
-                    // remove a data sample at random
-                    if (modules.Count > 0)
-                    {
-                        ProtoPartModuleSnapshot container = modules[Lib.RandomInt(modules.Count)];
-                        ConfigNode[] data = container.moduleValues.GetNodes("ScienceData");
-                        container.moduleValues.RemoveNode(data[Lib.RandomInt(data.Length)]);
-                    }
-                }
-            }
-            // our own science system
-            else
-            {
-                // select a file at random and remove it
-                foreach (var drive in Drive.GetDrives(v, true))
-                {
-                    if (drive.files.Count > 0) //< it should always be the case
-                    {
-                        SubjectData filename = null;
-                        int i = Lib.RandomInt(drive.files.Count);
-                        foreach (File file in drive.files.Values)
-                        {
-                            if (i-- == 0)
-                            {
-                                filename = file.subjectData;
-                                break;
-                            }
-                        }
-
-                        drive.files.Remove(filename);
-                        break;
-                    }
-                }
-            }
-        }
-
-
         // -- TECH ------------------------------------------------------------------
 
         ///<summary>return true if the tech has been researched</summary>
@@ -2153,43 +2041,16 @@ namespace Kerbalism
             return ResearchAndDevelopment.GetTechnologyState(tech_id) == RDTech.State.Available;
         }
 
-        ///<summary>return number of techs researched among the list specified</summary>
-        public static int CountTech(string[] techs)
-        {
-            int n = 0;
-            foreach (string tech_id in techs) n += HasTech(tech_id) ? 1 : 0;
-            return n;
-        }
-
         #endregion
 
         #region ASSETS
-
-        ///<summary> Returns the path of the directory containing the DLL </summary>
-        public static string Directory()
-        {
-            string dll_path = Assembly.GetExecutingAssembly().Location;
-            return dll_path.Substring(0, dll_path.LastIndexOf(Path.DirectorySeparatorChar));
-        }
 
         ///<summary> Loads a .png texture from the folder defined in <see cref="Textures.TexturePath"/> </summary>
         public static Texture2D GetTexture(string name, int width = 16, int height = 16)
         {
             Texture2D texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
             ImageConversion.LoadImage(texture,
-                global::System.IO.File.ReadAllBytes(Textures.TexturePath + name + ".png"));
-            return texture;
-        }
-
-        ///<summary> Returns a scaled copy of the source texture </summary>
-        public static Texture2D ScaledTexture(Texture2D src, int width, int height,
-            FilterMode mode = FilterMode.Trilinear)
-        {
-            ScaleWithGPU(src, width, height, mode);
-
-            Texture2D texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
-            texture.Resize(width, height);
-            texture.ReadPixels(new Rect(0, 0, width, height), 0, 0, true);
+                File.ReadAllBytes(Textures.TexturePath + name + ".png"));
             return texture;
         }
 
@@ -2300,12 +2161,6 @@ namespace Kerbalism
 
         #region CONFIG
 
-        ///<summary>get a config node from the config system</summary>
-        public static ConfigNode ParseConfig(string path)
-        {
-            return GameDatabase.Instance.GetConfigNode(path) ?? new ConfigNode();
-        }
-
         ///<summary>get a set of config nodes from the config system</summary>
         public static ConfigNode[] ParseConfigs(string path)
         {
@@ -2321,8 +2176,8 @@ namespace Kerbalism
             }
             catch (Exception e)
             {
-                Lib.Log("error while trying to parse '" + key + "' from " + cfg.name + " (" + e.Message + ")",
-                    Lib.LogLevel.Warning);
+                Log("error while trying to parse '" + key + "' from " + cfg.name + " (" + e.Message + ")",
+                    LogLevel.Warning);
                 return def_value;
             }
         }
@@ -2336,8 +2191,8 @@ namespace Kerbalism
             }
             catch (Exception e)
             {
-                Lib.Log("invalid enum in '" + key + "' from " + cfg.name + " (" + e.Message + ")",
-                    Lib.LogLevel.Warning);
+                Log("invalid enum in '" + key + "' from " + cfg.name + " (" + e.Message + ")",
+                    LogLevel.Warning);
                 return def_value;
             }
         }
@@ -2396,7 +2251,7 @@ namespace Kerbalism
         ///<summary>used to make rmb ui status toggles look all the same</summary>
         public static string StatusToggle(string title, string status)
         {
-            return Lib.BuildString("<b>", title, "</b>: ", status);
+            return BuildString("<b>", title, "</b>: ", status);
         }
 
 
@@ -2561,11 +2416,6 @@ namespace Kerbalism
                 return s != null && uint.TryParse(s, out v) ? v : def_value;
             }
 
-            public static Guid ToGuid(string s)
-            {
-                return new Guid(s);
-            }
-
             public static float ToFloat(string s, float def_value = 0.0f)
             {
                 float v;
@@ -2578,29 +2428,29 @@ namespace Kerbalism
                 return s != null && double.TryParse(s, out v) ? v : def_value;
             }
 
-            private static bool TryParseColor(string s, out UnityEngine.Color c)
+            private static bool TryParseColor(string s, out Color c)
             {
                 string[] split = s.Replace(" ", String.Empty).Split(',');
                 if (split.Length < 3)
                 {
-                    c = new UnityEngine.Color(0, 0, 0);
+                    c = new Color(0, 0, 0);
                     return false;
                 }
 
                 if (split.Length == 4)
                 {
-                    c = new UnityEngine.Color(ToFloat(split[0], 0f), ToFloat(split[1], 0f), ToFloat(split[2], 0f),
+                    c = new Color(ToFloat(split[0], 0f), ToFloat(split[1], 0f), ToFloat(split[2], 0f),
                         ToFloat(split[3], 1f));
                     return true;
                 }
 
-                c = new UnityEngine.Color(ToFloat(split[0], 0f), ToFloat(split[1], 0f), ToFloat(split[2], 0f));
+                c = new Color(ToFloat(split[0], 0f), ToFloat(split[1], 0f), ToFloat(split[2], 0f));
                 return true;
             }
 
-            public static UnityEngine.Color ToColor(string s, UnityEngine.Color def_value)
+            public static Color ToColor(string s, Color def_value)
             {
-                UnityEngine.Color v;
+                Color v;
                 return s != null && TryParseColor(s, out v) ? v : def_value;
             }
         }
@@ -2617,7 +2467,7 @@ namespace Kerbalism
 
         public ObjectPair(T key, U Value)
         {
-            this.Key = key;
+            Key = key;
             this.Value = Value;
         }
     }

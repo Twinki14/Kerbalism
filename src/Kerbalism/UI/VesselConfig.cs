@@ -41,13 +41,6 @@ namespace Kerbalism
             p.AddContent(Local.VESSELCONFIG_battery, string.Empty, tooltip); //"battery"
             p.AddRightIcon(vd.cfg_ec ? Textures.toggle_green : Textures.toggle_red, tooltip,
                 () => p.Toggle(ref vd.cfg_ec));
-            if (Features.Supplies)
-            {
-                tooltip = Local.VESSELCONFIG_Supplylow; //"Receive a message when\nsupply resources level is low"
-                p.AddContent(Local.VESSELCONFIG_supply, string.Empty, tooltip); //"supply"
-                p.AddRightIcon(vd.cfg_supply ? Textures.toggle_green : Textures.toggle_red, tooltip,
-                    () => p.Toggle(ref vd.cfg_supply));
-            }
 
             if (API.Comm.handlers.Count > 0 || HighLogic.fetch.currentGame.Parameters.Difficulty.EnableCommNet)
             {

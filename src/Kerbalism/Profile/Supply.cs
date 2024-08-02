@@ -11,8 +11,6 @@ namespace Kerbalism.Profile
             resource = Lib.ConfigValue(node, "resource", string.Empty);
             on_pod = Lib.ConfigValue(node, "on_pod", 0.0);
             on_eva = Lib.ConfigValue(node, "on_eva", 0.0);
-            on_rescue = Lib.ConfigValue(node, "on_rescue",
-                Lib.ConfigValue(node, "on_resque", 0.0)); //< old typo, pre 1.1.9
             empty = Lib.ConfigValue(node, "empty", false);
 
             low_threshold = Lib.ConfigValue(node, "low_threshold", 0.15);
@@ -118,7 +116,6 @@ namespace Kerbalism.Profile
         public string resource; // name of resource
         public double on_pod; // how much resource to add to manned parts, per-kerbal
         public double on_eva; // how much resource to take on eva, if any
-        public double on_rescue; // how much resource to gift to rescue missions
         public bool empty; // set initial amount to zero
 
         public double low_threshold; // threshold of resource level used to show low messages and yellow status color

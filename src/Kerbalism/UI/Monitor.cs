@@ -292,9 +292,6 @@ namespace Kerbalism
             // battery indicator
             Indicator_ec(p, v, vd);
 
-            // supply indicator
-            if (Features.Supplies) Indicator_supplies(p, v, vd);
-
             // signal indicator
             if (Features.Science) Indicator_signal(p, v, vd);
 

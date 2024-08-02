@@ -7,7 +7,6 @@ namespace Kerbalism.System
         public static void Detect()
         {
             // set user-specified features
-            Deploy = Settings.Deploy;
             Science = Settings.Science;
             SpaceWeather = Settings.SpaceWeather;
             Automation = Settings.Automation;
@@ -18,21 +17,15 @@ namespace Kerbalism.System
             // detect features from modifiers
             Radiation = modifiers.Contains("radiation");
 
-            // supplies is enabled if any non-EC supply exist
-            Supplies = Profile.Profile.supplies.Find(k => k.resource != "ElectricCharge") != null;
-
             // log features
             Lib.Log("features:");
-            Lib.Log("- Deploy: " + Deploy);
             Lib.Log("- Science: " + Science);
             Lib.Log("- SpaceWeather: " + SpaceWeather);
             Lib.Log("- Automation: " + Automation);
             Lib.Log("- Radiation: " + Radiation);
-            Lib.Log("- Supplies: " + Supplies);
         }
 
         // user-specified features
-        public static bool Deploy;
         public static bool Science;
         public static bool SpaceWeather;
         public static bool Automation;

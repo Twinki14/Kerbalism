@@ -9,10 +9,9 @@ namespace Kerbalism.System
         full // do not disable controls at all
     }
 
-
     public static class Settings
     {
-        private static string MODS_INCOMPATIBLE = "TacLifeSupport,Snacks,KolonyTools,USILifeSupport";
+        private static string MODS_INCOMPATIBLE = "";
         private static string MODS_WARNING = "RemoteTech,CommNetAntennasInfo";
         private static string MODS_SCIENCE = "KEI,[x] Science!";
 
@@ -26,7 +25,6 @@ namespace Kerbalism.System
             Profile = Lib.ConfigValue(cfg, "Profile", string.Empty);
 
             // user-defined features
-            Deploy = Lib.ConfigValue(cfg, "Deploy", false);
             Science = Lib.ConfigValue(cfg, "Science", false);
             SpaceWeather = Lib.ConfigValue(cfg, "SpaceWeather", false);
             Automation = Lib.ConfigValue(cfg, "Automation", false);
@@ -51,12 +49,9 @@ namespace Kerbalism.System
 
             // misc
             EnforceCoherency = Lib.ConfigValue(cfg, "EnforceCoherency", true);
-            HeadLampsCost = Lib.ConfigValue(cfg, "HeadLampsCost", 0.002);
             LowQualityRendering = Lib.ConfigValue(cfg, "LowQualityRendering", false);
             UIScale = Lib.ConfigValue(cfg, "UIScale", 1.0f);
             UIPanelWidthScale = Lib.ConfigValue(cfg, "UIPanelWidthScale", 1.0f);
-            KerbalDeathReputationPenalty = Lib.ConfigValue(cfg, "KerbalDeathReputationPenalty", 100.0f);
-            KerbalBreakdownReputationPenalty = Lib.ConfigValue(cfg, "KerbalBreakdownReputationPenalty", 30f);
 
             // save game settings presets
             StormFrequency = Lib.ConfigValue(cfg, "StormFrequency", 0.4f);
@@ -67,14 +62,13 @@ namespace Kerbalism.System
             ShieldingEfficiencyEasyMult = Lib.ConfigValue(cfg, "ShieldingEfficiencyEasyMult", 1.1f);
             ShieldingEfficiencyModerateMult = Lib.ConfigValue(cfg, "ShieldingEfficiencyModerateMult", 0.9f);
             ShieldingEfficiencyHardMult = Lib.ConfigValue(cfg, "ShieldingEfficiencyHardMult", 0.8f);
-            ExternRadiation = Lib.ConfigValue(cfg, "ExternRadiation", 0.04f);
+            ExternRadiation = 0.04f;
             RadiationInSievert = Lib.ConfigValue(cfg, "RadiationInSievert", false);
             UseSIUnits = Lib.ConfigValue(cfg, "UseSIUnits", false);
 
             ModsIncompatible = Lib.ConfigValue(cfg, "ModsIncompatible", MODS_INCOMPATIBLE);
             ModsWarning = Lib.ConfigValue(cfg, "ModsWarning", MODS_WARNING);
             ModsScience = Lib.ConfigValue(cfg, "ModsScience", MODS_SCIENCE);
-            CheckForCRP = Lib.ConfigValue(cfg, "CheckForCRP", true);
 
             UseSamplingSunFactor = Lib.ConfigValue(cfg, "UseSamplingSunFactor", false);
             UseResourcePriority = Lib.ConfigValue(cfg, "UseResourcePriority", false);
@@ -101,13 +95,9 @@ namespace Kerbalism.System
         // name of profile to use, if any
 
         // user-defined features
-        public static bool Deploy; // add EC cost to keep module working/animation, add EC cost to Extend\Retract
         public static bool Science; // science data storage, transmission and analysis
         public static bool SpaceWeather; // coronal mass ejections
         public static bool Automation; // control vessel components using scripts
-
-        // pressure
-        public static double PressureThreshold; // level of atmosphere resource that determine pressurized status
 
         // signal
         public static UnlinkedCtrl
@@ -148,7 +138,6 @@ namespace Kerbalism.System
 
         // misc
         public static bool EnforceCoherency; // detect and avoid issues at high timewarp in external modules
-        public static double HeadLampsCost; // EC/s cost if eva headlamps are on
         public static bool LowQualityRendering; // use less particles to render the magnetic fields
 
         public static float
@@ -156,11 +145,6 @@ namespace Kerbalism.System
 
         public static float
             UIPanelWidthScale; // scale UI Panel Width by this factor, relative to KSP scaling settings, useful for high PPI screens
-
-        public static float KerbalDeathReputationPenalty; // Reputation penalty when Kerbals dies
-
-        public static float
-            KerbalBreakdownReputationPenalty; // Reputation removed when Kerbals loose their marbles in space
 
 
         // presets for save game preferences
@@ -180,7 +164,6 @@ namespace Kerbalism.System
         public static string ModsIncompatible;
         public static string ModsWarning;
         public static string ModsScience;
-        public static bool CheckForCRP;
 
         public static bool UseSamplingSunFactor;
         public static bool UseResourcePriority;
