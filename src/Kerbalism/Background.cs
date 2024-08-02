@@ -310,6 +310,10 @@ namespace Kerbalism
             }
         }
 
+        // TODO - Kerbalism - Forked Science
+        // TODO - This can be completely removed, Forked Science is a new mod with new versioning & requirements
+        // TODO - It won't be compatible with old Kerbalism saves anyway
+        // -------
         // TODO : this is to migrate pre-3.1 saves using WarpFixer to the new SolarPanelFixer. At some point in the future we can remove this code.
         static void MigrateWarpFixer(Vessel v, Part prefab, ProtoPartSnapshot p, ProtoPartModuleSnapshot m)
         {

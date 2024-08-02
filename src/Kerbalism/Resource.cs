@@ -29,8 +29,6 @@ namespace Kerbalism
 
         public static ResourceBroker Light = GetOrCreate("Light", BrokerCategory.VesselSystem, Local.Brokers_Light);
 
-        public static ResourceBroker Deploy = GetOrCreate("Deploy", BrokerCategory.VesselSystem, Local.Brokers_Deploy);
-
         public static ResourceBroker Experiment =
             GetOrCreate("Experiment", BrokerCategory.Science, Local.Brokers_Experiment);
 
