@@ -1,4 +1,5 @@
 # Kerbalism - Forked Science
+A fork of the popular and highly asteemed Kerbalism mod with a sole focus as a Science Overhaul mod for Kerbal Space Progam
 
 ## Why?
 - Kerbalism hasn't been worked on in over a year now seriously, while there's been rumours of a Kerbalism 4.x, I haven't seen any active development
