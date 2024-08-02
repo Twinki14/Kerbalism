@@ -50,14 +50,6 @@ namespace Kerbalism
                     () => p.Toggle(ref vd.cfg_signal));
             }
 
-            if (Features.SpaceWeather)
-            {
-                tooltip = Local.VESSELCONFIG_CMEevent; //"Receive a message\nduring CME events"
-                p.AddContent(Local.VESSELCONFIG_storm, string.Empty, tooltip); //"storm"
-                p.AddRightIcon(vd.cfg_storm ? Textures.toggle_green : Textures.toggle_red, tooltip,
-                    () => p.Toggle(ref vd.cfg_storm));
-            }
-
             if (Features.Automation)
             {
                 tooltip = Local.VESSELCONFIG_ScriptExe; //"Receive a message when\nscripts are executed"

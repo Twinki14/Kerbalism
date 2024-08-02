@@ -12,7 +12,6 @@ namespace Kerbalism.Database
         public static UIData ui; // store ui data
 
         private static Version version; // savegame version
-        private static Dictionary<string, StormData> storms; // store data per-body
         private static Dictionary<Guid, VesselData> vessels = new Dictionary<Guid, VesselData>(); // store data per-vessel
 
         public static void Load(ConfigNode node)
@@ -88,16 +87,6 @@ namespace Kerbalism.Database
                 }
             }
 
-            // load bodies data
-            storms = new Dictionary<string, StormData>();
-            if (node.HasNode("bodies"))
-            {
-                foreach (var body_node in node.GetNode("bodies").GetNodes())
-                {
-                    storms.Add(From_safe_key(body_node.name), new StormData(body_node));
-                }
-            }
-
             // load landmark data
             if (node.HasNode("landmarks"))
             {
@@ -156,13 +145,6 @@ namespace Kerbalism.Database
             // save the science database
             ScienceDB.Save(node);
 
-            // save bodies data
-            var bodies_node = node.AddNode("bodies");
-            foreach (var p in storms)
-            {
-                p.Value.Save(bodies_node.AddNode(To_safe_key(p.Key)));
-            }
-
             // save landmark data
             landmarks.Save(node.AddNode("landmarks"));
 
@@ -207,16 +189,6 @@ namespace Kerbalism.Database
         }
 
         public static Dictionary<Guid, VesselData>.ValueCollection VesselDatas => vessels.Values;
-
-        public static StormData Storm(string name)
-        {
-            if (!storms.ContainsKey(name))
-            {
-                storms.Add(name, new StormData(null));
-            }
-
-            return storms[name];
-        }
 
         public static string To_safe_key(string key) => key.Replace(" ", "___");
 

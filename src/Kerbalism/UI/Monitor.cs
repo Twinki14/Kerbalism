@@ -455,35 +455,6 @@ namespace Kerbalism
             }
         }
 
-        void Problem_storm(Vessel v, ref List<Texture2D> icons, ref List<string> tooltips)
-        {
-            if (Storm.Incoming(v))
-            {
-                icons.Add(Textures.storm_yellow);
-
-                var bd = Lib.IsSun(v.mainBody)
-                    ? v.KerbalismData().stormData
-                    : DB.Storm(Lib.GetParentPlanet(v.mainBody).name);
-                var tti = bd.storm_time - Planetarium.GetUniversalTime();
-                tooltips.Add(Lib.BuildString(Lib.Color(Local.Monitor_ejectionincoming, Lib.Kolor.Orange), "\n<i>",
-                    Local.Monitor_TimetoimpactCoronalmass, Lib.HumanReadableDuration(tti),
-                    "</i>")); //"Coronal mass ejection incoming"Time to impact:
-            }
-
-            if (Storm.InProgress(v))
-            {
-                icons.Add(Textures.storm_red);
-
-                var bd = Lib.IsSun(v.mainBody)
-                    ? v.KerbalismData().stormData
-                    : DB.Storm(Lib.GetParentPlanet(v.mainBody).name);
-                var remainingDuration = bd.storm_time + bd.displayed_duration - Planetarium.GetUniversalTime();
-                tooltips.Add(Lib.BuildString(Lib.Color(Local.Monitor_Solarstorminprogress, Lib.Kolor.Red), "\n<i>",
-                    Local.Monitor_SolarstormRemaining, Lib.HumanReadableDuration(remainingDuration),
-                    "</i>")); //"Solar storm in progress"Remaining duration:
-            }
-        }
-
         void Indicator_problems(Panel p, Vessel v, VesselData vd)
         {
             // store problems icons & tooltips
@@ -492,7 +463,6 @@ namespace Kerbalism
 
             // detect problems
             Problem_sunlight(vd, ref problem_icons, ref problem_tooltips);
-            if (Features.SpaceWeather) Problem_storm(v, ref problem_icons, ref problem_tooltips);
 
             // choose problem icon
             const UInt64 problem_icon_time = 3;
@@ -537,47 +507,6 @@ namespace Kerbalism
                     : Textures.battery_white;
 
             p.AddRightIcon(image, tooltip);
-        }
-
-        void Indicator_supplies(Panel p, Vessel v, VesselData vd)
-        {
-            List<string> tooltips = new List<string>();
-            uint max_severity = 0;
-            if (vd.CrewCount > 0)
-            {
-                foreach (Supply supply in Profile.Profile.supplies.FindAll(k => k.resource != "ElectricCharge"))
-                {
-                    ResourceInfo res = ResourceCache.GetResource(v, supply.resource);
-                    double depletion = res.DepletionTime();
-
-                    if (res.Capacity > double.Epsilon)
-                    {
-                        if (tooltips.Count == 0)
-                            tooltips.Add(String.Format(
-                                "<align=left /><b>{0,-18}\t" + Local.Monitor_level + "\t" + Local.Monitor_duration +
-                                "</b>", Local.Monitor_name)); //level"duration"name"
-                        tooltips.Add(Lib.Color(
-                            String.Format("{0,-18}\t{1}\t{2}", supply.resource, Lib.HumanReadablePerc(res.Level),
-                                depletion <= double.Epsilon
-                                    ? Local.Monitor_depleted
-                                    : Lib.HumanReadableDuration(depletion)), //"depleted"
-                            res.Level <= 0.005 ? Lib.Kolor.Red :
-                            res.Level <= supply.low_threshold ? Lib.Kolor.Orange : Lib.Kolor.None
-                        ));
-
-                        uint severity = res.Level <= 0.005 ? 2u : res.Level <= supply.low_threshold ? 1u : 0;
-                        max_severity = Math.Max(max_severity, severity);
-                    }
-                }
-            }
-
-            Texture2D image = max_severity == 2
-                ? Textures.box_red
-                : max_severity == 1
-                    ? Textures.box_yellow
-                    : Textures.box_white;
-
-            p.AddRightIcon(image, string.Join("\n", tooltips.ToArray()));
         }
 
         void Indicator_signal(Panel p, Vessel v, VesselData vd)
@@ -636,10 +565,6 @@ namespace Kerbalism
 
                 case LinkStatus.plasma:
                     tooltip += Lib.Color(Lib.Italic("\n" + Local.UI_Plasmablackout), Lib.Kolor.Red);
-                    break;
-
-                case LinkStatus.storm:
-                    tooltip += Lib.Color(Lib.Italic("\n" + Local.UI_Stormblackout), Lib.Kolor.Red);
                     break;
             }
 

@@ -132,7 +132,6 @@ namespace Kerbalism.Comms
         protected virtual void UpdateInputs(ConnectionInfo connection)
         {
             connection.transmitting = vd.filesTransmitted.Count > 0;
-            connection.storm = vd.EnvStorm;
             connection.powered = vd.Powered;
         }
 

@@ -52,8 +52,6 @@ namespace Kerbalism.Database
         public bool cfg_ec; // enable/disable message: ec level
         public bool cfg_supply; // enable/disable message: supplies level
         public bool cfg_signal; // enable/disable message: link status
-        public bool cfg_malfunction; // enable/disable message: malfunctions
-        public bool cfg_storm; // enable/disable message: storms
         public bool cfg_script; // enable/disable message: scripts
         public bool cfg_showlink; // show/hide link line
         public bool cfg_show; // show/hide vessel in monitor
@@ -91,7 +89,6 @@ namespace Kerbalism.Database
 
         public bool msg_signal; // message flag: link status
         public bool msg_belt; // message flag: crossing radiation belt
-        public StormData stormData;
         private Dictionary<string, SupplyData> supplies; // supplies data
         public List<uint> scansat_id; // used to remember scansat sensors that were disabled
         public double scienceTransmitted;
@@ -184,11 +181,6 @@ namespace Kerbalism.Database
 
         bool interstellar;
 
-        /// <summary> [environment] true if the vessel is inside a magnetopause (except the sun) and under storm</summary>
-        public bool EnvBlackout => blackout;
-
-        bool blackout;
-
         /// <summary> [environment] true if vessel is inside thermosphere</summary>
         public bool EnvThermosphere => thermosphere;
 
@@ -198,16 +190,6 @@ namespace Kerbalism.Database
         public bool EnvExosphere => exosphere;
 
         bool exosphere;
-
-        /// <summary> [environment] true if vessel is inside exosphere</summary>
-        public bool EnvStorm => inStorm;
-
-        bool inStorm;
-
-        /// <summary> [environment] true if vessel currently experienced a solar storm</summary>
-        public double EnvStormRadiation => stormRadiation;
-
-        public double stormRadiation;
 
         /// <summary> [environment] proportion of ionizing radiation not blocked by atmosphere</summary>
         public double EnvGammaTransparency => gammaTransparency;
@@ -769,8 +751,6 @@ namespace Kerbalism.Database
             cfg_ec = PreferencesMessages.Instance.ec;
             cfg_supply = PreferencesMessages.Instance.supply;
             cfg_signal = PreferencesMessages.Instance.signal;
-            cfg_malfunction = PreferencesMessages.Instance.malfunction;
-            cfg_storm = Features.SpaceWeather && PreferencesMessages.Instance.storm && Lib.CrewCount(pv) > 0;
             cfg_script = PreferencesMessages.Instance.script;
             cfg_showlink = true;
             cfg_show = true;
@@ -779,7 +759,6 @@ namespace Kerbalism.Database
             // note : we check that at vessel creation and persist it, as the vesselType can be changed by the player
             isSerenityGroundController = pv != null && pv.vesselType == VesselType.DeployedScienceController;
 
-            stormData = new StormData(null);
             computer = new Computer(null);
             supplies = new Dictionary<string, SupplyData>();
             scansat_id = new List<uint>();
@@ -801,8 +780,6 @@ namespace Kerbalism.Database
             cfg_ec = Lib.ConfigValue(node, "cfg_ec", PreferencesMessages.Instance.ec);
             cfg_supply = Lib.ConfigValue(node, "cfg_supply", PreferencesMessages.Instance.supply);
             cfg_signal = Lib.ConfigValue(node, "cfg_signal", PreferencesMessages.Instance.signal);
-            cfg_malfunction = Lib.ConfigValue(node, "cfg_malfunction", PreferencesMessages.Instance.malfunction);
-            cfg_storm = Lib.ConfigValue(node, "cfg_storm", PreferencesMessages.Instance.storm);
             cfg_script = Lib.ConfigValue(node, "cfg_script", PreferencesMessages.Instance.script);
             cfg_showlink = Lib.ConfigValue(node, "cfg_showlink", true);
             cfg_show = Lib.ConfigValue(node, "cfg_show", true);
@@ -814,7 +791,6 @@ namespace Kerbalism.Database
             solarPanelsAverageExposure = Lib.ConfigValue(node, "solarPanelsAverageExposure", -1.0);
             scienceTransmitted = Lib.ConfigValue(node, "scienceTransmitted", 0.0);
 
-            stormData = new StormData(node.GetNode("StormData")); ;
             computer = new Computer(node.GetNode("computer"));
 
             supplies = new Dictionary<string, SupplyData>();
@@ -855,8 +831,6 @@ namespace Kerbalism.Database
             node.AddValue("cfg_ec", cfg_ec);
             node.AddValue("cfg_supply", cfg_supply);
             node.AddValue("cfg_signal", cfg_signal);
-            node.AddValue("cfg_malfunction", cfg_malfunction);
-            node.AddValue("cfg_storm", cfg_storm);
             node.AddValue("cfg_script", cfg_script);
             node.AddValue("cfg_showlink", cfg_showlink);
             node.AddValue("cfg_show", cfg_show);
@@ -868,7 +842,6 @@ namespace Kerbalism.Database
             node.AddValue("solarPanelsAverageExposure", solarPanelsAverageExposure);
             node.AddValue("scienceTransmitted", scienceTransmitted);
 
-            stormData.Save(node.AddNode("StormData"));
             computer.Save(node.AddNode("computer"));
 
             var supplies_node = node.AddNode("supplies");
@@ -983,9 +956,8 @@ namespace Kerbalism.Database
             UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.VesselData.Radiation");
             gammaTransparency = Sim.GammaTransparency(Vessel.mainBody, Vessel.altitude);
 
-            bool new_innerBelt, new_outerBelt, new_magnetosphere;
-            radiation = Radiation.Compute(Vessel, position, EnvGammaTransparency, mainSun.SunlightFactor, out blackout,
-                out new_magnetosphere, out new_innerBelt, out new_outerBelt, out interstellar);
+            radiation = Radiation.Compute(Vessel, position, EnvGammaTransparency, mainSun.SunlightFactor,
+                out var new_magnetosphere, out var new_innerBelt, out var new_outerBelt, out interstellar);
 
             if (new_innerBelt != innerBelt || new_outerBelt != outerBelt || new_magnetosphere != magnetosphere)
             {
@@ -998,18 +970,6 @@ namespace Kerbalism.Database
 
             thermosphere = Sim.InsideThermosphere(Vessel);
             exosphere = Sim.InsideExosphere(Vessel);
-            inStorm = Storm.InProgress(Vessel);
-
-            if (inStorm)
-            {
-                var sunActivity = Radiation.Info(mainSun.SunData.body).SolarActivity(false) / 2.0;
-                stormRadiation = PreferencesRadiation.Instance.StormRadiation * mainSun.SunlightFactor *
-                                 (sunActivity + 0.5);
-            }
-            else
-            {
-                stormRadiation = 0.0;
-            }
 
             vesselSituations.Update();
 

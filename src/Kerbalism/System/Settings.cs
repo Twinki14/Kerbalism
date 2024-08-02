@@ -26,7 +26,6 @@ namespace Kerbalism.System
 
             // user-defined features
             Science = Lib.ConfigValue(cfg, "Science", false);
-            SpaceWeather = Lib.ConfigValue(cfg, "SpaceWeather", false);
             Automation = Lib.ConfigValue(cfg, "Automation", false);
 
             // signal
@@ -96,7 +95,6 @@ namespace Kerbalism.System
 
         // user-defined features
         public static bool Science; // science data storage, transmission and analysis
-        public static bool SpaceWeather; // coronal mass ejections
         public static bool Automation; // control vessel components using scripts
 
         // signal

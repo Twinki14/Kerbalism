@@ -61,8 +61,6 @@ namespace Kerbalism.Planner
             inner_rad = gamma_radiation + magnetopause_rad + rb.radiation_inner;
             outer_rad = gamma_radiation + magnetopause_rad + rb.radiation_outer;
             surface_rad = magnetopause_rad * gamma_transparency + rb.radiation_surface / 3600.0;
-            storm_rad = heliopause_rad +
-                        PreferencesRadiation.Instance.StormRadiation * (solar_flux > double.Epsilon ? 1.0 : 0.0);
 
 #if DEBUG_RADIATION
 			Lib.Log("Planner/EA: extern_rad " + Lib.HumanReadableRadiation(extern_rad, false));
@@ -97,6 +95,5 @@ namespace Kerbalism.Planner
         public double inner_rad; // environment radiation inside the inner belt
         public double outer_rad; // environment radiation inside the outer belt
         public double surface_rad; // environment radiation on the surface of the body
-        public double storm_rad; // environment radiation during a solar storm, inside the heliopause
     }
 } // KERBALISM

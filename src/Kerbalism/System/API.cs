@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Kerbalism.Database;
-using Kerbalism.External;
 using Kerbalism.Modules;
 
 namespace Kerbalism.System
@@ -23,11 +22,6 @@ namespace Kerbalism.System
         /// This will be set to true if the vessel currently is transmitting data.
         /// </summary>
         public bool transmitting = false;
-
-        /// <summary>
-        /// Set to true if the vessel is currently subjected to a CME storm
-        /// </summary>
-        public bool storm = false;
 
         /// <summary>
         /// Set to true if the vessel has enough EC to operate
@@ -57,7 +51,7 @@ namespace Kerbalism.System
         public double strength = -1;
 
         /// <summary>
-        /// direct_link = 0, indirect_link = 1 (relayed signal), no_link = 2, plasma = 3 (plasma blackout on reentry), storm = 4 (cme storm blackout)
+        /// direct_link = 0, indirect_link = 1 (relayed signal), no_link = 2, plasma = 3 (plasma blackout on reentry)
         /// </summary>
         public int status = 2;
 
@@ -262,50 +256,6 @@ namespace Kerbalism.System
                     }
                 }
             }
-        }
-
-        // --- SPACE WEATHER --------------------------------------------------------
-
-        // return true if a solar storm is incoming at the vessel position
-        public static bool StormIncoming(Vessel v)
-        {
-            if (!Features.SpaceWeather) return false;
-            return v.KerbalismData().IsSimulated && Storm.Incoming(v);
-        }
-
-        // return true if a solar storm is in progress at the vessel position
-        public static bool StormInProgress(Vessel v)
-        {
-            if (!Features.SpaceWeather) return false;
-            VesselData vd = v.KerbalismData();
-            return vd.IsSimulated && vd.EnvStorm;
-        }
-
-        // return true if the vessel is subject to a signal blackout
-        public static bool Blackout(Vessel v)
-        {
-            if (!RemoteTech.Enabled) return false;
-            return v.KerbalismData().EnvBlackout;
-        }
-
-        /// <summary>
-        /// Returns the current sun observation quality (ranges from 0 to 1). this is
-        /// the probability that the player will get a warning for an incoming CME
-        /// </summary>
-        /// <returns>The observation quality.</returns>
-        public static float StormObservationQuality()
-        {
-            return Storm.sun_observation_quality;
-        }
-
-        /// <summary>
-        /// Set the current sun observation quality (ranges from 0 to 1). this is
-        /// the probability that the player will get a warning for an incoming CME
-        /// </summary>
-        /// <param name="quality">Quality.</param>
-        public static void SetStormObservationQuality(float quality)
-        {
-            Storm.sun_observation_quality = Lib.Clamp(quality, 0.0f, 1.0f);
         }
 
         // --- RESOURCES ------------------------------------------------------------

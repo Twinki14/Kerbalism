@@ -25,7 +25,7 @@ namespace Kerbalism.Comms
         {
             Vessel v = vd.Vessel;
 
-            baseRate = 1.0;
+            BaseRate = 1.0;
             connection.ec_idle = 0.0;
             connection.ec = 0.0;
 
@@ -60,7 +60,7 @@ namespace Kerbalism.Comms
                     }
                     else
                     {
-                        baseRate *= mdt.DataRate;
+                        BaseRate *= mdt.DataRate;
                         connection.ec += mdt.DataResourceCost * mdt.DataRate;
                         transmitterCount++;
                     }
@@ -97,7 +97,7 @@ namespace Kerbalism.Comms
                     }
                     else
                     {
-                        baseRate *= mdt.prefab.DataRate;
+                        BaseRate *= mdt.prefab.DataRate;
                         connection.ec += mdt.prefab.DataResourceCost * mdt.prefab.DataRate;
                         transmitterCount++;
                     }
@@ -105,12 +105,12 @@ namespace Kerbalism.Comms
             }
 
             if (transmitterCount > 1)
-                baseRate = Math.Pow(baseRate, 1.0 / transmitterCount);
+                BaseRate = Math.Pow(BaseRate, 1.0 / transmitterCount);
             else if (transmitterCount == 0)
-                baseRate = 0.0;
+                BaseRate = 0.0;
 
             // Apply Antenna Speed value from ksp in game settings
-            baseRate *= PreferencesScience.Instance.transmitFactor;
+            BaseRate *= PreferencesScience.Instance.transmitFactor;
 
             // when transmitting, transmitters need more EC for the signal amplifiers.
             // while not transmitting, transmitters only use 10-20% of that

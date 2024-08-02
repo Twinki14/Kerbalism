@@ -337,13 +337,8 @@ namespace Kerbalism
         ////////////////////////////////////////////////////////////////////
         public static string Brokers_Others = GetLoc("Brokers_Others"); // "others"
         public static string Brokers_SolarPanel = GetLoc("Brokers_SolarPanel"); // "solar panel"
-        public static string Brokers_KSPIEGenerator = GetLoc("Brokers_KSPIEGenerator"); // "KSPIE generator"
-        public static string Brokers_RTG = GetLoc("Brokers_RTG"); // "radioisotope generator"
         public static string Brokers_ScienceLab = GetLoc("Brokers_ScienceLab"); // "science lab"
         public static string Brokers_Light = GetLoc("Brokers_Light"); // "light"
-        public static string Brokers_Boiloff = GetLoc("Brokers_Boiloff"); // "boiloff"
-        public static string Brokers_Cryotank = GetLoc("Brokers_Cryotank"); // "cryo tank"
-        public static string Brokers_Deploy = GetLoc("Brokers_Deploy"); // "deploy"
         public static string Brokers_Experiment = GetLoc("Brokers_Experiment"); // "experiment"
         public static string Brokers_Command = GetLoc("Brokers_Command"); // "command"
         public static string Brokers_Scanner = GetLoc("Brokers_Scanner"); // "scanner"
@@ -373,17 +368,6 @@ namespace Kerbalism
         public static string
             Contracts_heliopauseComplete =
                 GetLoc("Contracts_heliopauseComplete"); // "We went so far the mind doesn't comprehend it. Beyond the heliopause there are the wonders of interstellar space, and more radiation."
-
-        public static string
-            Contracts_orbitTitle = GetLoc("Contracts_orbitTitle"); // "Put a Kerbal in orbit for 30 days"
-
-        public static string
-            Contracts_orbitDesc =
-                GetLoc("Contracts_orbitDesc"); // "Obtaining an orbit was easier than we expected. Now it is time to keep a Kerbal alive in orbit for 30 days."
-
-        public static string
-            Contracts_orbitComplete =
-                GetLoc("Contracts_orbitComplete"); // "The mission was a success, albeit the Kerbal is a bit bored. We have plenty of data about long-term permanence in space."
 
         public static string Contracts_sampleTitle = GetLoc("Contracts_sampleTitle"); // "Analyze samples in space"
 
@@ -450,10 +434,6 @@ namespace Kerbalism
         public static string Monitor_DATA_desc = GetLoc("Monitor_DATA_desc"); // "Stored files and samples"
         public static string Monitor_AUTO = GetLoc("Monitor_AUTO"); // "AUTO"
         public static string Monitor_AUTO_desc = GetLoc("Monitor_AUTO_desc"); // "Control and automate components"
-        public static string Monitor_FAILURES = GetLoc("Monitor_FAILURES"); // "FAILURES"
-
-        public static string
-            Monitor_FAILURES_desc = GetLoc("Monitor_FAILURES_desc"); // "See failures and maintenance state"
 
         public static string Monitor_LOG = GetLoc("Monitor_LOG"); // "LOG"
         public static string Monitor_LOG_desc = GetLoc("Monitor_LOG_desc"); // "See previous notifications"
@@ -461,24 +441,10 @@ namespace Kerbalism
         public static string Monitor_CFG_desc = GetLoc("Monitor_CFG_desc"); // "Configure the vessel"
         public static string Monitor_Inshadow = GetLoc("Monitor_Inshadow"); // "In shadow"
 
-        public static string
-            Monitor_ejectionincoming = GetLoc("Monitor_ejectionincoming"); // "Coronal mass ejection incoming"
-
-        public static string
-            Monitor_TimetoimpactCoronalmass = GetLoc("Monitor_TimetoimpactCoronalmass"); // "Time to impact:"
-
-        public static string
-            Monitor_Solarstorminprogress = GetLoc("Monitor_Solarstorminprogress"); // "Solar storm in progress"
-
-        public static string
-            Monitor_SolarstormRemaining = GetLoc("Monitor_SolarstormRemaining"); // "Remaining duration:"
-
         public static string Monitor_name = GetLoc("Monitor_name"); // "name"
         public static string Monitor_level = GetLoc("Monitor_level"); // "level"
         public static string Monitor_duration = GetLoc("Monitor_duration"); // "duration"
         public static string Monitor_depleted = GetLoc("Monitor_depleted"); // "depleted"
-        public static string Monitor_Malfunctions = GetLoc("Monitor_Malfunctions"); // "Malfunctions"
-        public static string Monitor_Criticalfailures = GetLoc("Monitor_Criticalfailures"); // "Critical failures"
         public static string Monitor_Hidden_Vessels = GetLoc("Monitor_Hidden_Vessels"); // "Hidden vessels"
 
         ////////////////////////////////////////////////////////////////////
@@ -498,7 +464,6 @@ namespace Kerbalism
         public static string UI_transmitting = GetLoc("UI_transmitting"); // "transmitting"
         public static string UI_Signalrelayed = GetLoc("UI_Signalrelayed"); // "Signal relayed"
         public static string UI_Plasmablackout = GetLoc("UI_Plasmablackout"); // "Plasma blackout"
-        public static string UI_Stormblackout = GetLoc("UI_Stormblackout"); // "Storm blackout"
 
         public static string
             UI_transmissiondisabled = GetLoc("UI_transmissiondisabled"); // "Data transmission disabled"
@@ -770,11 +735,6 @@ namespace Kerbalism
                 GetLoc("VESSELCONFIG_Signallost"); // "Receive a message when signal is lost or obtained"
 
         public static string VESSELCONFIG_signal = GetLoc("VESSELCONFIG_signal"); // "signal"
-
-        public static string
-            VESSELCONFIG_CMEevent = GetLoc("VESSELCONFIG_CMEevent"); // "Receive a message\nduring CME events"
-
-        public static string VESSELCONFIG_storm = GetLoc("VESSELCONFIG_storm"); // "storm"
 
         public static string
             VESSELCONFIG_ScriptExe = GetLoc("VESSELCONFIG_ScriptExe"); // "Receive a message when\nscripts are executed"
@@ -1252,18 +1212,6 @@ namespace Kerbalism
             Signal_desc =
                 GetLoc("Signal_desc"); // "Show a message when signal is lost or obtained\n(Preset, can be changed per vessel)"
 
-        public static string Failures = GetLoc("Failures"); // "Failures"
-
-        public static string
-            Failures_desc =
-                GetLoc("Failures_desc"); // "Show a message when a components fail\n(Preset, can be changed per vessel)"
-
-        public static string SpaceWeather = GetLoc("SpaceWeather"); // "Space Weather"
-
-        public static string
-            SpaceWeather_desc =
-                GetLoc("SpaceWeather_desc"); // "Show a message for CME events\n(Preset, can be changed per vessel)"
-
         public static string Scripts = GetLoc("Scripts"); // "Scripts"
 
         public static string
@@ -1280,69 +1228,7 @@ namespace Kerbalism
         public static string
             MessageDuration_desc = GetLoc("MessageDuration_desc"); // "Duration of messages on screen in seconds"
 
-        //
-        public static string Preferences_Comfort = GetLoc("Preferences_Comfort"); // "Comfort"
-        public static string StressBreakdowns = GetLoc("StressBreakdowns"); // "Stress Breakdowns"
-
-        public static string
-            StressBreakdowns_desc =
-                GetLoc("StressBreakdowns_desc"); // "Kerbals can make mistakes when they're under stress"
-
-        public static string
-            StressBreakdownProbability = GetLoc("StressBreakdownProbability"); // "Stress Breakdown Probability"
-
-        public static string
-            StressBreakdownProbability_desc =
-                GetLoc("StressBreakdownProbability_desc"); // "Probability of one stress induced mistake per year"
-
-        public static string IdealLivingSpace = GetLoc("IdealLivingSpace"); // "Ideal Living Space"
-
-        public static string
-            IdealLivingSpace_desc = GetLoc("IdealLivingSpace_desc"); // "Ideal living space per-capita in m^3"
-
-        public static string FirmGroundFactor = GetLoc("FirmGroundFactor"); // "Firm Ground Factor"
-        public static string FirmGroundFactor_desc = GetLoc("FirmGroundFactor_desc"); // "Having something to walk on"
-        public static string ExerciseFactor = GetLoc("ExerciseFactor"); // "Exercise Factor"
-        public static string ExerciseFactor_desc = GetLoc("ExerciseFactor_desc"); // "Having a treadmill"
-        public static string SocialFactor = GetLoc("SocialFactor"); // "Social Factor"
-        public static string SocialFactor_desc = GetLoc("SocialFactor_desc"); // "Having more than one crew on a vessel"
-        public static string CallHomeFactor = GetLoc("CallHomeFactor"); // "Call Home Factor"
-
-        public static string
-            CallHomeFactor_desc = GetLoc("CallHomeFactor_desc"); // "Having a way to communicate with Kerbin"
-
-        public static string PanoramaFactor = GetLoc("PanoramaFactor"); // "Panorama Factor"
-
-        public static string
-            PanoramaFactor_desc = GetLoc("PanoramaFactor_desc"); // "Comfort factor for having a panorama window"
-
-        public static string PlantsFactor = GetLoc("PlantsFactor"); // "Plants Factor"
-
-        public static string
-            PlantsFactor_desc = GetLoc("PlantsFactor_desc"); // "There is some comfort in tending to plants"
-
-        //
         public static string Preferences_Radiation = GetLoc("Preferences_Radiation"); // "Radiation"
-        public static string LifetimeRadiation = GetLoc("LifetimeRadiation"); // "Lifetime Radiation"
-
-        public static string
-            LifetimeRadiation_desc =
-                GetLoc("LifetimeRadiation_desc"); // "Do not reset radiation values for kerbals recovered on kerbin"
-
-        public static string Stormprobability = GetLoc("Stormprobability"); // "Storm probability"
-        public static string Stormprobability_desc = GetLoc("Stormprobability_desc"); // "Probability of solar storms"
-        public static string stormDurationHours = GetLoc("stormDurationHours"); // "Average storm duration (hours)"
-
-        public static string
-            stormDurationHours_desc = GetLoc("stormDurationHours_desc"); // "Average duration of a sun storm in hours"
-
-        public static string stormRadiation = GetLoc("stormRadiation"); // "Average storm radiation rad/h"
-        public static string stormRadiation_desc = GetLoc("stormRadiation_desc"); // "Radiation during a solar storm"
-        public static string ShieldingEfficiency = GetLoc("ShieldingEfficiency"); // "Shielding Efficiency"
-
-        public static string
-            ShieldingEfficiency_desc =
-                GetLoc("ShieldingEfficiency_desc"); // "Proportion of radiation blocked by shielding (at max amount)"
 
         ////////////////////////////////////////////////////////////////////
         // Planner UI
@@ -1395,11 +1281,6 @@ namespace Kerbalism
         public static string Planner_consumed = GetLoc("Planner_consumed"); // "consumed"
         public static string Planner_produced = GetLoc("Planner_produced"); // "produced"
         public static string Planner_duration = GetLoc("Planner_duration"); // "duration"
-        public static string Planner_STRESS = GetLoc("Planner_STRESS"); // "STRESS"
-        public static string Planner_volumepercapita = GetLoc("Planner_volumepercapita"); // "volume per-capita:"
-        public static string Planner_ideallivingspace = GetLoc("Planner_ideallivingspace"); // "ideal living space:"
-        public static string Planner_livingspace = GetLoc("Planner_livingspace"); // "living space"
-        public static string Planner_comfort = GetLoc("Planner_comfort"); // "comfort"
 
         public static string
             Planner_analyzerpressurized1 =
@@ -1419,7 +1300,6 @@ namespace Kerbalism
         public static string Planner_outerbelt = GetLoc("Planner_outerbelt"); // "outer belt"
         public static string Planner_interplanetary = GetLoc("Planner_interplanetary"); // "interplanetary"
         public static string Planner_interstellar = GetLoc("Planner_interstellar"); // "interstellar"
-        public static string Planner_storm = GetLoc("Planner_storm"); // "storm"
         public static string Planner_RADIATION = GetLoc("Planner_RADIATION"); // "RADIATION"
         public static string Planner_orbit = GetLoc("Planner_orbit"); // "orbit"
         public static string Planner_emission = GetLoc("Planner_emission"); // "emission"
@@ -1438,31 +1318,6 @@ namespace Kerbalism
 
         public static string
             SolarPanel_nonretractable = GetLoc("SolarPanel_nonretractable"); // "solar panel (non retractable)"
-
-        ////////////////////////////////////////////////////////////////////
-        // Class : Storm
-        ////////////////////////////////////////////////////////////////////
-        public static ParamString
-            Storm_msg1 = new ParamString("Storm_msg1"); // "The coronal mass ejection hit <<1>> system"
-
-        public static ParamString
-            Storm_msg2 =
-                new ParamString(
-                    "Storm_msg2"); // "Our observatories report a coronal mass ejection directed toward  <<1>> system"
-
-        public static ParamString
-            Storm_msg3 = new ParamString("Storm_msg3"); // "The solar storm at <<1>> system is over"
-
-        public static ParamString Storm_msg4 = new ParamString("Storm_msg4"); // "The solar storm around <<1>> is over"
-        public static ParamString Storm_msg5 = new ParamString("Storm_msg5"); // "The coronal mass ejection hit <<1>>"
-
-        public static ParamString
-            Storm_msg6 =
-                new ParamString(
-                    "Storm_msg6"); // "Our observatories report a coronal mass ejection directed toward <<1>>"
-
-        public static string Storm_msg1text = GetLoc("Storm_msg1text"); // "Storm duration:"
-        public static string Storm_msg2text = GetLoc("Storm_msg2text"); // "Time to impact:"
 
         ////////////////////////////////////////////////////////////////////
         // Science > ExperimentInfo
@@ -1623,7 +1478,6 @@ namespace Kerbalism
         public static string Situation_Magnetosphere = GetLoc("Situation_Magnetosphere"); // "magnetosphere"
         public static string Situation_Interstellar = GetLoc("Situation_Interstellar"); // "interstellar"
         public static string Situation_Reentry = GetLoc("Situation_Reentry"); // "reentry"
-        public static string Situation_Storm = GetLoc("Situation_Storm"); // "solar storm"
 
         //Log Manager
         public static string LogMan_LOGS = GetLoc("LogMan_LOGS"); // "LOGS"

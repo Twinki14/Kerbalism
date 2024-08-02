@@ -28,12 +28,6 @@ namespace Kerbalism.Comms
 
                         switch (vd.Connection.Status)
                         {
-                            case LinkStatus.plasma:
-                                subtext = Local.UI_Plasmablackout;
-                                break;
-                            case LinkStatus.storm:
-                                subtext = Local.UI_Stormblackout;
-                                break;
                             default:
                                 if (vd.CrewCount == 0)
                                 {

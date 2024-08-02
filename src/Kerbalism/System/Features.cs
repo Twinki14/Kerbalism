@@ -6,7 +6,6 @@ namespace Kerbalism.System
         {
             // set user-specified features
             Science = Settings.Science;
-            SpaceWeather = Settings.SpaceWeather;
             Automation = Settings.Automation;
 
             Radiation = true;
@@ -14,14 +13,12 @@ namespace Kerbalism.System
             // log features
             Lib.Log("features:");
             Lib.Log("- Science: " + Science);
-            Lib.Log("- SpaceWeather: " + SpaceWeather);
             Lib.Log("- Automation: " + Automation);
             Lib.Log("- Radiation: " + Radiation);
         }
 
         // user-specified features
         public static bool Science;
-        public static bool SpaceWeather;
         public static bool Automation;
 
         // features detected automatically from modifiers

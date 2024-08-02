@@ -9,7 +9,6 @@ namespace Kerbalism.Comms
         indirect_link = 1, // relayed signal
         no_link = 2,
         plasma = 3, // plasma blackout on reentry
-        storm = 4 // cme storm blackout
     }
 
     public sealed class ConnectionInfo : IConnectionInfo
@@ -46,11 +45,6 @@ namespace Kerbalism.Comms
         public bool transmitting = false;
 
         /// <summary>
-        /// Set to true if the vessel is currently subjected to a CME storm
-        /// </summary>
-        public bool storm = false;
-
-        /// <summary>
         /// Set to true if the vessel has enough EC to operate
         /// </summary>
         public bool powered = true;
@@ -83,7 +77,7 @@ namespace Kerbalism.Comms
         public double strength = -1;
 
         /// <summary>
-        /// direct_link = 0, indirect_link = 1 (relayed signal), no_link = 2, plasma = 3 (plasma blackout on reentry), storm = 4 (cme storm blackout)
+        /// direct_link = 0, indirect_link = 1 (relayed signal), no_link = 2, plasma = 3 (plasma blackout on reentry)
         /// </summary>
         public int status = 2;
 

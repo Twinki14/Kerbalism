@@ -11,7 +11,6 @@ namespace Kerbalism.Comms
         protected override void UpdateInputs(ConnectionInfo connection)
         {
             connection.transmitting = vd.filesTransmitted.Count > 0;
-            connection.storm = vd.EnvStorm;
 
             if (cluster == null)
                 cluster = Serenity.GetScienceCluster(vd.Vessel);
@@ -21,13 +20,13 @@ namespace Kerbalism.Comms
 
             if (cluster == null)
             {
-                baseRate = 0.0;
+                BaseRate = 0.0;
                 connection.powered = false;
                 connection.hasActiveAntenna = false;
             }
             else
             {
-                baseRate = Settings.DataRateSurfaceExperiment;
+                BaseRate = Settings.DataRateSurfaceExperiment;
                 connection.powered = cluster.IsPowered;
                 connection.hasActiveAntenna = cluster.AntennaParts.Count > 0;
             }

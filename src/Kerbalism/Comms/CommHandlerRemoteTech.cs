@@ -37,10 +37,7 @@ namespace Kerbalism.Comms
                 connection.linked = false;
 
                 // is loss of connection due to a blackout
-                if (RemoteTech.GetCommsBlackout(vd.VesselId))
-                    connection.Status = connection.storm ? LinkStatus.storm : LinkStatus.plasma;
-                else
-                    connection.Status = LinkStatus.no_link;
+                connection.Status = RemoteTech.GetCommsBlackout(vd.VesselId) ? LinkStatus.plasma : LinkStatus.no_link;
 
                 connection.strength = 0.0;
                 connection.rate = 0.0;
@@ -114,7 +111,7 @@ namespace Kerbalism.Comms
                 }
             }
 
-            // set minimal data rate to what is defined in Settings (1 bit/s by default) 
+            // set minimal data rate to what is defined in Settings (1 bit/s by default)
             if (connection.rate > 0.0 && connection.rate * bitsPerMB < Settings.DataRateMinimumBitsPerSecond)
                 connection.rate = Settings.DataRateMinimumBitsPerSecond / bitsPerMB;
         }
@@ -126,7 +123,6 @@ namespace Kerbalism.Comms
             if (RemoteTech.Enabled)
             {
                 RemoteTech.SetPoweredDown(v.id, !connection.powered);
-                RemoteTech.SetCommsBlackout(v.id, connection.storm);
             }
 
             baseRate = 0.0;

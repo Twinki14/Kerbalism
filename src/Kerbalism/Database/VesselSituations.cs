@@ -97,9 +97,6 @@ namespace Kerbalism.Database
                 Situations.Add(ScienceSituation.Surface);
                 Situations.Add(ScienceSituation.BodyGlobal);
 
-                if (_vd.EnvStorm)
-                    VirtualBiomes.Add(VirtualBiome.Storm);
-
                 if ((_vd.Vessel.latitude + 270.0) % 90.0 > 0.0)
                     VirtualBiomes.Add(VirtualBiome.NorthernHemisphere);
                 else
@@ -130,9 +127,6 @@ namespace Kerbalism.Database
                 Situations.Add(ScienceSituation.Flying);
                 Situations.Add(ScienceSituation.BodyGlobal);
 
-                if (_vd.EnvStorm)
-                    VirtualBiomes.Add(VirtualBiome.Storm);
-
                 if ((_vd.Vessel.latitude + 270.0) % 90.0 > 0.0)
                     VirtualBiomes.Add(VirtualBiome.NorthernHemisphere);
                 else
@@ -141,9 +135,6 @@ namespace Kerbalism.Database
                 VirtualBiomes.Add(VirtualBiome.NoBiome);
                 return;
             }
-
-            if (_vd.EnvStorm)
-                VirtualBiomes.Add(VirtualBiome.Storm);
 
             if (_vd.EnvInterstellar)
                 VirtualBiomes.Add(VirtualBiome.Interstellar);

@@ -680,11 +680,9 @@ namespace Kerbalism
 
         // return the total environent radiation at position specified
         public static double Compute(Vessel v, Vector3d position, double gamma_transparency, double sunlight,
-            out bool blackout,
             out bool magnetosphere, out bool inner_belt, out bool outer_belt, out bool interstellar)
         {
             // prepare out parameters
-            blackout = false;
             magnetosphere = false;
             inner_belt = false;
             outer_belt = false;
@@ -806,23 +804,6 @@ namespace Kerbalism
 #if DEBUG_RADIATION
 			if (v.loaded) Lib.Log("Radiation " + v + " from current main body: " + Lib.HumanReadableRadiation(radiation) + " gamma: " + Lib.HumanReadableRadiation(DistanceRadiation(RadiationR0(Info(v.mainBody)), v.altitude)));
 #endif
-
-            // if there is a storm in progress
-            if (Storm.InProgress(v))
-            {
-                // inside a magnetopause (except heliosphere), blackout the signal
-                // outside, add storm radiations modulated by sun visibility
-                if (magnetosphere) blackout = true;
-                else
-                {
-                    var vd = v.KerbalismData();
-
-                    var activity = Info(vd.EnvMainSun.SunData.body).SolarActivity(false) / 2.0;
-                    var strength = PreferencesRadiation.Instance.StormRadiation * sunlight * (activity + 0.5);
-
-                    radiation += strength;
-                }
-            }
 
             // add emitter radiation after atmosphere transparency
             var emitterRadiation = 0;

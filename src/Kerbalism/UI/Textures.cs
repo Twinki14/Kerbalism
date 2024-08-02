@@ -51,9 +51,6 @@ namespace Kerbalism
         internal static Texture2D signal_yellow;
         internal static Texture2D signal_red;
 
-        internal static Texture2D storm_yellow;
-        internal static Texture2D storm_red;
-
         internal static Texture2D station_black;
         internal static Texture2D station_white;
 
@@ -190,9 +187,6 @@ namespace Kerbalism
             GetTexture("brain-white");
             GetTexture("brain-yellow");
             GetTexture("brain-red");
-
-            storm_yellow = GetTexture("storm-yellow");
-            storm_red = GetTexture("storm-red");
 
             GetTexture("plant-white");
             GetTexture("plant-yellow");

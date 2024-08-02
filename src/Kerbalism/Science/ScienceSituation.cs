@@ -32,15 +32,14 @@ namespace Kerbalism.Science
     public enum VirtualBiome : byte
     {
         None = 0,
-        NoBiome = byte.MaxValue, // if used, will be registered as the global, biome-agnostic situation 
+        NoBiome = byte.MaxValue, // if used, will be registered as the global, biome-agnostic situation
         NorthernHemisphere = 254,
         SouthernHemisphere = 253,
         InnerBelt = 252,
         OuterBelt = 251,
         Magnetosphere = 250,
         Interstellar = 249,
-        Reentry = 248,
-        Storm = 247
+        Reentry = 248
     }
 
     public static class ScienceSituationUtils
@@ -220,7 +219,6 @@ namespace Kerbalism.Science
                 case VirtualBiome.Magnetosphere: return Local.Situation_Magnetosphere; //"magnetosphere"
                 case VirtualBiome.Interstellar: return Local.Situation_Interstellar; //"interstellar"
                 case VirtualBiome.Reentry: return Local.Situation_Reentry; //"reentry"
-                case VirtualBiome.Storm: return Local.Situation_Storm; //"solar storm"
                 default: return Local.Situation_None; //"none"
             }
         }
@@ -255,7 +253,6 @@ namespace Kerbalism.Science
                 case VirtualBiome.Magnetosphere: return "Magnetosphere";
                 case VirtualBiome.Interstellar: return "Interstellar";
                 case VirtualBiome.Reentry: return "Reentry";
-                case VirtualBiome.Storm: return "Storm";
                 default: return "None";
             }
         }
@@ -290,7 +287,6 @@ namespace Kerbalism.Science
                 case "Magnetosphere": return VirtualBiome.Magnetosphere;
                 case "Interstellar": return VirtualBiome.Interstellar;
                 case "Reentry": return VirtualBiome.Reentry;
-                case "Storm": return VirtualBiome.Storm;
                 default: return VirtualBiome.None;
             }
         }
@@ -461,7 +457,6 @@ namespace Kerbalism.Science
             VirtualBiome.Magnetosphere,
             VirtualBiome.Interstellar,
             VirtualBiome.Reentry,
-            VirtualBiome.Storm
         };
 
         public const int minVirtualBiome = 247;

@@ -70,17 +70,6 @@ namespace Kerbalism.System
 
         static Dictionary<Guid, Unloaded_data> unloaded = new Dictionary<Guid, Unloaded_data>();
 
-        // used to update storm data on one body per step
-        static int storm_index;
-
-        class Storm_data
-        {
-            public double time;
-            public CelestialBody body;
-        };
-
-        static List<Storm_data> storm_bodies = new List<Storm_data>();
-
         // equivalent to TimeWarp.fixedDeltaTime
         // note: stored here to avoid converting it to double every time
         public static double elapsed_s;
@@ -175,15 +164,6 @@ namespace Kerbalism.System
                 {
                     Cache.Init();
                     global::Kerbalism.ResourceCache.Init();
-
-                    // prepare storm data
-                    foreach (CelestialBody body in FlightGlobals.Bodies)
-                    {
-                        if (Storm.Skip_body(body))
-                            continue;
-                        Storm_data sd = new Storm_data {body = body};
-                        storm_bodies.Add(sd);
-                    }
 
                     BackgroundResources.DisableBackgroundResources();
                 }
@@ -333,9 +313,6 @@ namespace Kerbalism.System
                     UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.FixedUpdate.Loaded.Radiation");
                     // show belt warnings
                     Radiation.BeltWarnings(v, vd);
-
-                    // update storm data
-                    Storm.Update(v, vd, elapsed_s);
                     UnityEngine.Profiling.Profiler.EndSample();
 
                     UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.FixedUpdate.Loaded.Comms");
@@ -410,8 +387,6 @@ namespace Kerbalism.System
                 // show belt warnings
                 Radiation.BeltWarnings(last_v, last_vd);
 
-                // update storm data
-                Storm.Update(last_v, last_vd, last_time);
                 UnityEngine.Profiling.Profiler.EndSample();
 
                 UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.FixedUpdate.Unloaded.Comms");
@@ -443,16 +418,6 @@ namespace Kerbalism.System
 
                 // remove from unloaded data container
                 unloaded.Remove(last_vd.VesselId);
-            }
-
-            // update storm data for one body per-step
-            if (storm_bodies.Count > 0)
-            {
-                storm_bodies.ForEach(k => k.time += elapsed_s);
-                Storm_data sd = storm_bodies[storm_index];
-                Storm.Update(sd.body, sd.time);
-                sd.time = 0.0;
-                storm_index = (storm_index + 1) % storm_bodies.Count;
             }
         }
 
