@@ -95,14 +95,6 @@ namespace Kerbalism
 
             return new ResourceBroker(id, type, title);
         }
-
-        public static string GetTitle(string id)
-        {
-            ResourceBroker rb;
-            if (brokersDict.TryGetValue(id, out rb))
-                return rb.Title;
-            return null;
-        }
     }
 
     /// <summary>Global cache for storing and accessing VesselResources (and ResourceInfo) handlers in all vessels, with shortcut for common methods</summary>
@@ -170,12 +162,6 @@ namespace Kerbalism
         public static void Consume(Vessel v, string resource_name, double quantity, ResourceBroker broker)
         {
             GetResource(v, resource_name).Consume(quantity, broker);
-        }
-
-        /// <summary> register deferred execution of a recipe (shortcut)</summary>
-        public static void AddRecipe(Vessel v, ResourceRecipe recipe)
-        {
-            Get(v).AddRecipe(recipe);
         }
     }
 

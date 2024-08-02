@@ -7,5 +7,6 @@
 
 ## To-do
 - Totally remove RemoteTech support. The state of support is unknown. Kerbalism - Forked Science does it's own modifications to CommNet as it's a complete science overhaul, the CommNet modifications were originally implemented by the Kerbalism devs in a fairly realistic fashion. If you want the "Require KSC connection for Control" you can enable that in the KSP standard settings and achieve nearly the same level of difficulty. RemoteTech DevAntennas is supported(?)
-- Remove Radiation, Storms / Space Weather ?
 - Reduce Automation features, custom "Action Groups" don't really seem needed
+- Remove danger messages, or allow them to be customized
+- Remove all non-us translations, until I can figure out KSPLocalizer

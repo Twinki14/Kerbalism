@@ -4,7 +4,7 @@ using System.Reflection;
 using Kerbalism.Modules;
 
 // TODO - Kerbalism - Forked Science
-// TODO - This is likely no longer required, EC is the only thing we'll be truely simulating in the background
+// TODO - This is likely no longer required, EC is the only thing we'll be truly simulating in the background
 // TODO - and this appears to be for all other types of resources (Maybe CommNet?)
 
 namespace Kerbalism.Database
