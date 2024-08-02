@@ -667,78 +667,8 @@ namespace Kerbalism.System
 
         public static void PartPrefabsTweaks()
         {
-            List<string> partSequence = new List<string>();
-
-            partSequence.Add("kerbalism-container-inline-prosemian-full-0625");
-            partSequence.Add("kerbalism-container-inline-prosemian-full-125");
-            partSequence.Add("kerbalism-container-inline-prosemian-full-250");
-            partSequence.Add("kerbalism-container-inline-prosemian-full-375");
-
-            partSequence.Add("kerbalism-container-inline-prosemian-half-125");
-            partSequence.Add("kerbalism-container-inline-prosemian-half-250");
-            partSequence.Add("kerbalism-container-inline-prosemian-half-375");
-
-            partSequence.Add("kerbalism-container-radial-box-prosemian-small");
-            partSequence.Add("kerbalism-container-radial-box-prosemian-normal");
-            partSequence.Add("kerbalism-container-radial-box-prosemian-large");
-
-            partSequence.Add("kerbalism-container-radial-pressurized-prosemian-small");
-            partSequence.Add("kerbalism-container-radial-pressurized-prosemian-medium");
-            partSequence.Add("kerbalism-container-radial-pressurized-prosemian-big");
-            partSequence.Add("kerbalism-container-radial-pressurized-prosemian-huge");
-
-            partSequence.Add("kerbalism-solenoid-short-small");
-            partSequence.Add("kerbalism-solenoid-long-small");
-            partSequence.Add("kerbalism-solenoid-short-large");
-            partSequence.Add("kerbalism-solenoid-long-large");
-
-            partSequence.Add("kerbalism-activeshield");
-            partSequence.Add("kerbalism-chemicalplant");
-
-
-            Dictionary<string, float> iconScales = new Dictionary<string, float>();
-
-            iconScales["kerbalism-container-inline-prosemian-full-0625"] = 0.6f;
-            iconScales["kerbalism-container-radial-pressurized-prosemian-small"] = 0.6f;
-            iconScales["kerbalism-container-radial-box-prosemian-small"] = 0.6f;
-
-            iconScales["kerbalism-container-inline-prosemian-full-125"] = 0.85f;
-            iconScales["kerbalism-container-inline-prosemian-half-125"] = 0.85f;
-            iconScales["kerbalism-container-radial-pressurized-prosemian-medium"] = 0.85f;
-            iconScales["kerbalism-container-radial-box-prosemian-normal"] = 0.85f;
-            iconScales["kerbalism-solenoid-short-small"] = 0.85f;
-            iconScales["kerbalism-solenoid-long-small"] = 0.85f;
-
-            iconScales["kerbalism-container-inline-prosemian-full-250"] = 1.1f;
-            iconScales["kerbalism-container-inline-prosemian-half-250"] = 1.1f;
-            iconScales["kerbalism-container-radial-pressurized-prosemian-big"] = 1.1f;
-            iconScales["kerbalism-container-radial-box-prosemian-large"] = 1.1f;
-
-            iconScales["kerbalism-container-inline-prosemian-full-375"] = 1.33f;
-            iconScales["kerbalism-container-inline-prosemian-half-375"] = 1.33f;
-            iconScales["kerbalism-container-radial-pressurized-prosemian-huge"] = 1.33f;
-            iconScales["kerbalism-solenoid-short-large"] = 1.33f;
-            iconScales["kerbalism-solenoid-long-large"] = 1.33f;
-
-
             foreach (AvailablePart ap in PartLoader.LoadedPartsList)
             {
-                // scale part icons of the radial container variants
-                if (iconScales.ContainsKey(ap.name))
-                {
-                    float scale = iconScales[ap.name];
-                    ap.iconPrefab.transform.GetChild(0).localScale *= scale;
-                    ap.iconScale *= scale;
-                }
-
-                // force a non-lexical order in the editor
-                if (partSequence.Contains(ap.name))
-                {
-                    int index = partSequence.IndexOf(ap.name);
-                    ap.title = Lib.BuildString("<size=1><color=#00000000>" + index.ToString("00") + "</color></size>",
-                        ap.title);
-                }
-
                 // recompile some part infos (this is normally done by KSP on loading, after each part prefab is compiled)
                 // This is needed because :
                 // - We can't check interdependent modules when OnLoad() is called, since the other modules may not be loaded yet

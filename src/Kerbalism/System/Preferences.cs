@@ -22,15 +22,9 @@ namespace Kerbalism.System
         //Always allow sample transfers---When off, sample transfer is only available in crewed vessels
         public bool sampleTransfer = true;
 
-        public override GameParameters.GameMode GameMode
-        {
-            get { return GameParameters.GameMode.ANY; }
-        }
+        public override GameParameters.GameMode GameMode => GameParameters.GameMode.ANY;
 
-        public override bool HasPresets
-        {
-            get { return true; }
-        }
+        public override bool HasPresets => true;
 
         public override void SetDifficultyPreset(GameParameters.Preset preset)
         {
@@ -57,25 +51,13 @@ namespace Kerbalism.System
             }
         }
 
-        public override string DisplaySection
-        {
-            get { return "Kerbalism (1)"; }
-        }
+        public override string DisplaySection => "Kerbalism (1)";
 
-        public override string Section
-        {
-            get { return "Kerbalism (1)"; }
-        }
+        public override string Section => "Kerbalism (1)";
 
-        public override int SectionOrder
-        {
-            get { return 2; }
-        }
+        public override int SectionOrder => 2;
 
-        public override string Title
-        {
-            get { return Local.Preferences_Science; }
-        } //"Science"
+        public override string Title => Local.Preferences_Science; //"Science"
 
         private static PreferencesScience instance;
 
@@ -144,35 +126,17 @@ namespace Kerbalism.System
         //Message Duration--Duration of messages on screen in seconds
         public int messageLength = 4;
 
-        public override GameParameters.GameMode GameMode
-        {
-            get { return GameParameters.GameMode.ANY; }
-        }
+        public override GameParameters.GameMode GameMode => GameParameters.GameMode.ANY;
 
-        public override bool HasPresets
-        {
-            get { return false; }
-        }
+        public override bool HasPresets => false;
 
-        public override string DisplaySection
-        {
-            get { return "Kerbalism (2)"; }
-        }
+        public override string DisplaySection => "Kerbalism (2)";
 
-        public override string Section
-        {
-            get { return "Kerbalism (2)"; }
-        }
+        public override string Section => "Kerbalism (2)";
 
-        public override int SectionOrder
-        {
-            get { return 0; }
-        }
+        public override int SectionOrder => 0;
 
-        public override string Title
-        {
-            get { return Local.Preferences_Notifications; }
-        } //"Notifications"
+        public override string Title => Local.Preferences_Notifications; //"Notifications"
 
         private static PreferencesMessages instance;
 
@@ -185,98 +149,6 @@ namespace Kerbalism.System
                     if (HighLogic.CurrentGame != null)
                     {
                         instance = HighLogic.CurrentGame.Parameters.CustomParams<PreferencesMessages>();
-                    }
-                }
-
-                return instance;
-            }
-        }
-
-        public override void OnLoad(ConfigNode node)
-        {
-            base.OnLoad(node);
-            instance = null;
-        }
-    }
-
-    public class PreferencesComfort : GameParameters.CustomParameterNode
-    {
-        [GameParameters.CustomParameterUI("#KERBALISM_StressBreakdowns",
-            toolTip = "#KERBALISM_StressBreakdowns_desc")]
-        //Stress Breakdowns--Kerbals can make mistakes when they're under stress
-        public bool stressBreakdowns = false;
-
-        [GameParameters.CustomFloatParameterUI("#KERBALISM_StressBreakdownProbability", asPercentage = true,
-            minValue = 0, maxValue = 1, displayFormat = "F2", toolTip = "#KERBALISM_StressBreakdownProbability_desc")]
-        //Stress Breakdown Probability--Probability of one stress induced mistake per year
-        public float stressBreakdownRate = 0.25f;
-
-        public override GameParameters.GameMode GameMode
-        {
-            get { return GameParameters.GameMode.ANY; }
-        }
-
-        public override bool HasPresets
-        {
-            get { return true; }
-        }
-
-        public override void SetDifficultyPreset(GameParameters.Preset preset)
-        {
-            switch (preset)
-            {
-                case GameParameters.Preset.Easy:
-                    stressBreakdowns = false;
-                    stressBreakdownRate = 0.2f;
-                    break;
-                case GameParameters.Preset.Normal:
-                    stressBreakdowns = true;
-                    stressBreakdownRate = 0.25f;
-                    break;
-                case GameParameters.Preset.Moderate:
-                    stressBreakdowns = true;
-                    stressBreakdownRate = 0.3f;
-                    break;
-                case GameParameters.Preset.Hard:
-                    stressBreakdowns = true;
-                    stressBreakdownRate = 0.35f;
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public override string DisplaySection
-        {
-            get { return "Kerbalism (2)"; }
-        }
-
-        public override string Section
-        {
-            get { return "Kerbalism (2)"; }
-        }
-
-        public override int SectionOrder
-        {
-            get { return 1; }
-        }
-
-        public override string Title
-        {
-            get { return Local.Preferences_Comfort; }
-        } //"Comfort"
-
-        private static PreferencesComfort instance;
-
-        public static PreferencesComfort Instance
-        {
-            get
-            {
-                if (instance == null)
-                {
-                    if (HighLogic.CurrentGame != null)
-                    {
-                        instance = HighLogic.CurrentGame.Parameters.CustomParams<PreferencesComfort>();
                     }
                 }
 
@@ -313,35 +185,15 @@ namespace Kerbalism.System
         //Average storm radiation rad/h--Radiation during a solar storm
         public float stormRadiation = Settings.StormRadiation;
 
-        [GameParameters.CustomFloatParameterUI("#KERBALISM_ShieldingEfficiency", asPercentage = true, minValue = 0.01f,
-            maxValue = 1, displayFormat = "F2", toolTip = "#KERBALISM_ShieldingEfficiency_desc")]
-        //Shielding Efficiency--Proportion of radiation blocked by shielding (at max amount)
-        public float shieldingEfficiency = Settings.ShieldingEfficiency;
+        public double AvgStormDuration => stormDurationHours * 3600.0;
 
-        public double AvgStormDuration
-        {
-            get { return stormDurationHours * 3600.0; }
-        }
+        public double StormRadiation => stormRadiation / 3600.0;
 
-        public double StormRadiation
-        {
-            get { return stormRadiation / 3600.0; }
-        }
+        public double StormEjectionSpeed => Settings.StormEjectionSpeed * 299792458.0;
 
-        public double StormEjectionSpeed
-        {
-            get { return Settings.StormEjectionSpeed * 299792458.0; }
-        }
+        public override GameParameters.GameMode GameMode => GameParameters.GameMode.ANY;
 
-        public override GameParameters.GameMode GameMode
-        {
-            get { return GameParameters.GameMode.ANY; }
-        }
-
-        public override bool HasPresets
-        {
-            get { return true; }
-        }
+        public override bool HasPresets => true;
 
         public override void SetDifficultyPreset(GameParameters.Preset preset)
         {
@@ -351,27 +203,26 @@ namespace Kerbalism.System
                     lifetime = false;
                     stormFrequency = Settings.StormFrequency * 0.9f;
                     stormRadiation = Settings.StormRadiation * 0.9f;
-                    shieldingEfficiency = Lib.Clamp(Settings.ShieldingEfficiency * Settings.ShieldingEfficiencyEasyMult,
+                    Lib.Clamp(Settings.ShieldingEfficiency * Settings.ShieldingEfficiencyEasyMult,
                         0.0f, 0.99f);
                     break;
                 case GameParameters.Preset.Normal:
                     lifetime = false;
                     stormFrequency = Settings.StormFrequency;
                     stormRadiation = Settings.StormRadiation;
-                    shieldingEfficiency = Lib.Clamp(Settings.ShieldingEfficiency, 0.0f, 0.99f);
+                    Lib.Clamp(Settings.ShieldingEfficiency, 0.0f, 0.99f);
                     break;
                 case GameParameters.Preset.Moderate:
                     lifetime = true;
                     stormFrequency = Settings.StormFrequency * 1.3f;
                     stormRadiation = Settings.StormRadiation * 1.2f;
-                    shieldingEfficiency =
-                        Lib.Clamp(Settings.ShieldingEfficiency * Settings.ShieldingEfficiencyModerateMult, 0.0f, 0.99f);
+                    Lib.Clamp(Settings.ShieldingEfficiency * Settings.ShieldingEfficiencyModerateMult, 0.0f, 0.99f);
                     break;
                 case GameParameters.Preset.Hard:
                     lifetime = true;
                     stormFrequency = Settings.StormFrequency * 1.5f;
                     stormRadiation = Settings.StormRadiation * 1.5f;
-                    shieldingEfficiency = Lib.Clamp(Settings.ShieldingEfficiency * Settings.ShieldingEfficiencyHardMult,
+                    Lib.Clamp(Settings.ShieldingEfficiency * Settings.ShieldingEfficiencyHardMult,
                         0.0f, 0.99f);
                     break;
                 default:
@@ -379,25 +230,13 @@ namespace Kerbalism.System
             }
         }
 
-        public override string DisplaySection
-        {
-            get { return "Kerbalism (1)"; }
-        }
+        public override string DisplaySection => "Kerbalism (1)";
 
-        public override string Section
-        {
-            get { return "Kerbalism (1)"; }
-        }
+        public override string Section => "Kerbalism (1)";
 
-        public override int SectionOrder
-        {
-            get { return 0; }
-        }
+        public override int SectionOrder => 0;
 
-        public override string Title
-        {
-            get { return Local.Preferences_Radiation; }
-        } //"Radiation"
+        public override string Title => Local.Preferences_Radiation; //"Radiation"
 
         private static PreferencesRadiation instance;
 
