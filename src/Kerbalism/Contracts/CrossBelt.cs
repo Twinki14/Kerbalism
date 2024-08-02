@@ -2,12 +2,13 @@ using Contracts;
 using Kerbalism.Database;
 using Kerbalism.System;
 
-
 namespace Kerbalism.Contracts
 {
     // Cross radiation belt
     public sealed class CrossBelt : Contract
     {
+        private bool _meetRequirements;
+
         protected override bool Generate()
         {
             // never expire
@@ -24,61 +25,45 @@ namespace Kerbalism.Contracts
             return true;
         }
 
-        protected override string GetHashString()
-        {
-            return "CrossBelt";
-        }
+        protected override string GetHashString() => "CrossBelt";
 
-        protected override string GetTitle()
-        {
-            return Local.Contracts_radTitle;
-        }
+        protected override string GetTitle() => Local.Contracts_radTitle;
 
-        protected override string GetDescription()
-        {
-            return Local.Contracts_radDesc;
-        }
+        protected override string GetDescription() => Local.Contracts_radDesc;
 
-        protected override string MessageCompleted()
-        {
-            return Local.Contracts_radComplete;
-        }
+        protected override string MessageCompleted() => Local.Contracts_radComplete;
 
         public override bool MeetRequirements()
         {
             // stop checking when requirements are met
-            if (!meet_requirements)
+            if (_meetRequirements)
             {
-                ProgressTracking progress = ProgressTracking.Instance;
-
-                meet_requirements =
-                    Features.Radiation // radiation is enabled
-                    && progress != null && progress.reachSpace.IsComplete // first suborbit flight completed
-                    && !DB.landmarks.belt_crossing; // belt never crossed before
+                return _meetRequirements;
             }
 
-            return meet_requirements;
+            var progress = ProgressTracking.Instance;
+
+            _meetRequirements =
+                Features.Radiation // radiation is enabled
+                && progress != null && progress.reachSpace.IsComplete // first suborbit flight completed
+                && !DB.landmarks.belt_crossing; // belt never crossed before
+
+            return _meetRequirements;
         }
-
-        bool meet_requirements;
     }
-
 
     public sealed class CrossBeltCondition : ContractParameter
     {
-        protected override string GetHashString()
-        {
-            return "CrossBeltCondition";
-        }
+        protected override string GetHashString() => "CrossBeltCondition";
 
-        protected override string GetTitle()
-        {
-            return Local.Contracts_radTitle;
-        }
+        protected override string GetTitle() => Local.Contracts_radTitle;
 
         protected override void OnUpdate()
         {
-            if (DB.landmarks.belt_crossing) SetComplete();
+            if (DB.landmarks.belt_crossing)
+            {
+                SetComplete();
+            }
         }
     }
-} // KERBALISM.CONTRACTS
+}

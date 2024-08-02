@@ -10,6 +10,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.gitignore = .gitignore
 		KSPCommon.props = KSPCommon.props
 		src\Kerbalism\.ksplocalizer.settings = src\Kerbalism\.ksplocalizer.settings
+		readme.md = readme.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Localization", "Localization", "{C39748D3-9B9D-4BC8-9F3D-7894152C140D}"

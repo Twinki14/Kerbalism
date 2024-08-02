@@ -2,12 +2,13 @@ using Contracts;
 using Kerbalism.Database;
 using Kerbalism.System;
 
-
 namespace Kerbalism.Contracts
 {
     // First sample analysis
     public sealed class SpaceAnalysis : Contract
     {
+        private bool _meetRequirements;
+
         protected override bool Generate()
         {
             // never expire
@@ -24,46 +25,33 @@ namespace Kerbalism.Contracts
             return true;
         }
 
-        protected override string GetHashString()
-        {
-            return "SpaceAnalysis";
-        }
+        protected override string GetHashString() => "SpaceAnalysis";
 
-        protected override string GetTitle()
-        {
-            return Local.Contracts_sampleTitle;
-        }
+        protected override string GetTitle() => Local.Contracts_sampleTitle;
 
-        protected override string GetDescription()
-        {
-            return Local.Contracts_sampleDesc;
-        }
+        protected override string GetDescription() => Local.Contracts_sampleDesc;
 
-        protected override string MessageCompleted()
-        {
-            return Local.Contracts_sampleComplete;
-        }
+        protected override string MessageCompleted() => Local.Contracts_sampleComplete;
 
         public override bool MeetRequirements()
         {
             // stop checking when requirements are met
-            if (!meet_requirements)
+            if (_meetRequirements)
             {
-                var lab = PartLoader.getPartInfoByName("Large_Crewed_Lab");
-
-                meet_requirements =
-                    Features.Science // science is enabled
-                    && lab != null // lab part is present
-                    && ResearchAndDevelopment.PartTechAvailable(lab) // lab part is unlocked
-                    && !DB.landmarks.space_analysis; // never analyzed samples in space before
+                return _meetRequirements;
             }
 
-            return meet_requirements;
+            var lab = PartLoader.getPartInfoByName("Large_Crewed_Lab");
+
+            _meetRequirements =
+                Features.Science // science is enabled
+                && lab != null // lab part is present
+                && ResearchAndDevelopment.PartTechAvailable(lab) // lab part is unlocked
+                && !DB.landmarks.space_analysis; // never analyzed samples in space before
+
+            return _meetRequirements;
         }
-
-        bool meet_requirements;
     }
-
 
     public sealed class SpaceAnalysisCondition : ContractParameter
     {
@@ -82,4 +70,4 @@ namespace Kerbalism.Contracts
             if (DB.landmarks.space_analysis) SetComplete();
         }
     }
-} // KERBALISM
+}

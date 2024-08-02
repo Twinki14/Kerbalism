@@ -55,7 +55,6 @@
     <Compile Include="Comms\IConnectionInfo.cs"/>
     <Compile Include="Contracts\CrossBelt.cs"/>
     <Compile Include="Contracts\CrossHeliopause.cs" />
-    <Compile Include="Contracts\MannedOrbit.cs"/>
     <Compile Include="Contracts\SpaceAnalysis.cs"/>
     <Compile Include="Database\DB.cs"/>
     <Compile Include="Database\LandmarkData.cs"/>

@@ -1,3 +1,4 @@
+using System.Linq;
 using Contracts;
 using Kerbalism.Database;
 using Kerbalism.System;
@@ -7,6 +8,8 @@ namespace Kerbalism.Contracts
     // Cross the heliopause
     public sealed class CrossHeliopause : Contract
     {
+        private bool _meetRequirements;
+
         protected override bool Generate()
         {
             // never expire
@@ -23,71 +26,55 @@ namespace Kerbalism.Contracts
             return true;
         }
 
-        protected override string GetHashString()
-        {
-            return "CrossHeliopause";
-        }
+        protected override string GetHashString() => "CrossHeliopause";
 
-        protected override string GetTitle()
-        {
-            return Local.Contracts_heliopauseTitle;
-        }
+        protected override string GetTitle() => Local.Contracts_heliopauseTitle;
 
-        protected override string GetDescription()
-        {
-            return Local.Contracts_heliopauseDesc;
-        }
+        protected override string GetDescription() => Local.Contracts_heliopauseDesc;
 
-        protected override string MessageCompleted()
-        {
-            return Local.Contracts_heliopauseComplete;
-        }
+        protected override string MessageCompleted() => Local.Contracts_heliopauseComplete;
 
         public override bool MeetRequirements()
         {
             // stop checking when requirements are met
-            if (!meet_requirements)
+            if (_meetRequirements)
             {
-                ProgressTracking progress = ProgressTracking.Instance;
-                if (progress == null) return false;
-                int known = 0;
-                foreach (var body_progress in progress.celestialBodyNodes)
-                {
-                    known += body_progress.flyBy != null && body_progress.flyBy.IsComplete ? 1 : 0;
-                }
-
-                bool end_game = known > FlightGlobals.Bodies.Count / 2;
-
-                meet_requirements =
-                    Features.Radiation // radiation is enabled
-                    && end_game // entered SOI of half the bodies
-                    && Radiation.Info(FlightGlobals.Bodies[0]).model.has_pause // there is an actual heliopause
-                    && !DB.landmarks.heliopause_crossing; // heliopause never crossed before
+                return _meetRequirements;
             }
 
-            return meet_requirements;
+            var progress = ProgressTracking.Instance;
+            if (progress == null)
+            {
+                return false;
+            }
+
+            var known = progress.celestialBodyNodes.Sum(bodyProgress => bodyProgress.flyBy != null && bodyProgress.flyBy.IsComplete ? 1 : 0);
+
+            var endGame = known > FlightGlobals.Bodies.Count / 2;
+
+            _meetRequirements =
+                Features.Radiation // radiation is enabled
+                && endGame // entered SOI of half the bodies
+                && Radiation.Info(FlightGlobals.Bodies[0]).model.has_pause // there is an actual heliopause
+                && !DB.landmarks.heliopause_crossing; // heliopause never crossed before
+
+            return _meetRequirements;
         }
-
-        bool meet_requirements;
     }
-
 
     // Cross radiation belt - condition
     public sealed class CrossHeliopauseCondition : ContractParameter
     {
-        protected override string GetHashString()
-        {
-            return "CrossHeliopauseCondition";
-        }
+        protected override string GetHashString() => "CrossHeliopauseCondition";
 
-        protected override string GetTitle()
-        {
-            return Local.Contracts_heliopauseTitle;
-        }
+        protected override string GetTitle() => Local.Contracts_heliopauseTitle;
 
         protected override void OnUpdate()
         {
-            if (DB.landmarks.heliopause_crossing) SetComplete();
+            if (DB.landmarks.heliopause_crossing)
+            {
+                SetComplete();
+            }
         }
     }
-} // KERBALISM
+}
