@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-
 namespace Kerbalism.System
 {
     public static class Features
@@ -11,11 +9,7 @@ namespace Kerbalism.System
             SpaceWeather = Settings.SpaceWeather;
             Automation = Settings.Automation;
 
-            // detect all modifiers in use by current profile
-            HashSet<string> modifiers = new HashSet<string>();
-
-            // detect features from modifiers
-            Radiation = modifiers.Contains("radiation");
+            Radiation = true;
 
             // log features
             Lib.Log("features:");
@@ -32,8 +26,5 @@ namespace Kerbalism.System
 
         // features detected automatically from modifiers
         public static bool Radiation;
-
-        // features detected in other ways
-        public static bool Supplies;
     }
-} // KERBALISM
+}

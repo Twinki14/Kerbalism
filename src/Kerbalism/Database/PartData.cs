@@ -20,11 +20,13 @@ namespace Kerbalism.Database
 
         public void Save(ConfigNode node)
         {
-            if (Drive != null)
+            if (Drive == null)
             {
-                ConfigNode driveNode = node.AddNode("drive");
-                Drive.Save(driveNode);
+                return;
             }
+
+            var driveNode = node.AddNode("drive");
+            Drive.Save(driveNode);
         }
 
         public void Load(ConfigNode node)
@@ -38,8 +40,7 @@ namespace Kerbalism.Database
         /// <summary> Must be called if the part is destroyed </summary>
         public void OnPartWillDie()
         {
-            if (Drive != null)
-                Drive.DeleteDriveData();
+            Drive?.DeleteDriveData();
         }
     }
 }

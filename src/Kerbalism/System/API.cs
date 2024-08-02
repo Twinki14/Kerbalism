@@ -390,7 +390,7 @@ namespace Kerbalism.System
             List<KeyValuePair<string[], double>> apiBrokers = new List<KeyValuePair<string[], double>>();
             foreach (SupplyData.ResourceBrokerRate rb in brokers)
             {
-                apiBrokers.Add(new KeyValuePair<string[], double>(rb.broker.BrokerInfo, rb.rate));
+                apiBrokers.Add(new KeyValuePair<string[], double>(rb.Broker.BrokerInfo, rb.Rate));
             }
 
             return apiBrokers;

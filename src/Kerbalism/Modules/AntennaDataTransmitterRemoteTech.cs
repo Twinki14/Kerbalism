@@ -1,5 +1,8 @@
 ﻿using Kerbalism.Utility;
 
+// TODO - Kerbalism - Forked Science
+// TODO - Completely remove, RemoteTech will not be supported without a fresh implementation
+
 namespace Kerbalism.Modules
 {
     /// <summary>

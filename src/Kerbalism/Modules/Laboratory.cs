@@ -334,7 +334,7 @@ namespace Kerbalism.Modules
                     fileDrive.Send(subject.Id, true);
 
                 // record landmark event
-                if (!Lib.Landed(v)) DB.landmarks.space_analysis = true;
+                if (!Lib.Landed(v)) DB.landmarks.SpaceAnalysis = true;
             }
 
             return Status.RUNNING;

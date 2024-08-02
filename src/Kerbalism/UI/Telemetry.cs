@@ -199,14 +199,14 @@ namespace Kerbalism
                     foreach (SupplyData.ResourceBrokerRate rb in brokers)
                     {
                         sb.Append("\n");
-                        sb.Append(Lib.Color(rb.rate > 0.0,
-                            Lib.BuildString("+", Lib.HumanOrSIRate(Math.Abs(rb.rate), resource.id), "   "),
+                        sb.Append(Lib.Color(rb.Rate > 0.0,
+                            Lib.BuildString("+", Lib.HumanOrSIRate(Math.Abs(rb.Rate), resource.id), "   "),
                             Lib.Kolor.PosRate, // spaces to mitigate alignement issues
-                            Lib.BuildString("-", Lib.HumanOrSIRate(Math.Abs(rb.rate), resource.id), "   "),
+                            Lib.BuildString("-", Lib.HumanOrSIRate(Math.Abs(rb.Rate), resource.id), "   "),
                             Lib.Kolor.NegRate, // spaces to mitigate alignement issues
                             true));
                         sb.Append("\t");
-                        sb.Append(rb.broker.Title);
+                        sb.Append(rb.Broker.Title);
                     }
                 }
 

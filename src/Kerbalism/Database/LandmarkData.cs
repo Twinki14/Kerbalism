@@ -2,29 +2,27 @@ namespace Kerbalism.Database
 {
     public class LandmarkData
     {
+        public bool BeltCrossing; // record first belt crossing
+        public bool SpaceAnalysis; // record first lab sample analysis in space
+        public bool HeliopauseCrossing; // record first heliopause crossing
+
         public LandmarkData()
         {
+
         }
 
         public LandmarkData(ConfigNode node)
         {
-            belt_crossing = Lib.ConfigValue(node, "belt_crossing", false);
-            manned_orbit = Lib.ConfigValue(node, "manned_orbit", false);
-            space_analysis = Lib.ConfigValue(node, "space_analysis", false);
-            heliopause_crossing = Lib.ConfigValue(node, "heliopause_crossing", false);
+            BeltCrossing = Lib.ConfigValue(node, "belt_crossing", false);
+            SpaceAnalysis = Lib.ConfigValue(node, "space_analysis", false);
+            HeliopauseCrossing = Lib.ConfigValue(node, "heliopause_crossing", false);
         }
 
         public void Save(ConfigNode node)
         {
-            node.AddValue("belt_crossing", belt_crossing);
-            node.AddValue("manned_orbit", manned_orbit);
-            node.AddValue("space_analysis", space_analysis);
-            node.AddValue("heliopause_crossing", heliopause_crossing);
+            node.AddValue("belt_crossing", BeltCrossing);
+            node.AddValue("space_analysis", SpaceAnalysis);
+            node.AddValue("heliopause_crossing", HeliopauseCrossing);
         }
-
-        public bool belt_crossing; // record first belt crossing
-        public bool manned_orbit; // record first 30 days manned orbit
-        public bool space_analysis; // record first lab sample analysis in space
-        public bool heliopause_crossing; // record first heliopause crossing
     }
-} // KERBALISM
+}

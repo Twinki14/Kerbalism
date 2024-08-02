@@ -52,23 +52,23 @@ namespace Kerbalism.Profile
                 uint variant = crew.Count > 0 ? 0 : 1u;
 
                 // manage messages
-                if (res.Level <= double.Epsilon && sd.message < 2)
+                if (res.Level <= double.Epsilon && sd.Message < 2)
                 {
                     if (empty_message.Length > 0 && show_msg)
                         Message.Post(Severity.danger, Lib.ExpandMsg(empty_message, v, null, variant));
-                    sd.message = 2;
+                    sd.Message = 2;
                 }
-                else if (res.Level < low_threshold && sd.message < 1)
+                else if (res.Level < low_threshold && sd.Message < 1)
                 {
                     if (low_message.Length > 0 && show_msg)
                         Message.Post(Severity.warning, Lib.ExpandMsg(low_message, v, null, variant));
-                    sd.message = 1;
+                    sd.Message = 1;
                 }
-                else if (res.Level > low_threshold && sd.message > 0)
+                else if (res.Level > low_threshold && sd.Message > 0)
                 {
                     if (refill_message.Length > 0 && show_msg)
                         Message.Post(Severity.relax, Lib.ExpandMsg(refill_message, v, null, variant));
-                    sd.message = 0;
+                    sd.Message = 0;
                 }
             }
         }

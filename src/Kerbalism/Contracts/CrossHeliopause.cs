@@ -56,7 +56,7 @@ namespace Kerbalism.Contracts
                 Features.Radiation // radiation is enabled
                 && endGame // entered SOI of half the bodies
                 && Radiation.Info(FlightGlobals.Bodies[0]).model.has_pause // there is an actual heliopause
-                && !DB.landmarks.heliopause_crossing; // heliopause never crossed before
+                && !DB.landmarks.HeliopauseCrossing; // heliopause never crossed before
 
             return _meetRequirements;
         }
@@ -71,7 +71,7 @@ namespace Kerbalism.Contracts
 
         protected override void OnUpdate()
         {
-            if (DB.landmarks.heliopause_crossing)
+            if (DB.landmarks.HeliopauseCrossing)
             {
                 SetComplete();
             }

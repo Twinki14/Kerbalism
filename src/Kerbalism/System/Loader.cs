@@ -77,7 +77,7 @@ namespace Kerbalism.System
         static void Inject(UrlDir.UrlFile root, string type, string id)
         {
             Lib.Log(Lib.BuildString("Injecting ", type, id));
-            if (ModuleManager.MM_major >= 4)
+            if (ModuleManager.mmMajor >= 4)
             {
                 MM40Injector.AddInjector(type, id);
             }

@@ -2,6 +2,9 @@ using System;
 using System.Reflection;
 using Kerbalism.System;
 
+// TODO - Kerbalism - Forked Science
+// TODO - Completely remove, RemoteTech will not be supported without a fresh implementation
+
 namespace Kerbalism.External
 {
     /// <summary> Contains methods for RemoteTech's API</summary>

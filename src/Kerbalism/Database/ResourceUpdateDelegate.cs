@@ -3,56 +3,62 @@ using System.Collections.Generic;
 using System.Reflection;
 using Kerbalism.Modules;
 
+// TODO - Kerbalism - Forked Science
+// TODO - This is likely no longer required, EC is the only thing we'll be truely simulating in the background
+// TODO - and this appears to be for all other types of resources (Maybe CommNet?)
+
 namespace Kerbalism.Database
 {
     public class ResourceUpdateDelegate
     {
-        private static Type[] signature =
-            {typeof(Dictionary<string, double>), typeof(List<KeyValuePair<string, double>>)};
+        private readonly PartModule _module;
+        private readonly MethodInfo _methodInfo;
 
-        internal PartModule module;
-
-        internal MethodInfo methodInfo;
+        private static readonly Dictionary<Type, MethodInfo> SupportedModules = new Dictionary<Type, MethodInfo>();
+        private static readonly List<Type> UnsupportedModules = new List<Type>();
 
         private ResourceUpdateDelegate(MethodInfo methodInfo, PartModule module)
         {
-            this.methodInfo = methodInfo;
-            this.module = module;
+            _methodInfo = methodInfo;
+            _module = module;
         }
 
-        public string invoke(Dictionary<string, double> availableRresources,
-            List<KeyValuePair<string, double>> resourceChangeRequest)
+        public string invoke(Dictionary<string, double> availableResources, List<KeyValuePair<string, double>> resourceChangeRequest)
         {
-            IKerbalismModule km = module as IKerbalismModule;
+            var km = _module as IKerbalismModule;
             if (km != null)
-                return km.ResourceUpdate(availableRresources, resourceChangeRequest);
+            {
+                return km.ResourceUpdate(availableResources, resourceChangeRequest);
+            }
 
-            var title = methodInfo.Invoke(module, new object[] {availableRresources, resourceChangeRequest});
-            if (title == null) return module.moduleName;
-            return title.ToString();
+            var title = _methodInfo.Invoke(_module, new object[] {availableResources, resourceChangeRequest});
+            return title == null ? _module.moduleName : title.ToString();
         }
 
         public static ResourceUpdateDelegate Instance(PartModule module)
         {
-            MethodInfo methodInfo = null;
             var type = module.GetType();
-            supportedModules.TryGetValue(type, out methodInfo);
-            if (methodInfo != null) return new ResourceUpdateDelegate(methodInfo, module);
 
-            if (unsupportedModules.Contains(type)) return null;
+            SupportedModules.TryGetValue(type, out var methodInfo);
+            if (methodInfo != null)
+            {
+                return new ResourceUpdateDelegate(methodInfo, module);
+            }
+
+            if (UnsupportedModules.Contains(type))
+            {
+                return null;
+            }
 
             methodInfo = module.GetType().GetMethod("ResourceUpdate", BindingFlags.Instance | BindingFlags.Public);
             if (methodInfo == null)
             {
-                unsupportedModules.Add(type);
+                UnsupportedModules.Add(type);
                 return null;
             }
 
-            supportedModules[type] = methodInfo;
+            SupportedModules[type] = methodInfo;
             return new ResourceUpdateDelegate(methodInfo, module);
         }
-
-        private static readonly Dictionary<Type, MethodInfo> supportedModules = new Dictionary<Type, MethodInfo>();
-        private static readonly List<Type> unsupportedModules = new List<Type>();
     }
 }

@@ -2,29 +2,29 @@ namespace Kerbalism.Database
 {
     public class UIData
     {
+        public uint WinLeft; // popout window position left
+        public uint WinTop; // popout window position top
+        public bool MapViewed; // has the user entered map-view/tracking-station
+
         public UIData()
         {
-            win_left = 280u;
-            win_top = 100u;
-            map_viewed = false;
+            WinLeft = 280u;
+            WinTop = 100u;
+            MapViewed = false;
         }
 
         public UIData(ConfigNode node)
         {
-            win_left = Lib.ConfigValue(node, "win_left", 280u);
-            win_top = Lib.ConfigValue(node, "win_top", 100u);
-            map_viewed = Lib.ConfigValue(node, "map_viewed", false);
+            WinLeft = Lib.ConfigValue(node, "win_left", 280u);
+            WinTop = Lib.ConfigValue(node, "win_top", 100u);
+            MapViewed = Lib.ConfigValue(node, "map_viewed", false);
         }
 
         public void Save(ConfigNode node)
         {
-            node.AddValue("win_left", win_left);
-            node.AddValue("win_top", win_top);
-            node.AddValue("map_viewed", map_viewed);
+            node.AddValue("win_left", WinLeft);
+            node.AddValue("win_top", WinTop);
+            node.AddValue("map_viewed", MapViewed);
         }
-
-        public uint win_left; // popout window position left
-        public uint win_top; // popout window position top
-        public bool map_viewed; // has the user entered map-view/tracking-station
     }
-} // KERBALISM
+}

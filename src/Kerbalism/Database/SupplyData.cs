@@ -4,34 +4,33 @@ namespace Kerbalism.Database
 {
     public class SupplyData
     {
+        public uint Message; // used to avoid sending messages multiple times
+        public List<ResourceBrokerRate> ResourceBrokers { get; } = new List<ResourceBrokerRate>();
+
         public SupplyData()
         {
-            message = 0;
+            Message = 0;
         }
 
         public SupplyData(ConfigNode node)
         {
-            message = Lib.ConfigValue(node, "message", 0u);
+            Message = Lib.ConfigValue(node, "message", 0u);
         }
 
         public void Save(ConfigNode node)
         {
-            node.AddValue("message", message);
+            node.AddValue("message", Message);
         }
-
-        public uint message; // used to avoid sending messages multiple times
-        public List<ResourceBrokerRate> ResourceBrokers { get; private set; } = new List<ResourceBrokerRate>();
-        public static string LocAveragecache;
 
         public class ResourceBrokerRate
         {
-            public ResourceBroker broker;
-            public double rate;
+            public readonly ResourceBroker Broker;
+            public readonly double Rate;
 
             public ResourceBrokerRate(ResourceBroker broker, double amount)
             {
-                this.broker = broker;
-                this.rate = amount;
+                Broker = broker;
+                Rate = amount;
             }
         }
 
@@ -40,14 +39,13 @@ namespace Kerbalism.Database
         {
             ResourceBrokers.Clear();
 
-            foreach (KeyValuePair<ResourceBroker, double> p in ruleBrokersRate)
+            foreach (var p in ruleBrokersRate)
             {
-                ResourceBroker broker = ResourceBroker.GetOrCreate(p.Key.Id + "Avg", p.Key.Category,
-                    Lib.BuildString(p.Key.Title, " (", Local.Generic_AVERAGE, ")"));
+                var broker = ResourceBroker.GetOrCreate(p.Key.Id + "Avg", p.Key.Category, Lib.BuildString(p.Key.Title, " (", Local.Generic_AVERAGE, ")"));
                 ResourceBrokers.Add(new ResourceBrokerRate(broker, p.Value));
             }
 
-            foreach (KeyValuePair<ResourceBroker, double> p in brokersResAmount)
+            foreach (var p in brokersResAmount)
             {
                 ResourceBrokers.Add(new ResourceBrokerRate(p.Key, p.Value / elapsedSeconds));
             }
@@ -58,4 +56,4 @@ namespace Kerbalism.Database
             }
         }
     }
-} // KERBALISM
+}

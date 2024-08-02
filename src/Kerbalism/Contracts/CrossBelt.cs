@@ -46,7 +46,7 @@ namespace Kerbalism.Contracts
             _meetRequirements =
                 Features.Radiation // radiation is enabled
                 && progress != null && progress.reachSpace.IsComplete // first suborbit flight completed
-                && !DB.landmarks.belt_crossing; // belt never crossed before
+                && !DB.landmarks.BeltCrossing; // belt never crossed before
 
             return _meetRequirements;
         }
@@ -60,7 +60,7 @@ namespace Kerbalism.Contracts
 
         protected override void OnUpdate()
         {
-            if (DB.landmarks.belt_crossing)
+            if (DB.landmarks.BeltCrossing)
             {
                 SetComplete();
             }

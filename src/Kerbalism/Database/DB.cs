@@ -1,22 +1,38 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Kerbalism.Science;
 
 namespace Kerbalism.Database
 {
     public static class DB
     {
+        public static int uid; // savegame unique id
+        public static LandmarkData landmarks; // store landmark data
+        public static UIData ui; // store ui data
+
+        private static Version version; // savegame version
+        private static Dictionary<string, StormData> storms; // store data per-body
+        private static Dictionary<Guid, VesselData> vessels = new Dictionary<Guid, VesselData>(); // store data per-vessel
+
         public static void Load(ConfigNode node)
         {
             // get version (or use current one for new savegames)
-            string versionStr = Lib.ConfigValue(node, "version", Lib.KerbalismVersion.ToString());
+            var versionStr = Lib.ConfigValue(node, "version", Lib.KerbalismVersion.ToString());
+
             // sanitize old saves (pre 3.1) format (X.X.X.X) to new format (X.X)
             if (versionStr.Split('.').Length > 2)
+            {
                 versionStr = versionStr.Split('.')[0] + "." + versionStr.Split('.')[1];
+            }
+
             version = new Version(versionStr);
 
             // if this is an unsupported version, print warning
-            if (version <= new Version(1, 2)) Lib.Log("loading save from unsupported version " + version);
+            if (version <= new Version(1, 2))
+            {
+                Lib.Log("loading save from unsupported version " + version);
+            }
 
             // get unique id (or generate one for new savegames)
             uid = Lib.ConfigValue(node, "uid", Lib.RandomInt(int.MaxValue));
@@ -26,15 +42,15 @@ namespace Kerbalism.Database
 
             UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.DB.Load.Vessels");
             vessels.Clear();
+
             // flightstate will be null when first creating the game
             if (HighLogic.CurrentGame.flightState != null)
             {
-                ConfigNode vesselsNode = node.GetNode("vessels2");
-                if (vesselsNode == null)
-                    vesselsNode = new ConfigNode();
+                var vesselsNode = node.GetNode("vessels2") ?? new ConfigNode();
+
                 // HighLogic.CurrentGame.flightState.protoVessels is what is used by KSP to persist vessels
                 // It is always available and synchronized in OnLoad, no matter the scene, excepted on the first OnLoad in a new game
-                foreach (ProtoVessel pv in HighLogic.CurrentGame.flightState.protoVessels)
+                foreach (var pv in HighLogic.CurrentGame.flightState.protoVessels)
                 {
                     if (pv.vesselID == Guid.Empty)
                     {
@@ -43,7 +59,7 @@ namespace Kerbalism.Database
                         continue;
                     }
 
-                    VesselData vd = new VesselData(pv, vesselsNode.GetNode(pv.vesselID.ToString()));
+                    var vd = new VesselData(pv, vesselsNode.GetNode(pv.vesselID.ToString()));
                     vessels.Add(pv.vesselID, vd);
                     Lib.LogDebug("VesselData loaded for vessel " + pv.vesselName);
                 }
@@ -54,26 +70,20 @@ namespace Kerbalism.Database
             // for compatibility with old saves, convert drives data (it's now saved in PartData)
             if (node.HasNode("drives"))
             {
-                Dictionary<uint, PartData> allParts = new Dictionary<uint, PartData>();
-                foreach (VesselData vesselData in vessels.Values)
+                var allParts = new Dictionary<uint, PartData>();
+                foreach (var partData in vessels.Values.SelectMany(vesselData => vesselData.PartDatas))
                 {
-                    foreach (PartData partData in vesselData.PartDatas)
-                    {
-                        // we had a case of someone having a save with multiple parts having the same flightID
-                        // 5 duplicates, all were asteroids.
-                        if (!allParts.ContainsKey(partData.FlightId))
-                        {
-                            allParts.Add(partData.FlightId, partData);
-                        }
-                    }
+                    // we had a case of someone having a save with multiple parts having the same flightID
+                    // 5 duplicates, all were asteroids.
+                    allParts.TryAdd(partData.FlightId, partData);
                 }
 
                 foreach (var drive_node in node.GetNode("drives").GetNodes())
                 {
-                    uint driveId = Lib.Parse.ToUInt(drive_node.name);
-                    if (allParts.ContainsKey(driveId))
+                    var driveId = Lib.Parse.ToUInt(drive_node.name);
+                    if (allParts.TryGetValue(driveId, out var part))
                     {
-                        allParts[driveId].Drive = new Drive(drive_node);
+                        part.Drive = new Drive(drive_node);
                     }
                 }
             }
@@ -110,7 +120,9 @@ namespace Kerbalism.Database
 
             // if an old savegame was imported, log some debug info
             if (version != Lib.KerbalismVersion)
+            {
                 Lib.Log("savegame converted from version " + version + " to " + Lib.KerbalismVersion);
+            }
         }
 
         public static void Save(ConfigNode node)
@@ -124,8 +136,8 @@ namespace Kerbalism.Database
             // only persist vessels that exists in KSP own vessel persistence
             // this prevent creating junk data without going into the mess of using gameevents
             UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.DB.Save.Vessels");
-            ConfigNode vesselsNode = node.AddNode("vessels2");
-            foreach (ProtoVessel pv in HighLogic.CurrentGame.flightState.protoVessels)
+            var vesselsNode = node.AddNode("vessels2");
+            foreach (var pv in HighLogic.CurrentGame.flightState.protoVessels)
             {
                 if (pv.vesselID == Guid.Empty)
                 {
@@ -134,8 +146,8 @@ namespace Kerbalism.Database
                     continue;
                 }
 
-                VesselData vd = pv.KerbalismData();
-                ConfigNode vesselNode = vesselsNode.AddNode(pv.vesselID.ToString());
+                var vd = pv.KerbalismData();
+                var vesselNode = vesselsNode.AddNode(pv.vesselID.ToString());
                 vd.Save(vesselNode);
             }
 
@@ -158,31 +170,32 @@ namespace Kerbalism.Database
             ui.Save(node.AddNode("ui"));
         }
 
-
         public static VesselData KerbalismData(this Vessel vessel)
         {
-            VesselData vd;
-            if (!vessels.TryGetValue(vessel.id, out vd))
+            if (vessels.TryGetValue(vessel.id, out var vd))
             {
-                Lib.LogDebug("Creating Vesseldata for new vessel " + vessel.vesselName);
-                vd = new VesselData(vessel);
-                vessels.Add(vessel.id, vd);
+                return vd;
             }
+
+            Lib.LogDebug("Creating Vesseldata for new vessel " + vessel.vesselName);
+            vd = new VesselData(vessel);
+            vessels.Add(vessel.id, vd);
 
             return vd;
         }
 
         public static VesselData KerbalismData(this ProtoVessel protoVessel)
         {
-            VesselData vd;
-            if (!vessels.TryGetValue(protoVessel.vesselID, out vd))
+            if (vessels.TryGetValue(protoVessel.vesselID, out var vd))
             {
-                Lib.Log(
-                    "VesselData for protovessel " + protoVessel.vesselName + ", ID=" + protoVessel.vesselID +
-                    " doesn't exist !", Lib.LogLevel.Warning);
-                vd = new VesselData(protoVessel, null);
-                vessels.Add(protoVessel.vesselID, vd);
+                return vd;
             }
+
+            Lib.Log(
+                "VesselData for protovessel " + protoVessel.vesselName + ", ID=" + protoVessel.vesselID +
+                " doesn't exist !", Lib.LogLevel.Warning);
+            vd = new VesselData(protoVessel, null);
+            vessels.Add(protoVessel.vesselID, vd);
 
             return vd;
         }
@@ -205,37 +218,21 @@ namespace Kerbalism.Database
             return storms[name];
         }
 
-        public static string To_safe_key(string key)
-        {
-            return key.Replace(" ", "___");
-        }
+        public static string To_safe_key(string key) => key.Replace(" ", "___");
 
-        public static string From_safe_key(string key)
-        {
-            return key.Replace("___", " ");
-        }
-
-        public static Version version; // savegame version
-        public static int uid; // savegame unique id
-
-        private static Dictionary<Guid, VesselData>
-            vessels = new Dictionary<Guid, VesselData>(); // store data per-vessel
-
-        public static Dictionary<string, StormData> storms; // store data per-body
-        public static LandmarkData landmarks; // store landmark data
-        public static UIData ui; // store ui data
+        public static string From_safe_key(string key) => key.Replace("___", " ");
 
         #region VESSELDATA METHODS
 
         public static bool TryGetVesselDataTemp(this Vessel vessel, out VesselData vesselData)
         {
-            if (!vessels.TryGetValue(vessel.id, out vesselData))
+            if (vessels.TryGetValue(vessel.id, out vesselData))
             {
-                Lib.LogStack($"Could not get VesselData for vessel {vessel.vesselName}", Lib.LogLevel.Error);
-                return false;
+                return true;
             }
 
-            return true;
+            Lib.LogStack($"Could not get VesselData for vessel {vessel.vesselName}", Lib.LogLevel.Error);
+            return false;
         }
 
         /// <summary>
@@ -243,12 +240,9 @@ namespace Kerbalism.Database
         /// </summary>
         public static bool TryGetVesselData(this Vessel vessel, out VesselData vesselData)
         {
-            if (!vessels.TryGetValue(vessel.id, out vesselData))
-                return false;
-
-            return true;
+            return vessels.TryGetValue(vessel.id, out vesselData);
         }
 
         #endregion
     }
-} // KERBALISM
+}

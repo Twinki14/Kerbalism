@@ -976,7 +976,7 @@ namespace Kerbalism
             if (Features.Radiation)
             {
                 // we only show the warning for manned vessels, or for all vessels the first time its crossed
-                bool must_warn = vd.CrewCount > 0 || !DB.landmarks.belt_crossing;
+                bool must_warn = vd.CrewCount > 0 || !DB.landmarks.BeltCrossing;
 
                 // are we inside a belt
                 bool inside_belt = vd.EnvInnerBelt || vd.EnvOuterBelt;
@@ -997,10 +997,10 @@ namespace Kerbalism
                 }
 
                 // record first belt crossing
-                if (inside_belt) DB.landmarks.belt_crossing = true;
+                if (inside_belt) DB.landmarks.BeltCrossing = true;
 
                 // record first heliopause crossing
-                if (vd.EnvInterstellar) DB.landmarks.heliopause_crossing = true;
+                if (vd.EnvInterstellar) DB.landmarks.HeliopauseCrossing = true;
             }
         }
 
