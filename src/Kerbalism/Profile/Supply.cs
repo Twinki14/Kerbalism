@@ -106,7 +106,6 @@ namespace Kerbalism.Profile
             p.cost += (float) (Lib.GetDefinition(resource).unitCost * (empty ? 0.0 : quantity));
         }
 
-
         public void SetupEva(Part p)
         {
             // do nothing if no resource on eva
@@ -115,27 +114,6 @@ namespace Kerbalism.Profile
             // create new resource capacity in the eva kerbal
             Lib.AddResource(p, resource, 0.0, on_eva);
         }
-
-
-        public void SetupRescue(Vessel v)
-        {
-            // do nothing if no resource on rescue
-            if (on_rescue <= double.Epsilon) return;
-
-            // if the vessel has no capacity
-            if (ResourceCache.GetResource(v, resource).Capacity <= double.Epsilon)
-            {
-                // find the first useful part
-                Part p = v.parts.Find(k => k.CrewCapacity > 0 || k.FindModuleImplementing<KerbalEVA>() != null);
-
-                // add capacity
-                Lib.AddResource(p, resource, 0.0, on_rescue);
-            }
-
-            // add resource to the vessel
-            ResourceCache.Produce(v, resource, on_rescue, ResourceBroker.Generic);
-        }
-
 
         public string resource; // name of resource
         public double on_pod; // how much resource to add to manned parts, per-kerbal

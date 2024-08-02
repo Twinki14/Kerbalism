@@ -10,13 +10,8 @@ namespace Kerbalism
         public enum BrokerCategory
         {
             Unknown,
-            Generator,
-            Converter,
             SolarPanel,
-            Harvester,
-            RTG,
             VesselSystem,
-            Kerbal,
             Comms,
             Science
         }
@@ -28,11 +23,6 @@ namespace Kerbalism
 
         public static ResourceBroker SolarPanel =
             GetOrCreate("SolarPanel", BrokerCategory.SolarPanel, Local.Brokers_SolarPanel);
-
-        public static ResourceBroker KSPIEGenerator =
-            GetOrCreate("KSPIEGenerator", BrokerCategory.Generator, Local.Brokers_KSPIEGenerator);
-
-        public static ResourceBroker RTG = GetOrCreate("RTG", BrokerCategory.RTG, Local.Brokers_RTG);
 
         public static ResourceBroker ScienceLab =
             GetOrCreate("ScienceLab", BrokerCategory.Science, Local.Brokers_ScienceLab);

@@ -136,15 +136,6 @@ namespace Kerbalism.Profile
             }
         }
 
-
-        public static void SetupRescue(Vessel v)
-        {
-            foreach (Supply supply in supplies)
-            {
-                supply.SetupRescue(v);
-            }
-        }
-
         public static List<Supply> supplies; // supplies in the profile
     }
 } // KERBALISM

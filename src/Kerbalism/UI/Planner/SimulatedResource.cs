@@ -32,7 +32,6 @@ namespace Kerbalism.Planner
         {
             consumers = new Dictionary<string, Wrapper>();
             producers = new Dictionary<string, Wrapper>();
-            harvests = new List<string>();
             consumed = 0.0;
             produced = 0.0;
         }
@@ -119,20 +118,11 @@ namespace Kerbalism.Planner
                 info.Clamp(location);
             }
 
-            public override double amount
-            {
-                get => info._amount[location];
-            }
+            public override double amount => info._amount[location];
 
-            public override double capacity
-            {
-                get => info._capacity[location];
-            }
+            public override double capacity => info._capacity[location];
 
-            public override double storage
-            {
-                get => info._storage[location];
-            }
+            public override double storage => info._storage[location];
 
             private SimulatedResource info;
             private Resource_location location;
@@ -255,68 +245,24 @@ namespace Kerbalism.Planner
                 sb.Append(pair.Key);
             }
 
-            if (harvests.Count > 0)
-            {
-                sb.Append("\n\n<b>");
-                sb.Append(Local.Harvests); //Harvests
-                sb.Append("</b>");
-                foreach (string s in harvests)
-                {
-                    sb.Append("\n");
-                    sb.Append(s);
-                }
-            }
-
             return Lib.BuildString("<align=left />", sb.ToString());
         }
 
         // Enforce that modification happens through official accessor functions
         // Many external classes need to read these values, and they want convenient access
         // However direct modification of these members from outside would make the coupling far too high
-        public string resource_name
-        {
-            get { return _resource_name; }
-            private set { _resource_name = value; }
-        }
+        public string resource_name { get; private set; }
 
-        public List<string> harvests
-        {
-            get { return _harvests; }
-            private set { _harvests = value; }
-        }
+        public double consumed { get; private set; }
 
-        public double consumed
-        {
-            get { return _consumed; }
-            private set { _consumed = value; }
-        }
-
-        public double produced
-        {
-            get { return _produced; }
-            private set { _produced = value; }
-        }
+        public double produced { get; private set; }
 
         // only getters, use official interface for setting that support resource location
-        public double storage
-        {
-            get { return _storage.Values.Sum(); }
-        }
+        public double storage => _storage.Values.Sum();
 
-        public double capacity
-        {
-            get { return _capacity.Values.Sum(); }
-        }
+        public double capacity => _capacity.Values.Sum();
 
-        public double amount
-        {
-            get { return _amount.Values.Sum(); }
-        }
-
-        private string _resource_name; // associated resource name
-        private List<string> _harvests; // some extra data about harvests
-        private double _consumed; // total consumption rate
-        private double _produced; // total production rate
+        public double amount => _amount.Values.Sum();
 
         private IDictionary<Resource_location, double> _storage; // amount stored (at the start of simulation)
         private IDictionary<Resource_location, double> _capacity; // storage capacity
