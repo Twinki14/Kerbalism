@@ -207,7 +207,7 @@ namespace Kerbalism.System
             }
 
             // execute script
-            data.from.vessel.KerbalismData().computer.Execute(data.from.vessel, ScriptType.eva_out);
+            data.from.vessel.KerbalismData().computer.Execute(data.from.vessel, ScriptType.EvaOut);
 
             // Start a coroutine for doing eva propellant resource transfers once the kerbal EVA is started (this is too early here)
             data.to.StartCoroutine(PostEVATweaks(data.from, data.to, evaPropName));
@@ -377,7 +377,7 @@ namespace Kerbalism.System
             this.OnVesselModified(data.to.vessel);
 
             // execute script
-            data.to.vessel.KerbalismData().computer.Execute(data.to.vessel, ScriptType.eva_in);
+            data.to.vessel.KerbalismData().computer.Execute(data.to.vessel, ScriptType.EvaIn);
         }
 
         void VesselRecovered(ProtoVessel pv, bool b)

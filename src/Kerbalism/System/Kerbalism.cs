@@ -316,7 +316,7 @@ namespace Kerbalism.System
                     UnityEngine.Profiling.Profiler.EndSample();
 
                     UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.FixedUpdate.Loaded.Comms");
-                    CommsMessages.Update(v, vd, elapsed_s);
+                    CommsMessages.Update(v, vd);
                     UnityEngine.Profiling.Profiler.EndSample();
 
                     UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.FixedUpdate.Loaded.Science");
@@ -390,7 +390,7 @@ namespace Kerbalism.System
                 UnityEngine.Profiling.Profiler.EndSample();
 
                 UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.FixedUpdate.Unloaded.Comms");
-                CommsMessages.Update(last_v, last_vd, last_time);
+                CommsMessages.Update(last_v, last_vd);
                 UnityEngine.Profiling.Profiler.EndSample();
 
                 UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.FixedUpdate.Unloaded.Profile");
@@ -716,27 +716,27 @@ namespace Kerbalism.System
             // call scripts with 1-5 key
             if (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1))
             {
-                vd.computer.Execute(v, ScriptType.action1);
+                vd.computer.Execute(v, ScriptType.Action1);
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2))
             {
-                vd.computer.Execute(v, ScriptType.action2);
+                vd.computer.Execute(v, ScriptType.Action2);
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3))
             {
-                vd.computer.Execute(v, ScriptType.action3);
+                vd.computer.Execute(v, ScriptType.Action3);
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4))
             {
-                vd.computer.Execute(v, ScriptType.action4);
+                vd.computer.Execute(v, ScriptType.Action4);
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha5) || Input.GetKeyDown(KeyCode.Keypad5))
             {
-                vd.computer.Execute(v, ScriptType.action5);
+                vd.computer.Execute(v, ScriptType.Action5);
             }
         }
 

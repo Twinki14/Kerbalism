@@ -12,15 +12,15 @@ namespace Kerbalism.Automation.Devices
         {
             get
             {
-                return Lib.ReflectionValue<bool>(module, "IsRTActive")
+                return Lib.ReflectionValue<bool>(Module, "IsRTActive")
                     ? Lib.Color(Local.Generic_ACTIVE, Lib.Kolor.Green)
                     : Lib.Color(Local.Generic_INACTIVE, Lib.Kolor.Yellow);
             }
         }
 
-        public override void Ctrl(bool value) => Lib.ReflectionValue(module, "IsRTActive", value);
+        public override void Ctrl(bool value) => Lib.ReflectionValue(Module, "IsRTActive", value);
 
-        public override void Toggle() => Ctrl(!Lib.ReflectionValue<bool>(module, "IsRTActive"));
+        public override void Toggle() => Ctrl(!Lib.ReflectionValue<bool>(Module, "IsRTActive"));
     }
 
     public sealed class ProtoAntennaRTDevice : ProtoDevice<PartModule>
@@ -36,14 +36,14 @@ namespace Kerbalism.Automation.Devices
         {
             get
             {
-                return Lib.Proto.GetBool(protoModule, "IsRTActive")
+                return Lib.Proto.GetBool(ProtoModule, "IsRTActive")
                     ? Lib.Color(Local.Generic_ACTIVE, Lib.Kolor.Green)
                     : Lib.Color(Local.Generic_INACTIVE, Lib.Kolor.Yellow);
             }
         }
 
-        public override void Ctrl(bool value) => Lib.Proto.Set(protoModule, "IsRTActive", value);
+        public override void Ctrl(bool value) => Lib.Proto.Set(ProtoModule, "IsRTActive", value);
 
-        public override void Toggle() => Ctrl(!Lib.Proto.GetBool(protoModule, "IsRTActive"));
+        public override void Toggle() => Ctrl(!Lib.Proto.GetBool(ProtoModule, "IsRTActive"));
     }
 }

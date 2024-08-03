@@ -34,7 +34,6 @@ namespace Kerbalism.Comms
 
         public double Strength => strength;
 
-
         // ====================================================================
         // VALUES SET BY KERBALISM (CommInfo API )
         // ====================================================================

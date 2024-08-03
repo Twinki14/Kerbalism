@@ -7,16 +7,16 @@ namespace Kerbalism.Comms
 {
     public class CommHandler
     {
-        private static bool CommNetPatchApplied = false;
+        private static bool _commNetPatchApplied = false;
 
-        protected VesselData vd;
+        protected VesselData Vd;
 
-        private bool transmittersDirty;
+        private bool _transmittersDirty;
 
         /// <summary>
         /// false while the network isn't initialized or when the transmitter list is not up-to-date
         /// </summary>
-        public bool IsReady => NetworkIsReady && !transmittersDirty;
+        public bool IsReady => NetworkIsReady && !_transmittersDirty;
 
         /// <summary>
         /// pseudo ctor for getting the right handler type
@@ -31,9 +31,9 @@ namespace Kerbalism.Comms
             // This said, this isn't ideal, and it would be cleaner to have a "commHandledByAPI"
             // bool that mods should set once and for all before any vessel exist.
 
-            if (!CommNetPatchApplied)
+            if (!_commNetPatchApplied)
             {
-                CommNetPatchApplied = true;
+                _commNetPatchApplied = true;
 
                 if (API.Comm.handlers.Count == 0 && !RemoteTech.Installed)
                 {
@@ -44,26 +44,21 @@ namespace Kerbalism.Comms
             if (API.Comm.handlers.Count > 0)
             {
                 handler = new CommHandler();
-                Lib.LogDebug("Created new API CommHandler", Lib.LogLevel.Message);
-            }
-            else if (RemoteTech.Installed)
-            {
-                handler = new CommHandlerRemoteTech();
-                Lib.LogDebug("Created new CommHandlerRemoteTech", Lib.LogLevel.Message);
+                Lib.LogDebug("Created new API CommHandler");
             }
             else if (isGroundController)
             {
                 handler = new CommHandlerCommNetSerenity();
-                Lib.LogDebug("Created new CommHandlerCommNetSerenity", Lib.LogLevel.Message);
+                Lib.LogDebug("Created new CommHandlerCommNetSerenity");
             }
             else
             {
                 handler = new CommHandlerCommNetVessel();
-                Lib.LogDebug("Created new CommHandlerCommNetVessel", Lib.LogLevel.Message);
+                Lib.LogDebug("Created new CommHandlerCommNetVessel");
             }
 
-            handler.vd = vd;
-            handler.transmittersDirty = true;
+            handler.Vd = vd;
+            handler._transmittersDirty = true;
 
             return handler;
         }
@@ -80,10 +75,10 @@ namespace Kerbalism.Comms
             {
                 if (NetworkIsReady)
                 {
-                    if (transmittersDirty)
+                    if (_transmittersDirty)
                     {
                         UpdateTransmitters(connection, true);
-                        transmittersDirty = false;
+                        _transmittersDirty = false;
                     }
                     else
                     {
@@ -95,14 +90,14 @@ namespace Kerbalism.Comms
             }
             else
             {
-                transmittersDirty = false;
+                _transmittersDirty = false;
                 try
                 {
-                    API.Comm.handlers[0].Invoke(null, new object[] {connection, vd.Vessel});
+                    API.Comm.handlers[0].Invoke(null, new object[] {connection, Vd.Vessel});
                 }
                 catch (Exception e)
                 {
-                    Lib.Log("CommInfo handler threw exception " + e.Message + "\n" + e.ToString(), Lib.LogLevel.Error);
+                    Lib.Log("CommInfo handler threw exception " + e.Message + "\n" + e, Lib.LogLevel.Error);
                 }
             }
 
@@ -113,7 +108,7 @@ namespace Kerbalism.Comms
         /// Clear and re-find all transmitters partmodules on the vessel.
         /// Must be called when parts have been removed / added on the vessel.
         /// </summary>
-        public void ResetPartTransmitters() => transmittersDirty = true;
+        public void ResetPartTransmitters() => _transmittersDirty = true;
 
         /// <summary>
         /// Get the cost for transmitting data with this CommHandler
@@ -123,7 +118,7 @@ namespace Kerbalism.Comms
         /// <returns></returns>
         public virtual double GetTransmissionCost(double transmittedTotal, double elapsed_s)
         {
-            return (vd.Connection.ec - vd.Connection.ec_idle) * (transmittedTotal / (vd.Connection.rate * elapsed_s));
+            return (Vd.Connection.ec - Vd.Connection.ec_idle) * (transmittedTotal / (Vd.Connection.rate * elapsed_s));
         }
 
         /// <summary>
@@ -131,8 +126,8 @@ namespace Kerbalism.Comms
         /// </summary>
         protected virtual void UpdateInputs(ConnectionInfo connection)
         {
-            connection.transmitting = vd.filesTransmitted.Count > 0;
-            connection.powered = vd.Powered;
+            connection.transmitting = Vd.filesTransmitted.Count > 0;
+            connection.powered = Vd.Powered;
         }
 
         protected virtual bool NetworkIsReady => true;

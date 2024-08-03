@@ -8,17 +8,17 @@ namespace Kerbalism.Automation.Devices
         {
         }
 
-        public override string Status => Lib.Color(module.running, Local.Generic_ACTIVE, Lib.Kolor.Green,
+        public override string Status => Lib.Color(Module.running, Local.Generic_ACTIVE, Lib.Kolor.Green,
             Local.Generic_DISABLED, Lib.Kolor.Yellow);
 
         public override void Ctrl(bool value)
         {
-            if (module.running != value) module.Toggle();
+            if (Module.running != value) Module.Toggle();
         }
 
         public override void Toggle()
         {
-            Ctrl(!module.running);
+            Ctrl(!Module.running);
         }
     }
 
@@ -31,17 +31,17 @@ namespace Kerbalism.Automation.Devices
         {
         }
 
-        public override string Status => Lib.Color(Lib.Proto.GetBool(protoModule, "running"), Local.Generic_ACTIVE,
+        public override string Status => Lib.Color(Lib.Proto.GetBool(ProtoModule, "running"), Local.Generic_ACTIVE,
             Lib.Kolor.Green, Local.Generic_DISABLED, Lib.Kolor.Yellow);
 
         public override void Ctrl(bool value)
         {
-            Lib.Proto.Set(protoModule, "running", value);
+            Lib.Proto.Set(ProtoModule, "running", value);
         }
 
         public override void Toggle()
         {
-            Ctrl(!Lib.Proto.GetBool(protoModule, "running"));
+            Ctrl(!Lib.Proto.GetBool(ProtoModule, "running"));
         }
     }
 } // KERBALISM

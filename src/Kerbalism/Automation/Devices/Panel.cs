@@ -13,7 +13,7 @@ namespace Kerbalism.Automation.Devices
         {
             get
             {
-                if (module.SolarPanel.IsRetractable())
+                if (Module.SolarPanel.IsRetractable())
                     return Local.SolarPanel_deployable; //"solar panel (deployable)"
                 else
                     return Local.SolarPanel_nonretractable; //"solar panel (non retractable)"
@@ -24,7 +24,7 @@ namespace Kerbalism.Automation.Devices
         {
             get
             {
-                switch (module.state)
+                switch (Module.state)
                 {
                     case SolarPanelFixer.PanelState.Retracted:
                         return Lib.Color(Local.Generic_RETRACTED, Lib.Kolor.Yellow);
@@ -37,19 +37,19 @@ namespace Kerbalism.Automation.Devices
             }
         }
 
-        public override bool IsVisible => module.SolarPanel.SupportAutomation(module.state);
+        public override bool IsVisible => Module.SolarPanel.SupportAutomation(Module.state);
 
         public override void Ctrl(bool value)
         {
-            if (value && module.state == SolarPanelFixer.PanelState.Retracted) module.ToggleState();
-            if (!value && module.state == SolarPanelFixer.PanelState.Extended) module.ToggleState();
+            if (value && Module.state == SolarPanelFixer.PanelState.Retracted) Module.ToggleState();
+            if (!value && Module.state == SolarPanelFixer.PanelState.Extended) Module.ToggleState();
         }
 
         public override void Toggle()
         {
-            if (module.state == SolarPanelFixer.PanelState.Retracted ||
-                module.state == SolarPanelFixer.PanelState.Extended)
-                module.ToggleState();
+            if (Module.state == SolarPanelFixer.PanelState.Retracted ||
+                Module.state == SolarPanelFixer.PanelState.Extended)
+                Module.ToggleState();
         }
     }
 
@@ -65,20 +65,20 @@ namespace Kerbalism.Automation.Devices
         {
             get
             {
-                if (prefab.SolarPanel.IsRetractable())
+                if (Prefab.SolarPanel.IsRetractable())
                     return Local.SolarPanel_deployable; //"solar panel (deployable)"
                 else
                     return Local.SolarPanel_nonretractable; //"solar panel (non retractable)"
             }
         }
 
-        public override uint PartId => protoPart.flightID;
+        public override uint PartId => ProtoPart.flightID;
 
         public override string Status
         {
             get
             {
-                string state = Lib.Proto.GetString(protoModule, "state");
+                string state = Lib.Proto.GetString(ProtoModule, "state");
                 switch (state)
                 {
                     case "Retracted": return Lib.Color(Local.Generic_RETRACTED, Lib.Kolor.Yellow);
@@ -89,25 +89,25 @@ namespace Kerbalism.Automation.Devices
             }
         }
 
-        public override bool IsVisible => prefab.SolarPanel.SupportProtoAutomation(protoModule);
+        public override bool IsVisible => Prefab.SolarPanel.SupportProtoAutomation(ProtoModule);
 
         public override void Ctrl(bool value)
         {
             SolarPanelFixer.PanelState state =
                 (SolarPanelFixer.PanelState) Enum.Parse(typeof(SolarPanelFixer.PanelState),
-                    Lib.Proto.GetString(protoModule, "state"));
+                    Lib.Proto.GetString(ProtoModule, "state"));
             if ((value && state == SolarPanelFixer.PanelState.Retracted)
                 ||
                 (!value && state == SolarPanelFixer.PanelState.Extended))
-                SolarPanelFixer.ProtoToggleState(prefab, protoModule, state);
+                SolarPanelFixer.ProtoToggleState(Prefab, ProtoModule, state);
         }
 
         public override void Toggle()
         {
             SolarPanelFixer.PanelState state =
                 (SolarPanelFixer.PanelState) Enum.Parse(typeof(SolarPanelFixer.PanelState),
-                    Lib.Proto.GetString(protoModule, "state"));
-            SolarPanelFixer.ProtoToggleState(prefab, protoModule, state);
+                    Lib.Proto.GetString(ProtoModule, "state"));
+            SolarPanelFixer.ProtoToggleState(Prefab, ProtoModule, state);
         }
     }
 } // KERBALISM

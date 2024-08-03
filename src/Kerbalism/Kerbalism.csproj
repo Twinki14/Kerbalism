@@ -49,7 +49,6 @@
     <Compile Include="Comms\CommHandlerCommNetBase.cs"/>
     <Compile Include="Comms\CommHandlerCommNetSerenity.cs"/>
     <Compile Include="Comms\CommHandlerCommNetVessel.cs"/>
-    <Compile Include="Comms\CommHandlerRemoteTech.cs"/>
     <Compile Include="Comms\CommsMessages.cs"/>
     <Compile Include="Comms\ConnectionInfo.cs"/>
     <Compile Include="Comms\IConnectionInfo.cs"/>

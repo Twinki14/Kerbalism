@@ -23,14 +23,14 @@ namespace Kerbalism.Automation.Devices
         {
             get
             {
-                switch (module.antennaType)
+                switch (Module.antennaType)
                 {
                     case AntennaType.INTERNAL:
-                        return Lib.BuildString(Local.AntennaUI_type1, ", ", module.powerText); //internal antenna
+                        return Lib.BuildString(Local.AntennaUI_type1, ", ", Module.powerText); //internal antenna
                     case AntennaType.DIRECT:
-                        return Lib.BuildString(Local.AntennaUI_type2, ", ", module.powerText); //direct antenna
+                        return Lib.BuildString(Local.AntennaUI_type2, ", ", Module.powerText); //direct antenna
                     case AntennaType.RELAY:
-                        return Lib.BuildString(Local.AntennaUI_type3, ", ", module.powerText); //relay antenna
+                        return Lib.BuildString(Local.AntennaUI_type3, ", ", Module.powerText); //relay antenna
                     default: return string.Empty;
                 }
             }
@@ -99,14 +99,14 @@ namespace Kerbalism.Automation.Devices
         {
             get
             {
-                switch (prefab.antennaType)
+                switch (Prefab.antennaType)
                 {
                     case AntennaType.INTERNAL:
-                        return Lib.BuildString(Local.AntennaUI_type1, ", ", prefab.powerText); //internal antenna
+                        return Lib.BuildString(Local.AntennaUI_type1, ", ", Prefab.powerText); //internal antenna
                     case AntennaType.DIRECT:
-                        return Lib.BuildString(Local.AntennaUI_type2, ", ", prefab.powerText); //direct antenna
+                        return Lib.BuildString(Local.AntennaUI_type2, ", ", Prefab.powerText); //direct antenna
                     case AntennaType.RELAY:
-                        return Lib.BuildString(Local.AntennaUI_type3, ", ", prefab.powerText); //relay antenna
+                        return Lib.BuildString(Local.AntennaUI_type3, ", ", Prefab.powerText); //relay antenna
                     default: return string.Empty;
                 }
             }
@@ -116,7 +116,7 @@ namespace Kerbalism.Automation.Devices
         {
             get
             {
-                if (protoPart.shielded)
+                if (ProtoPart.shielded)
                     return Lib.Color(Local.AntennaUI_unavailable, Lib.Kolor.Orange); //"unavailable"
 
                 switch (scalarModuleSnapshot.moduleName)
@@ -143,7 +143,7 @@ namespace Kerbalism.Automation.Devices
 
         public override void Ctrl(bool value)
         {
-            if (protoPart.shielded)
+            if (ProtoPart.shielded)
                 return;
 
             switch (scalarModuleSnapshot.moduleName)
@@ -162,7 +162,7 @@ namespace Kerbalism.Automation.Devices
                     break;
             }
 
-            Lib.Proto.Set(protoModule, "canComm", value);
+            Lib.Proto.Set(ProtoModule, "canComm", value);
         }
 
         public override void Toggle()

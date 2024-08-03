@@ -8,24 +8,24 @@ namespace Kerbalism.Automation
     {
         public class DeviceIcon
         {
-            public Texture2D texture;
-            public string tooltip;
-            public Action onClick;
+            public readonly Texture2D Texture;
+            public readonly string Tooltip;
+            public readonly Action OnClick;
 
             public DeviceIcon(Texture2D texture, string tooltip = "", Action onClick = null)
             {
-                this.texture = texture;
-                this.tooltip = tooltip;
-                this.onClick = onClick;
+                Texture = texture;
+                Tooltip = tooltip;
+                OnClick = onClick;
             }
         }
 
-        public Device()
+        protected Device()
         {
             DeviceType = GetType().Name;
         }
 
-        // note 1 : the Id must be unique and always the same (persistence), so the Name property must always be the
+        // note 1 : the ID must be unique and always the same (persistence), so the Name property must always be the
         // same, and be unique in case multiple modules of the same type exists on the part.
         // note 2 : dynamically generate the id when first requested.
         // can't do it in the base ctor because the PartId and Name may be overloaded.
@@ -33,14 +33,16 @@ namespace Kerbalism.Automation
         {
             get
             {
-                if (id == uint.MaxValue)
-                    id = PartId + (uint) Math.Abs(Name.GetHashCode());
+                if (_id == uint.MaxValue)
+                {
+                    _id = PartId + (uint) Math.Abs(Name.GetHashCode());
+                }
 
-                return id;
+                return _id;
             }
         }
 
-        private uint id = uint.MaxValue; // lets just hope nothing will ever have that id
+        private uint _id = uint.MaxValue; // let's just hope nothing will ever have that id
 
         public string DeviceType { get; private set; }
 
@@ -54,7 +56,7 @@ namespace Kerbalism.Automation
         public abstract uint PartId { get; }
 
         // return part name
-        public abstract string PartName { get; }
+        protected abstract string PartName { get; }
 
         // return short device status string
         public abstract string Status { get; }
@@ -80,49 +82,47 @@ namespace Kerbalism.Automation
 
     public abstract class LoadedDevice<T> : Device where T : PartModule
     {
-        protected readonly T module;
+        protected readonly T Module;
 
-        public LoadedDevice(T module) : base()
+        protected LoadedDevice(T module)
         {
-            this.module = module;
+            Module = module;
         }
 
-        public override string PartName => module.part.partInfo.title;
-        public override string Name => module is IModuleInfo ? ((IModuleInfo) module).GetModuleTitle() : module.GUIName;
-        public override uint PartId => module.part.flightID;
+        protected override string PartName => Module.part.partInfo.title;
+        public override string Name => Module is IModuleInfo info ? info.GetModuleTitle() : Module.GUIName;
+        public override uint PartId => Module.part.flightID;
     }
 
     public abstract class ProtoDevice<T> : Device where T : PartModule
     {
-        protected readonly T prefab;
-        protected readonly ProtoPartSnapshot protoPart;
-        protected readonly ProtoPartModuleSnapshot protoModule;
+        protected readonly T Prefab;
+        protected readonly ProtoPartSnapshot ProtoPart;
+        protected readonly ProtoPartModuleSnapshot ProtoModule;
 
-        public ProtoDevice(T prefab, ProtoPartSnapshot protoPart, ProtoPartModuleSnapshot protoModule) : base()
+        protected ProtoDevice(T prefab, ProtoPartSnapshot protoPart, ProtoPartModuleSnapshot protoModule)
         {
-            this.prefab = prefab;
-            this.protoPart = protoPart;
-            this.protoModule = protoModule;
+            Prefab = prefab;
+            ProtoPart = protoPart;
+            ProtoModule = protoModule;
         }
 
-        public override string PartName => prefab.part.partInfo.title;
-        public override string Name => prefab is IModuleInfo ? ((IModuleInfo) prefab).GetModuleTitle() : prefab.GUIName;
-        public override uint PartId => protoPart.flightID;
+        protected override string PartName => Prefab.part.partInfo.title;
+        public override string Name => Prefab is IModuleInfo info ? info.GetModuleTitle() : Prefab.GUIName;
+        public override uint PartId => ProtoPart.flightID;
     }
 
     public abstract class VesselDevice : Device
     {
-        protected readonly Vessel vessel;
-        protected readonly VesselData vesselData;
+        protected readonly VesselData VesselData;
 
-        public VesselDevice(Vessel v, VesselData vd) : base()
+        protected VesselDevice(VesselData vd)
         {
-            vessel = v;
-            vesselData = vd;
+            VesselData = vd;
         }
 
         public override uint PartId => 0u;
-        public override string PartName => string.Empty;
+        protected override string PartName => string.Empty;
         public override string Tooltip => Lib.Bold(DisplayName);
     }
-} // KERBALISM
+}

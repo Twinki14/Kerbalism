@@ -23,7 +23,7 @@ namespace Kerbalism.Comms
 
         protected override void UpdateTransmitters(ConnectionInfo connection, bool searchTransmitters)
         {
-            Vessel v = vd.Vessel;
+            Vessel v = Vd.Vessel;
 
             BaseRate = 1.0;
             connection.ec_idle = 0.0;

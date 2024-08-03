@@ -20,62 +20,62 @@ namespace Kerbalism.Automation.Devices
 
         public override void OnUpdate()
         {
-            scienceValue = Experiment.ScienceValue(module.Subject);
+            scienceValue = Experiment.ScienceValue(Module.Subject);
         }
 
-        public override string Name => module.experiment_id;
+        public override string Name => Module.experiment_id;
 
         public override string DisplayName
         {
             get
             {
                 sb.Length = 0;
-                sb.Append(Lib.EllipsisMiddle(module.ExpInfo.Title, 28));
+                sb.Append(Lib.EllipsisMiddle(Module.ExpInfo.Title, 28));
                 sb.Append(": ");
                 sb.Append(scienceValue);
 
-                if (module.Status == Experiment.ExpStatus.Running)
+                if (Module.Status == Experiment.ExpStatus.Running)
                 {
                     sb.Append(" ");
-                    sb.Append(Experiment.RunningCountdown(module.ExpInfo, module.Subject, module.data_rate,
-                        module.prodFactor));
+                    sb.Append(Experiment.RunningCountdown(Module.ExpInfo, Module.Subject, Module.data_rate,
+                        Module.prodFactor));
                 }
-                else if (module.Subject != null && module.Status == Experiment.ExpStatus.Forced)
+                else if (Module.Subject != null && Module.Status == Experiment.ExpStatus.Forced)
                 {
                     sb.Append(" ");
-                    sb.Append(module.Subject.PercentCollectedTotal.ToString("P0"));
+                    sb.Append(Module.Subject.PercentCollectedTotal.ToString("P0"));
                 }
 
                 return sb.ToString();
             }
         }
 
-        public override string Status => Experiment.StatusInfo(module.Status, module.issue);
+        public override string Status => Experiment.StatusInfo(Module.Status, Module.issue);
 
         public override string Tooltip
         {
             get
             {
                 sb.Length = 0;
-                if (module.Subject != null)
-                    sb.Append(module.Subject.FullTitle);
+                if (Module.Subject != null)
+                    sb.Append(Module.Subject.FullTitle);
                 else
-                    sb.Append(module.ExpInfo.Title);
+                    sb.Append(Module.ExpInfo.Title);
                 sb.Append("\n");
                 sb.Append(Local.Experiment_on); //on
                 sb.Append(" ");
-                sb.Append(module.part.partInfo.title);
+                sb.Append(Module.part.partInfo.title);
                 sb.Append("\n");
                 sb.Append(Local.Experiment_status); //status :
                 sb.Append(" ");
-                sb.Append(Experiment.StatusInfo(module.Status));
+                sb.Append(Experiment.StatusInfo(Module.Status));
 
-                if (module.Status == Experiment.ExpStatus.Issue)
+                if (Module.Status == Experiment.ExpStatus.Issue)
                 {
                     sb.Append("\n");
                     sb.Append(Local.Experiment_issue); //issue :
                     sb.Append(" ");
-                    sb.Append(Lib.Color(module.issue, Lib.Kolor.Orange));
+                    sb.Append(Lib.Color(Module.issue, Lib.Kolor.Orange));
                 }
 
                 sb.Append("\n");
@@ -83,20 +83,20 @@ namespace Kerbalism.Automation.Devices
                 sb.Append(" ");
                 sb.Append(scienceValue);
 
-                if (module.Status == Experiment.ExpStatus.Running)
+                if (Module.Status == Experiment.ExpStatus.Running)
                 {
                     sb.Append("\n");
                     sb.Append(Local.Experiment_completion); //completion :
                     sb.Append(" ");
-                    sb.Append(Experiment.RunningCountdown(module.ExpInfo, module.Subject, module.data_rate,
-                        module.prodFactor, false));
+                    sb.Append(Experiment.RunningCountdown(Module.ExpInfo, Module.Subject, Module.data_rate,
+                        Module.prodFactor, false));
                 }
-                else if (module.Subject != null && module.Status == Experiment.ExpStatus.Forced)
+                else if (Module.Subject != null && Module.Status == Experiment.ExpStatus.Forced)
                 {
                     sb.Append("\n");
                     sb.Append(Local.Experiment_completion); //completion :
                     sb.Append(" ");
-                    sb.Append(module.Subject.PercentCollectedTotal.ToString("P0"));
+                    sb.Append(Module.Subject.PercentCollectedTotal.ToString("P0"));
                 }
 
                 return sb.ToString();
@@ -107,15 +107,15 @@ namespace Kerbalism.Automation.Devices
 
         public override void Ctrl(bool value)
         {
-            if (value != module.Running) Toggle();
+            if (value != Module.Running) Toggle();
         }
 
         public override void Toggle()
         {
-            module.Toggle();
+            Module.Toggle();
         }
 
-        public override string PartName => module.part.partInfo.title;
+        protected override string PartName => Module.part.partInfo.title;
     }
 
     public sealed class ProtoExperimentDevice : ProtoDevice<Experiment>
@@ -149,14 +149,14 @@ namespace Kerbalism.Automation.Devices
 
         public override void OnUpdate()
         {
-            issue = Lib.Proto.GetString(protoModule, "issue");
-            status = Lib.Proto.GetEnum(protoModule, "status", Experiment.ExpStatus.Stopped);
-            subject = ScienceDB.GetSubjectData(expInfo, Lib.Proto.GetInt(protoModule, "situationId"));
+            issue = Lib.Proto.GetString(ProtoModule, "issue");
+            status = Lib.Proto.GetEnum(ProtoModule, "status", Experiment.ExpStatus.Stopped);
+            subject = ScienceDB.GetSubjectData(expInfo, Lib.Proto.GetInt(ProtoModule, "situationId"));
             scienceValue = Experiment.ScienceValue(subject);
-            prodFactor = Lib.Proto.GetDouble(protoModule, "prodFactor");
+            prodFactor = Lib.Proto.GetDouble(ProtoModule, "prodFactor");
         }
 
-        public override string Name => prefab.experiment_id;
+        public override string Name => Prefab.experiment_id;
 
         public override string DisplayName
         {
@@ -170,7 +170,7 @@ namespace Kerbalism.Automation.Devices
                 if (status == Experiment.ExpStatus.Running)
                 {
                     sb.Append(" ");
-                    sb.Append(Experiment.RunningCountdown(expInfo, subject, prefab.data_rate, prodFactor));
+                    sb.Append(Experiment.RunningCountdown(expInfo, subject, Prefab.data_rate, prodFactor));
                 }
                 else if (subject != null && status == Experiment.ExpStatus.Forced)
                 {
@@ -196,7 +196,7 @@ namespace Kerbalism.Automation.Devices
                 sb.Append("\n");
                 sb.Append(Local.Experiment_on); //on
                 sb.Append(" ");
-                sb.Append(prefab.part.partInfo.title);
+                sb.Append(Prefab.part.partInfo.title);
                 sb.Append("\n");
                 sb.Append(Local.Experiment_status); //status :
                 sb.Append(" ");
@@ -220,7 +220,7 @@ namespace Kerbalism.Automation.Devices
                     sb.Append("\n");
                     sb.Append(Local.Experiment_completion); //completion :
                     sb.Append(" ");
-                    sb.Append(Experiment.RunningCountdown(expInfo, subject, prefab.data_rate, prodFactor, false));
+                    sb.Append(Experiment.RunningCountdown(expInfo, subject, Prefab.data_rate, prodFactor, false));
                 }
                 else if (subject != null && status == Experiment.ExpStatus.Forced)
                 {
@@ -238,12 +238,12 @@ namespace Kerbalism.Automation.Devices
 
         public override void Ctrl(bool value)
         {
-            if (value != Experiment.IsRunning(status)) Experiment.ProtoToggle(vessel, prefab, protoModule);
+            if (value != Experiment.IsRunning(status)) Experiment.ProtoToggle(vessel, Prefab, ProtoModule);
         }
 
         public override void Toggle()
         {
-            Experiment.ProtoToggle(vessel, prefab, protoModule);
+            Experiment.ProtoToggle(vessel, Prefab, ProtoModule);
         }
     }
 } // KERBALISM

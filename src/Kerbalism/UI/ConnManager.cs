@@ -13,12 +13,18 @@ namespace Kerbalism
             v = FlightGlobals.FindVessel(v.id);
 
             // if vessel doesn't exist anymore, leave the panel empty
-            if (v == null) return;
+            if (v == null)
+            {
+                return;
+            }
 
-            VesselData vd = v.KerbalismData();
+            var vd = v.KerbalismData();
 
             // if not a valid vessel, leave the panel empty
-            if (!vd.IsSimulated) return;
+            if (!vd.IsSimulated)
+            {
+                return;
+            }
 
             // set metadata
             p.Title(Lib.BuildString(Lib.Ellipsis(v.vesselName, Styles.ScaleStringLength(40)), " ",
@@ -27,25 +33,38 @@ namespace Kerbalism
             p.paneltype = Panel.PanelType.connection;
 
             // time-out simulation
-            if (!Lib.IsControlUnit(v) && p.Timeout(vd)) return;
+            if (!Lib.IsControlUnit(v) && p.Timeout(vd))
+            {
+                return;
+            }
 
             // draw ControlPath section
             p.AddSection(Local.ConnManager_CONTROLPATH); //"CONTROL PATH"
             if (vd.Connection.linked)
             {
-                if (vd.Connection.control_path != null)
+                if (vd.Connection.control_path == null)
                 {
-                    foreach (string[] hop in vd.Connection.control_path)
+                    return;
+                }
+
+                foreach (var hop in vd.Connection.control_path)
+                {
+                    if (hop == null || hop.Length < 1)
                     {
-                        if (hop == null || hop.Length < 1) continue;
-                        string name = hop[0];
-                        string value = hop.Length >= 2 ? hop[1] : "";
-                        string tooltip = hop.Length >= 3 ? ("\n" + hop[2]) : "";
-                        p.AddContent(name, value, tooltip);
+                        continue;
                     }
+
+                    var name = hop[0];
+                    var value = hop.Length >= 2 ? hop[1] : "";
+                    var tooltip = hop.Length >= 3 ? ("\n" + hop[2]) : "";
+
+                    p.AddContent(name, value, tooltip);
                 }
             }
-            else p.AddContent("<i>" + Local.ConnManager_noconnection + "</i>", string.Empty); //no connection
+            else
+            {
+                p.AddContent("<i>" + Local.ConnManager_noconnection + "</i>", string.Empty); //no connection
+            }
         }
     }
 }

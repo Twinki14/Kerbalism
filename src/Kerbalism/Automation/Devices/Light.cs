@@ -8,18 +8,18 @@ namespace Kerbalism.Automation.Devices
 
         public override string Name => "light";
 
-        public override string Status => Lib.Color(module.isOn, Local.Generic_ON, Lib.Kolor.Green, Local.Generic_OFF,
+        public override string Status => Lib.Color(Module.isOn, Local.Generic_ON, Lib.Kolor.Green, Local.Generic_OFF,
             Lib.Kolor.Yellow);
 
         public override void Ctrl(bool value)
         {
-            if (value) module.LightsOn();
-            else module.LightsOff();
+            if (value) Module.LightsOn();
+            else Module.LightsOff();
         }
 
         public override void Toggle()
         {
-            Ctrl(!module.isOn);
+            Ctrl(!Module.isOn);
         }
     }
 
@@ -33,17 +33,17 @@ namespace Kerbalism.Automation.Devices
 
         public override string Name => "light";
 
-        public override string Status => Lib.Color(Lib.Proto.GetBool(protoModule, "isOn"), Local.Generic_ON,
+        public override string Status => Lib.Color(Lib.Proto.GetBool(ProtoModule, "isOn"), Local.Generic_ON,
             Lib.Kolor.Green, Local.Generic_OFF, Lib.Kolor.Yellow);
 
         public override void Ctrl(bool value)
         {
-            Lib.Proto.Set(protoModule, "isOn", value);
+            Lib.Proto.Set(ProtoModule, "isOn", value);
         }
 
         public override void Toggle()
         {
-            Ctrl(!Lib.Proto.GetBool(protoModule, "isOn"));
+            Ctrl(!Lib.Proto.GetBool(ProtoModule, "isOn"));
         }
     }
 } // KERBALISM

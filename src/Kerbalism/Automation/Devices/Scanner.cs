@@ -8,19 +8,19 @@ namespace Kerbalism.Automation.Devices
         {
         }
 
-        public override string Status => Lib.Color(Lib.ReflectionValue<bool>(module, "scanning"), Local.Generic_ENABLED,
+        public override string Status => Lib.Color(Lib.ReflectionValue<bool>(Module, "scanning"), Local.Generic_ENABLED,
             Lib.Kolor.Green, Local.Generic_DISABLED, Lib.Kolor.Yellow);
 
         public override void Ctrl(bool value)
         {
-            bool scanning = Lib.ReflectionValue<bool>(module, "scanning");
-            if (scanning && !value) module.Events["stopScan"].Invoke();
-            else if (!scanning && value) module.Events["startScan"].Invoke();
+            bool scanning = Lib.ReflectionValue<bool>(Module, "scanning");
+            if (scanning && !value) Module.Events["stopScan"].Invoke();
+            else if (!scanning && value) Module.Events["startScan"].Invoke();
         }
 
         public override void Toggle()
         {
-            Ctrl(!Lib.ReflectionValue<bool>(module, "scanning"));
+            Ctrl(!Lib.ReflectionValue<bool>(Module, "scanning"));
         }
     }
 
@@ -35,19 +35,19 @@ namespace Kerbalism.Automation.Devices
             this.vessel = v;
         }
 
-        public override string Status => Lib.Color(Lib.Proto.GetBool(protoModule, "scanning"), Local.Generic_ENABLED,
+        public override string Status => Lib.Color(Lib.Proto.GetBool(ProtoModule, "scanning"), Local.Generic_ENABLED,
             Lib.Kolor.Green, Local.Generic_DISABLED, Lib.Kolor.Yellow);
 
         public override void Ctrl(bool value)
         {
-            bool scanning = Lib.Proto.GetBool(protoModule, "scanning");
-            if (scanning && !value) SCANsat.StopScanner(vessel, protoModule, prefab.part);
-            else if (!scanning && value) SCANsat.ResumeScanner(vessel, protoModule, prefab.part);
+            bool scanning = Lib.Proto.GetBool(ProtoModule, "scanning");
+            if (scanning && !value) SCANsat.StopScanner(vessel, ProtoModule, Prefab.part);
+            else if (!scanning && value) SCANsat.ResumeScanner(vessel, ProtoModule, Prefab.part);
         }
 
         public override void Toggle()
         {
-            Ctrl(!Lib.Proto.GetBool(protoModule, "scanning"));
+            Ctrl(!Lib.Proto.GetBool(ProtoModule, "scanning"));
         }
     }
 } // KERBALISM

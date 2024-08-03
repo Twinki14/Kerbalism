@@ -17,22 +17,22 @@ namespace Kerbalism.Automation.Devices
         {
             get
             {
-                if (!module.isTrackingEnabled)
+                if (!Module.isTrackingEnabled)
                     return Local.Generic_DISABLED;
 
-                return module.status;
+                return Module.status;
             }
         }
 
         public override void Ctrl(bool value)
         {
             if (value)
-                module.StartTracking();
+                Module.StartTracking();
             else
-                module.StopTracking();
+                Module.StopTracking();
         }
 
-        public override void Toggle() => Ctrl(!module.isTrackingEnabled);
+        public override void Toggle() => Ctrl(!Module.isTrackingEnabled);
     }
 
     public sealed class ProtoSentinelDevice : ProtoDevice<KerbalismSentinel>
@@ -52,10 +52,10 @@ namespace Kerbalism.Automation.Devices
         {
             get
             {
-                if (!Lib.Proto.GetBool(protoModule, "isTrackingEnabled"))
+                if (!Lib.Proto.GetBool(ProtoModule, "isTrackingEnabled"))
                     return Local.Generic_DISABLED;
 
-                if (Lib.Proto.GetBool(protoModule, "isTracking"))
+                if (Lib.Proto.GetBool(ProtoModule, "isTracking"))
                 {
                     if (SentinelUtilities.FindInnerAndOuterBodies(vessel, out var innerBody, out var outerBody))
                     {
@@ -71,7 +71,7 @@ namespace Kerbalism.Automation.Devices
 
                 VesselData vd = vessel.KerbalismData();
 
-                if (!vd.Connection.linked || vd.Connection.rate < prefab.comms_rate)
+                if (!vd.Connection.linked || vd.Connection.rate < Prefab.comms_rate)
                 {
                     return "Comms connection too weak";
                 }
@@ -87,8 +87,8 @@ namespace Kerbalism.Automation.Devices
             }
         }
 
-        public override void Ctrl(bool value) => Lib.Proto.Set(protoModule, "isTrackingEnabled", value);
+        public override void Ctrl(bool value) => Lib.Proto.Set(ProtoModule, "isTrackingEnabled", value);
 
-        public override void Toggle() => Ctrl(!Lib.Proto.GetBool(protoModule, "isTrackingEnabled"));
+        public override void Toggle() => Ctrl(!Lib.Proto.GetBool(ProtoModule, "isTrackingEnabled"));
     }
 }

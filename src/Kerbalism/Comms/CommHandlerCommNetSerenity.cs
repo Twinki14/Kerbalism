@@ -10,10 +10,10 @@ namespace Kerbalism.Comms
 
         protected override void UpdateInputs(ConnectionInfo connection)
         {
-            connection.transmitting = vd.filesTransmitted.Count > 0;
+            connection.transmitting = Vd.filesTransmitted.Count > 0;
 
             if (cluster == null)
-                cluster = Serenity.GetScienceCluster(vd.Vessel);
+                cluster = Serenity.GetScienceCluster(Vd.Vessel);
 
             connection.ec = 0.0;
             connection.ec_idle = 0.0;

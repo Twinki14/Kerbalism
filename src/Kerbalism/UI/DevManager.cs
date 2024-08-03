@@ -44,8 +44,8 @@ namespace Kerbalism
                 (
                     Local.UI_devices,
                     Description(),
-                    () => p.Prev(ref script_index, (int) ScriptType.last),
-                    () => p.Next(ref script_index, (int) ScriptType.last),
+                    () => p.Prev(ref script_index, (int) ScriptType.Last),
+                    () => p.Next(ref script_index, (int) ScriptType.Last),
                     false
                 );
 
@@ -86,7 +86,7 @@ namespace Kerbalism
                         p.AddContent(dev.DisplayName, dev.Status, dev.Tooltip, dev.Toggle);
 
                     if (dev.Icon != null)
-                        p.SetLeftIcon(dev.Icon.texture, dev.Icon.tooltip, dev.Icon.onClick);
+                        p.SetLeftIcon(dev.Icon.Texture, dev.Icon.Tooltip, dev.Icon.OnClick);
 
                     deviceCount++;
                 }
@@ -104,8 +104,8 @@ namespace Kerbalism
                 (
                     script_name,
                     Description(),
-                    () => p.Prev(ref script_index, (int) ScriptType.last),
-                    () => p.Next(ref script_index, (int) ScriptType.last)
+                    () => p.Prev(ref script_index, (int) ScriptType.Last),
+                    () => p.Next(ref script_index, (int) ScriptType.Last)
                 );
 
                 bool hasVesselDeviceSection = false;
@@ -120,9 +120,9 @@ namespace Kerbalism
                     if (!dev.IsVisible) continue;
 
                     // determine tribool state
-                    int state = !script.states.ContainsKey(dev.Id)
+                    int state = !script.States.ContainsKey(dev.Id)
                         ? -1
-                        : !script.states[dev.Id]
+                        : !script.States[dev.Id]
                             ? 0
                             : 1;
 
@@ -187,26 +187,26 @@ namespace Kerbalism
         {
             switch ((ScriptType) script_index)
             {
-                case ScriptType.landed: return Local.DevManager_NameTabLanded;
-                case ScriptType.atmo: return Local.DevManager_NameTabAtmo;
-                case ScriptType.space: return Local.DevManager_NameTabSpace;
-                case ScriptType.sunlight: return Local.DevManager_NameTabSunlight;
-                case ScriptType.shadow: return Local.DevManager_NameTabShadow;
-                case ScriptType.power_high: return Local.DevManager_NameTabPowerHigh;
-                case ScriptType.power_low: return Local.DevManager_NameTabPowerLow;
-                case ScriptType.rad_high: return Local.DevManager_NameTabRadHigh;
-                case ScriptType.rad_low: return Local.DevManager_NameTabRadLow;
-                case ScriptType.linked: return Local.DevManager_NameTabLinked;
-                case ScriptType.unlinked: return Local.DevManager_NameTabUnlinked;
-                case ScriptType.eva_out: return Local.DevManager_NameTabEVAOut;
-                case ScriptType.eva_in: return Local.DevManager_NameTabEVAIn;
-                case ScriptType.action1: return Local.DevManager_NameTabAct1;
-                case ScriptType.action2: return Local.DevManager_NameTabAct2;
-                case ScriptType.action3: return Local.DevManager_NameTabAct3;
-                case ScriptType.action4: return Local.DevManager_NameTabAct4;
-                case ScriptType.action5: return Local.DevManager_NameTabAct5;
-                case ScriptType.drive_full: return Local.DevManager_NameTabDriveFull;
-                case ScriptType.drive_empty: return Local.DevManager_NameTabDriveEmpty;
+                case ScriptType.Landed: return Local.DevManager_NameTabLanded;
+                case ScriptType.Atmo: return Local.DevManager_NameTabAtmo;
+                case ScriptType.Space: return Local.DevManager_NameTabSpace;
+                case ScriptType.Sunlight: return Local.DevManager_NameTabSunlight;
+                case ScriptType.Shadow: return Local.DevManager_NameTabShadow;
+                case ScriptType.PowerHigh: return Local.DevManager_NameTabPowerHigh;
+                case ScriptType.PowerLow: return Local.DevManager_NameTabPowerLow;
+                case ScriptType.RadHigh: return Local.DevManager_NameTabRadHigh;
+                case ScriptType.RadLow: return Local.DevManager_NameTabRadLow;
+                case ScriptType.Linked: return Local.DevManager_NameTabLinked;
+                case ScriptType.Unlinked: return Local.DevManager_NameTabUnlinked;
+                case ScriptType.EvaOut: return Local.DevManager_NameTabEVAOut;
+                case ScriptType.EvaIn: return Local.DevManager_NameTabEVAIn;
+                case ScriptType.Action1: return Local.DevManager_NameTabAct1;
+                case ScriptType.Action2: return Local.DevManager_NameTabAct2;
+                case ScriptType.Action3: return Local.DevManager_NameTabAct3;
+                case ScriptType.Action4: return Local.DevManager_NameTabAct4;
+                case ScriptType.Action5: return Local.DevManager_NameTabAct5;
+                case ScriptType.DriveFull: return Local.DevManager_NameTabDriveFull;
+                case ScriptType.DriveEmpty: return Local.DevManager_NameTabDriveEmpty;
             }
 
             return string.Empty;
@@ -218,35 +218,35 @@ namespace Kerbalism
             if (script_index == 0) return Local.DevManager_TabManual; //Control vessel components directly
             switch ((ScriptType) script_index)
             {
-                case ScriptType.landed: return Local.DevManager_TabLanded; // <i>Called on landing</i>
-                case ScriptType.atmo: return Local.DevManager_TabAtmo; // <i>Called on entering atmosphere</i>
-                case ScriptType.space: return Local.DevManager_TabSpace; // <i>Called on reaching space</i>
-                case ScriptType.sunlight: return Local.DevManager_TabSunlight; // <i>Called when sun became visible</i>
-                case ScriptType.shadow: return Local.DevManager_TabShadow; // <i>Called when sun became occluded</i>
-                case ScriptType.power_high:
+                case ScriptType.Landed: return Local.DevManager_TabLanded; // <i>Called on landing</i>
+                case ScriptType.Atmo: return Local.DevManager_TabAtmo; // <i>Called on entering atmosphere</i>
+                case ScriptType.Space: return Local.DevManager_TabSpace; // <i>Called on reaching space</i>
+                case ScriptType.Sunlight: return Local.DevManager_TabSunlight; // <i>Called when sun became visible</i>
+                case ScriptType.Shadow: return Local.DevManager_TabShadow; // <i>Called when sun became occluded</i>
+                case ScriptType.PowerHigh:
                     return Local.DevManager_TabPowerHigh; // <i>Called when EC level goes above 80%</i>
-                case ScriptType.power_low:
+                case ScriptType.PowerLow:
                     return Local.DevManager_TabPowerLow; // <i>Called when EC level goes below 20%</i>
-                case ScriptType.rad_high:
+                case ScriptType.RadHigh:
                     return Local.DevManager_TabRadHigh; // <i>Called when radiation exceed 0.05 rad/h</i>
-                case ScriptType.rad_low:
+                case ScriptType.RadLow:
                     return Local.DevManager_TabRadLow; // <i>Called when radiation goes below 0.02 rad/h</i>
-                case ScriptType.linked: return Local.DevManager_TabLinked; // <i>Called when signal is regained</i>
-                case ScriptType.unlinked: return Local.DevManager_TabUnlinked; // <i>Called when signal is lost</i>
-                case ScriptType.eva_out: return Local.DevManager_TabEVAOut; // <i>Called when going out on EVA</i>
-                case ScriptType.eva_in: return Local.DevManager_TabEVAIn; // <i>Called when returning from EVA</i>
-                case ScriptType.action1:
+                case ScriptType.Linked: return Local.DevManager_TabLinked; // <i>Called when signal is regained</i>
+                case ScriptType.Unlinked: return Local.DevManager_TabUnlinked; // <i>Called when signal is lost</i>
+                case ScriptType.EvaOut: return Local.DevManager_TabEVAOut; // <i>Called when going out on EVA</i>
+                case ScriptType.EvaIn: return Local.DevManager_TabEVAIn; // <i>Called when returning from EVA</i>
+                case ScriptType.Action1:
                     return Local.DevManager_TabAct1; // <i>Called by pressing <b>1</b> on the keyboard</i>
-                case ScriptType.action2:
+                case ScriptType.Action2:
                     return Local.DevManager_TabAct2; // <i>Called by pressing <b>2</b> on the keyboard</i>
-                case ScriptType.action3:
+                case ScriptType.Action3:
                     return Local.DevManager_TabAct3; // <i>Called by pressing <b>3</b> on the keyboard</i>
-                case ScriptType.action4:
+                case ScriptType.Action4:
                     return Local.DevManager_TabAct4; // <i>Called by pressing <b>4</b> on the keyboard</i>
-                case ScriptType.action5:
+                case ScriptType.Action5:
                     return Local.DevManager_TabAct5; // <i>Called by pressing <b>5</b> on the keyboard</i>
-                case ScriptType.drive_full: return Local.DevManager_TabDriveFull;
-                case ScriptType.drive_empty: return Local.DevManager_TabDriveEmpty;
+                case ScriptType.DriveFull: return Local.DevManager_TabDriveFull;
+                case ScriptType.DriveEmpty: return Local.DevManager_TabDriveEmpty;
             }
 
             return string.Empty;

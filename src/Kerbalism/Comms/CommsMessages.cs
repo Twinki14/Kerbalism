@@ -3,9 +3,9 @@ using Kerbalism.System;
 
 namespace Kerbalism.Comms
 {
-    public class CommsMessages
+    public static class CommsMessages
     {
-        public static void Update(Vessel v, VesselData vd, double elapsed_s)
+        public static void Update(Vessel v, VesselData vd)
         {
             if (!Lib.IsVessel(v))
                 return;
@@ -17,48 +17,46 @@ namespace Kerbalism.Comms
             // maintain and send messages
             // - do not send messages during/after solar storms
             // - do not send messages for EVA kerbals
-            if (!v.isEVA && v.situation != Vessel.Situations.PRELAUNCH)
+            if (v.isEVA || v.situation == Vessel.Situations.PRELAUNCH)
             {
-                if (!vd.msg_signal && !vd.Connection.linked)
+                return;
+            }
+
+            if (!vd.msg_signal && !vd.Connection.linked)
+            {
+                vd.msg_signal = true;
+
+                if (!vd.cfg_signal)
                 {
-                    vd.msg_signal = true;
-                    if (vd.cfg_signal)
+                    return;
+                }
+
+                var subtext = Local.UI_transmissiondisabled;
+
+                if (vd.CrewCount == 0)
+                {
+                    switch (Settings.UnlinkedControl)
                     {
-                        string subtext = Local.UI_transmissiondisabled;
-
-                        switch (vd.Connection.Status)
-                        {
-                            default:
-                                if (vd.CrewCount == 0)
-                                {
-                                    switch (Settings.UnlinkedControl)
-                                    {
-                                        case UnlinkedCtrl.none:
-                                            subtext = Local.UI_noctrl;
-                                            break;
-                                        case UnlinkedCtrl.limited:
-                                            subtext = Local.UI_limitedcontrol;
-                                            break;
-                                    }
-                                }
-
-                                break;
-                        }
-
-                        Message.Post(Severity.warning,
-                            Lib.BuildString(Local.UI_signallost, " <b>", v.vesselName, "</b>"), subtext);
+                        case UnlinkedCtrl.none:
+                            subtext = Local.UI_noctrl;
+                            break;
+                        case UnlinkedCtrl.limited:
+                            subtext = Local.UI_limitedcontrol;
+                            break;
                     }
                 }
-                else if (vd.msg_signal && vd.Connection.linked)
+
+                Message.Post(Severity.warning, Lib.BuildString(Local.UI_signallost, " <b>", v.vesselName, "</b>"), subtext);
+            }
+            else if (vd.msg_signal && vd.Connection.linked)
+            {
+                vd.msg_signal = false;
+                if (vd.cfg_signal)
                 {
-                    vd.msg_signal = false;
-                    if (vd.cfg_signal)
-                    {
-                        Message.Post(Severity.relax, Lib.BuildString("<b>", v.vesselName, "</b> ", Local.UI_signalback),
-                            vd.Connection.Status == (int) LinkStatus.direct_link
-                                ? Local.UI_directlink
-                                : Lib.BuildString(Local.UI_relayby, " <b>", vd.Connection.target_name, "</b>"));
-                    }
+                    Message.Post(Severity.relax, Lib.BuildString("<b>", v.vesselName, "</b> ", Local.UI_signalback),
+                        vd.Connection.Status == (int) LinkStatus.direct_link
+                            ? Local.UI_directlink
+                            : Lib.BuildString(Local.UI_relayby, " <b>", vd.Connection.target_name, "</b>"));
                 }
             }
         }

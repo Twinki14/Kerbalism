@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Kerbalism.Automation.Devices;
 using Kerbalism.Automation.VesselDevices;
 using Kerbalism.Database;
@@ -9,83 +10,95 @@ namespace Kerbalism.Automation
 {
     public enum ScriptType
     {
-        power_low = 1, // called when ec level goes below 15%
-        power_high = 2, // called when ec level goes above 15%
-        sunlight = 3, // called when sun rise
-        shadow = 4, // called when sun set
-        unlinked = 5, // called when signal is lost
-        linked = 6, // called when signal is regained
-        drive_full = 7, // called when storage capacity goes below 15%
-        drive_empty = 8, // called when storage capacity goes above 30%
-        landed = 9, // called on landing
-        atmo = 10, // called on entering atmosphere
-        space = 11, // called on reaching space
-        rad_low = 12, // called when radiation goes below 0.05 rad/h
-        rad_high = 13, // called when radiation goes above 0.05 rad/h
-        eva_out = 14, // called when going out on eva
-        eva_in = 15, // called when coming back from eva
-        action1 = 16, // called when pressing 1
-        action2 = 17, // called when pressing 2
-        action3 = 18, // called when pressing 3
-        action4 = 19, // called when pressing 4
-        action5 = 20, // called when pressing 5
-        last = 21
+        PowerLow = 1, // called when ec level goes below 15%
+        PowerHigh = 2, // called when ec level goes above 15%
+        Sunlight = 3, // called when sun rise
+        Shadow = 4, // called when sun set
+        Unlinked = 5, // called when signal is lost
+        Linked = 6, // called when signal is regained
+        DriveFull = 7, // called when storage capacity goes below 15%
+        DriveEmpty = 8, // called when storage capacity goes above 30%
+        Landed = 9, // called on landing
+        Atmo = 10, // called on entering atmosphere
+        Space = 11, // called on reaching space
+        RadLow = 12, // called when radiation goes below 0.05 rad/h
+        RadHigh = 13, // called when radiation goes above 0.05 rad/h
+        EvaOut = 14, // called when going out on eva
+        EvaIn = 15, // called when coming back from eva
+        Action1 = 16, // called when pressing 1
+        Action2 = 17, // called when pressing 2
+        Action3 = 18, // called when pressing 3
+        Action4 = 19, // called when pressing 4
+        Action5 = 20, // called when pressing 5
+        Last = 21
     }
 
     public sealed class Computer
     {
+        private readonly Dictionary<ScriptType, Script> _scripts;
+
         public Computer(ConfigNode node)
         {
-            scripts = new Dictionary<ScriptType, Script>();
+            _scripts = new Dictionary<ScriptType, Script>();
 
             if (node == null)
+            {
                 return;
+            }
 
             // load scripts
-            foreach (var script_node in node.GetNode("scripts").GetNodes())
+            foreach (var scriptNode in node.GetNode("scripts").GetNodes())
             {
-                scripts.Add((ScriptType) Lib.Parse.ToUInt(script_node.name), new Script(script_node));
+                _scripts.Add((ScriptType) Lib.Parse.ToUInt(scriptNode.name), new Script(scriptNode));
             }
         }
 
         public void Save(ConfigNode node)
         {
             // save scripts
-            var scripts_node = node.AddNode("scripts");
-            foreach (var p in scripts)
+            var scriptsNode = node.AddNode("scripts");
+            foreach (var p in _scripts.Where(p => p.Value.States.Count != 0))
             {
-                if (p.Value.states.Count == 0) continue; //< empty-script optimization
-                p.Value.Save(scripts_node.AddNode(((uint) p.Key).ToString()));
+                p.Value.Save(scriptsNode.AddNode(((uint) p.Key).ToString()));
             }
         }
 
         // get a script
         public Script Get(ScriptType type)
         {
-            if (!scripts.ContainsKey(type)) scripts.Add(type, new Script());
-            return scripts[type];
+            if (!_scripts.ContainsKey(type))
+            {
+                _scripts.Add(type, new Script());
+            }
+
+            return _scripts[type];
         }
 
         // execute a script
         public void Execute(Vessel v, ScriptType type)
         {
             // do nothing if there is no EC left on the vessel
-            ResourceInfo ec = ResourceCache.GetResource(v, "ElectricCharge");
-            if (ec.Amount <= double.Epsilon) return;
+            var ec = ResourceCache.GetResource(v, "ElectricCharge");
+
+            if (ec.Amount <= double.Epsilon)
+            {
+                return;
+            }
 
             // get the script
-            Script script;
-            if (scripts.TryGetValue(type, out script))
+            if (!_scripts.TryGetValue(type, out var script))
             {
-                // execute the script
-                script.Execute(GetModuleDevices(v));
+                return;
+            }
 
-                // show message to the user
-                // - unless the script is empty (can happen when being edited)
-                if (script.states.Count > 0 && v.KerbalismData().cfg_script)
-                {
-                    Message.Post(Lib.BuildString(Local.UI_scriptvessel, " <b>", v.vesselName, "</b>"));
-                }
+            // execute the script
+            script.Execute(GetModuleDevices(v));
+
+            // show message to the user
+            // - unless the script is empty (can happen when being edited)
+            if (script.States.Count > 0 && v.KerbalismData().cfg_script)
+            {
+                Message.Post(Lib.BuildString(Local.UI_scriptvessel, " <b>", v.vesselName, "</b>"));
             }
         }
 
@@ -93,23 +106,27 @@ namespace Kerbalism.Automation
         public void Automate(Vessel v, VesselData vd, VesselResources resources)
         {
             // do nothing if automation is disabled
-            if (!Features.Automation) return;
+            if (!Features.Automation)
+            {
+                return;
+            }
 
             // get current states
-            ResourceInfo ec = resources.GetResource(v, "ElectricCharge");
-            bool sunlight = !vd.EnvInFullShadow;
-            bool power_low = ec.Level < 0.2;
-            bool power_high = ec.Level > 0.8;
-            bool radiation_low = vd.EnvRadiation < 0.000005552; //< 0.02 rad/h
-            bool radiation_high = vd.EnvRadiation > 0.00001388; //< 0.05 rad/h
-            bool signal = vd.Connection.linked;
-            bool drive_full = vd.DrivesFreeSpace < double.MaxValue && (vd.DrivesFreeSpace / vd.DrivesCapacity < 0.15);
-            bool drive_empty = vd.DrivesFreeSpace >= double.MaxValue || (vd.DrivesFreeSpace / vd.DrivesCapacity > 0.9);
+            var ec = resources.GetResource(v, "ElectricCharge");
+            var sunlight = !vd.EnvInFullShadow;
+            var powerLow = ec.Level < 0.2;
+            var powerHigh = ec.Level > 0.8;
+            var radiationLow = vd.EnvRadiation < 0.000005552; //< 0.02 rad/h
+            var radiationHigh = vd.EnvRadiation > 0.00001388; //< 0.05 rad/h
+            var signal = vd.Connection.linked;
+            var driveFull = vd.DrivesFreeSpace < double.MaxValue && (vd.DrivesFreeSpace / vd.DrivesCapacity < 0.15);
+            var driveEmpty = vd.DrivesFreeSpace >= double.MaxValue || (vd.DrivesFreeSpace / vd.DrivesCapacity > 0.9);
 
             // get current situation
-            bool landed = false;
-            bool atmo = false;
-            bool space = false;
+            var landed = false;
+            var atmo = false;
+            var space = false;
+
             switch (v.situation)
             {
                 case Vessel.Situations.LANDED:
@@ -128,101 +145,102 @@ namespace Kerbalism.Automation
                     break;
             }
 
-
             // compile list of scripts that need to be called
-            var to_exec = new List<Script>();
-            foreach (var p in scripts)
+            var toExec = new List<Script>();
+            foreach (var p in _scripts)
             {
-                ScriptType type = p.Key;
-                Script script = p.Value;
-                if (script.states.Count == 0) continue; //< skip empty scripts (may happen during editing)
+                var type = p.Key;
+                var script = p.Value;
+                if (script.States.Count == 0) continue; //< skip empty scripts (may happen during editing)
 
                 switch (type)
                 {
-                    case ScriptType.landed:
-                        if (landed && script.prev == "0") to_exec.Add(script);
-                        script.prev = landed ? "1" : "0";
+                    case ScriptType.Landed:
+                        if (landed && script.Prev == "0") toExec.Add(script);
+                        script.Prev = landed ? "1" : "0";
                         break;
 
-                    case ScriptType.atmo:
-                        if (atmo && script.prev == "0") to_exec.Add(script);
-                        script.prev = atmo ? "1" : "0";
+                    case ScriptType.Atmo:
+                        if (atmo && script.Prev == "0") toExec.Add(script);
+                        script.Prev = atmo ? "1" : "0";
                         break;
 
-                    case ScriptType.space:
-                        if (space && script.prev == "0") to_exec.Add(script);
-                        script.prev = space ? "1" : "0";
+                    case ScriptType.Space:
+                        if (space && script.Prev == "0") toExec.Add(script);
+                        script.Prev = space ? "1" : "0";
                         break;
 
-                    case ScriptType.sunlight:
-                        if (sunlight && script.prev == "0") to_exec.Add(script);
-                        script.prev = sunlight ? "1" : "0";
+                    case ScriptType.Sunlight:
+                        if (sunlight && script.Prev == "0") toExec.Add(script);
+                        script.Prev = sunlight ? "1" : "0";
                         break;
 
-                    case ScriptType.shadow:
-                        if (!sunlight && script.prev == "0") to_exec.Add(script);
-                        script.prev = !sunlight ? "1" : "0";
+                    case ScriptType.Shadow:
+                        if (!sunlight && script.Prev == "0") toExec.Add(script);
+                        script.Prev = !sunlight ? "1" : "0";
                         break;
 
-                    case ScriptType.power_high:
-                        if (power_high && script.prev == "0") to_exec.Add(script);
-                        script.prev = power_high ? "1" : "0";
+                    case ScriptType.PowerHigh:
+                        if (powerHigh && script.Prev == "0") toExec.Add(script);
+                        script.Prev = powerHigh ? "1" : "0";
                         break;
 
-                    case ScriptType.power_low:
-                        if (power_low && script.prev == "0") to_exec.Add(script);
-                        script.prev = power_low ? "1" : "0";
+                    case ScriptType.PowerLow:
+                        if (powerLow && script.Prev == "0") toExec.Add(script);
+                        script.Prev = powerLow ? "1" : "0";
                         break;
 
-                    case ScriptType.rad_low:
-                        if (radiation_low && script.prev == "0") to_exec.Add(script);
-                        script.prev = radiation_low ? "1" : "0";
+                    case ScriptType.RadLow:
+                        if (radiationLow && script.Prev == "0") toExec.Add(script);
+                        script.Prev = radiationLow ? "1" : "0";
                         break;
 
-                    case ScriptType.rad_high:
-                        if (radiation_high && script.prev == "0") to_exec.Add(script);
-                        script.prev = radiation_high ? "1" : "0";
+                    case ScriptType.RadHigh:
+                        if (radiationHigh && script.Prev == "0") toExec.Add(script);
+                        script.Prev = radiationHigh ? "1" : "0";
                         break;
-                    case ScriptType.linked:
-                        if (signal && script.prev == "0") to_exec.Add(script);
-                        script.prev = signal ? "1" : "0";
-                        break;
-
-                    case ScriptType.unlinked:
-                        if (!signal && script.prev == "0") to_exec.Add(script);
-                        script.prev = !signal ? "1" : "0";
+                    case ScriptType.Linked:
+                        if (signal && script.Prev == "0") toExec.Add(script);
+                        script.Prev = signal ? "1" : "0";
                         break;
 
-                    case ScriptType.drive_full:
-                        if (drive_full && script.prev == "0") to_exec.Add(script);
-                        script.prev = drive_full ? "1" : "0";
+                    case ScriptType.Unlinked:
+                        if (!signal && script.Prev == "0") toExec.Add(script);
+                        script.Prev = !signal ? "1" : "0";
                         break;
 
-                    case ScriptType.drive_empty:
-                        if (drive_empty && script.prev == "0") to_exec.Add(script);
-                        script.prev = drive_empty ? "1" : "0";
+                    case ScriptType.DriveFull:
+                        if (driveFull && script.Prev == "0") toExec.Add(script);
+                        script.Prev = driveFull ? "1" : "0";
+                        break;
+
+                    case ScriptType.DriveEmpty:
+                        if (driveEmpty && script.Prev == "0") toExec.Add(script);
+                        script.Prev = driveEmpty ? "1" : "0";
                         break;
                 }
             }
 
             // if there are scripts to call
-            if (to_exec.Count > 0)
+            if (toExec.Count <= 0)
             {
-                // get list of devices
-                // - we avoid creating it when there are no scripts to be executed, making its overall cost trivial
-                List<Device> devices = GetModuleDevices(v);
+                return;
+            }
 
-                // execute all scripts
-                foreach (Script script in to_exec)
-                {
-                    script.Execute(devices);
-                }
+            // get list of devices
+            // - we avoid creating it when there are no scripts to be executed, making its overall cost trivial
+            var devices = GetModuleDevices(v);
 
-                // show message to the user
-                if (v.KerbalismData().cfg_script)
-                {
-                    Message.Post(Lib.BuildString("Script called on vessel <b>", v.vesselName, "</b>"));
-                }
+            // execute all scripts
+            foreach (var script in toExec)
+            {
+                script.Execute(devices);
+            }
+
+            // show message to the user
+            if (v.KerbalismData().cfg_script)
+            {
+                Message.Post(Lib.BuildString("Script called on vessel <b>", v.vesselName, "</b>"));
             }
         }
 
@@ -230,7 +248,7 @@ namespace Kerbalism.Automation
         // - the list is only valid for a single simulation step
         public static List<Device> GetModuleDevices(Vessel v)
         {
-            List<Device> moduleDevices = Cache.VesselObjectsCache<List<Device>>(v, "computer");
+            var moduleDevices = Cache.VesselObjectsCache<List<Device>>(v, "computer");
             if (moduleDevices != null)
                 return moduleDevices;
 
@@ -242,7 +260,7 @@ namespace Kerbalism.Automation
             // loaded vessel
             if (v.loaded)
             {
-                foreach (PartModule m in Lib.FindModules<PartModule>(v))
+                foreach (var m in Lib.FindModules<PartModule>(v))
                 {
                     switch (m.moduleName)
                     {
@@ -292,27 +310,27 @@ namespace Kerbalism.Automation
             else
             {
                 // store data required to support multiple modules of same type in a part
-                var PD = new Dictionary<string, Lib.Module_prefab_data>();
+                var pd = new Dictionary<string, Lib.Module_prefab_data>();
 
                 // for each part
-                foreach (ProtoPartSnapshot p in v.protoVessel.protoPartSnapshots)
+                foreach (var p in v.protoVessel.protoPartSnapshots)
                 {
                     // get part prefab (required for module properties)
-                    Part part_prefab = PartLoader.getPartInfoByName(p.partName).partPrefab;
+                    var partPrefab = PartLoader.getPartInfoByName(p.partName).partPrefab;
 
                     // get all module prefabs
-                    var module_prefabs = part_prefab.FindModulesImplementing<PartModule>();
+                    var modulePrefabs = partPrefab.FindModulesImplementing<PartModule>();
 
                     // clear module indexes
-                    PD.Clear();
+                    pd.Clear();
 
                     // for each module
-                    foreach (ProtoPartModuleSnapshot m in p.modules)
+                    foreach (var m in p.modules)
                     {
                         // get the module prefab
                         // if the prefab doesn't contain this module, skip it
-                        PartModule module_prefab = Lib.ModulePrefab(module_prefabs, m.moduleName, PD);
-                        if (!module_prefab) continue;
+                        var modulePrefab = Lib.ModulePrefab(modulePrefabs, m.moduleName, pd);
+                        if (!modulePrefab) continue;
 
                         // if the module is disabled, skip it
                         // note: this must be done after ModulePrefab is called, so that indexes are right
@@ -322,35 +340,35 @@ namespace Kerbalism.Automation
                         switch (m.moduleName)
                         {
                             case "Laboratory":
-                                device = new ProtoLaboratoryDevice(module_prefab as Laboratory, p, m);
+                                device = new ProtoLaboratoryDevice(modulePrefab as Laboratory, p, m);
                                 break;
                             case "Experiment":
-                                device = new ProtoExperimentDevice(module_prefab as Experiment, p, m, v);
+                                device = new ProtoExperimentDevice(modulePrefab as Experiment, p, m, v);
                                 break;
                             case "SolarPanelFixer":
-                                device = new ProtoPanelDevice(module_prefab as SolarPanelFixer, p, m);
+                                device = new ProtoPanelDevice(modulePrefab as SolarPanelFixer, p, m);
                                 break;
                             case "ModuleLight":
                             case "ModuleColoredLensLight":
                             case "ModuleMultiPointSurfaceLight":
-                                device = new ProtoLightDevice(module_prefab as ModuleLight, p, m);
+                                device = new ProtoLightDevice(modulePrefab as ModuleLight, p, m);
                                 break;
                             case "SCANsat":
-                                device = new ProtoScannerDevice(module_prefab, p, m, v);
+                                device = new ProtoScannerDevice(modulePrefab, p, m, v);
                                 break;
                             case "ModuleSCANresourceScanner":
-                                device = new ProtoScannerDevice(module_prefab, p, m, v);
+                                device = new ProtoScannerDevice(modulePrefab, p, m, v);
                                 break;
                             case "ModuleDataTransmitter":
                             case "ModuleDataTransmitterFeedeable":
-                                device = new ProtoAntennaDevice(module_prefab as ModuleDataTransmitter, p, m);
+                                device = new ProtoAntennaDevice(modulePrefab as ModuleDataTransmitter, p, m);
                                 break;
                             case "ModuleRTAntenna":
                             case "ModuleRTAntennaPassive":
-                                device = new ProtoAntennaRTDevice(module_prefab, p, m);
+                                device = new ProtoAntennaRTDevice(modulePrefab, p, m);
                                 break;
                             case "KerbalismSentinel":
-                                device = new ProtoSentinelDevice(module_prefab as KerbalismSentinel, p, m, v);
+                                device = new ProtoSentinelDevice(modulePrefab as KerbalismSentinel, p, m, v);
                                 break;
                             default: continue;
                         }
@@ -365,20 +383,18 @@ namespace Kerbalism.Automation
             // in reverse (the list will be presented from end to start in the UI)
             moduleDevices.Sort((b, a) =>
             {
-                int xdiff = a.DeviceType.CompareTo(b.DeviceType);
-                if (xdiff != 0) return xdiff;
-                else return a.Name.CompareTo(b.Name);
+                var xdiff = a.DeviceType.CompareTo(b.DeviceType);
+
+                return xdiff != 0 ? xdiff : a.Name.CompareTo(b.Name);
             });
 
             // now add vessel wide devices to the end of the list
-            VesselData vd = v.KerbalismData();
+            var vd = v.KerbalismData();
 
             moduleDevices.Add(new VesselDeviceTransmit(v, vd)); // vessel wide transmission toggle
 
             Cache.SetVesselObjectsCache(v, "computer", moduleDevices);
             return moduleDevices;
         }
-
-        Dictionary<ScriptType, Script> scripts;
     }
-} // KERBALISM
+}

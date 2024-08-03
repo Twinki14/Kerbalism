@@ -16,7 +16,7 @@ namespace Kerbalism.Comms
 
         protected override void UpdateNetwork(ConnectionInfo connection)
         {
-            var v = vd.Vessel;
+            var v = Vd.Vessel;
 
             var vIsNull = v == null || v.connection == null;
 
