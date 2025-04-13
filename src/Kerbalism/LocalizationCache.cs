@@ -398,15 +398,7 @@ namespace Kerbalism
         public static string BodyInfo_breathable_no = GetLoc("BodyInfo_breathable_no"); // "no"
         public static string BodyInfo_lightabsorption = GetLoc("BodyInfo_lightabsorption"); // "light absorption"
         public static string BodyInfo_gammaabsorption = GetLoc("BodyInfo_gammaabsorption"); // "gamma absorption"
-        public static string BodyInfo_RADIATION = GetLoc("BodyInfo_RADIATION"); // "RADIATION"
-        public static string BodyInfo_solaractivity = GetLoc("BodyInfo_solaractivity"); // "solar activity"
 
-        public static string
-            BodyInfo_radiationonsurface = GetLoc("BodyInfo_radiationonsurface"); // "radiation on surface:"
-
-        public static string BodyInfo_innerbelt = GetLoc("BodyInfo_innerbelt"); // "inner belt: "
-        public static string BodyInfo_outerbelt = GetLoc("BodyInfo_outerbelt"); // "outer belt: "
-        public static string BodyInfo_magnetopause = GetLoc("BodyInfo_magnetopause"); // "magnetopause:"
         public static string BodyInfo_show = GetLoc("BodyInfo_show"); // "show"
         public static string BodyInfo_hide = GetLoc("BodyInfo_hide"); // "hide"
         public static string BodyInfo_unknown = GetLoc("BodyInfo_unknown"); // "unknown"
@@ -1300,7 +1292,6 @@ namespace Kerbalism
         public static string Planner_outerbelt = GetLoc("Planner_outerbelt"); // "outer belt"
         public static string Planner_interplanetary = GetLoc("Planner_interplanetary"); // "interplanetary"
         public static string Planner_interstellar = GetLoc("Planner_interstellar"); // "interstellar"
-        public static string Planner_RADIATION = GetLoc("Planner_RADIATION"); // "RADIATION"
         public static string Planner_orbit = GetLoc("Planner_orbit"); // "orbit"
         public static string Planner_emission = GetLoc("Planner_emission"); // "emission"
 
@@ -1473,9 +1464,6 @@ namespace Kerbalism
         public static string
             Situation_SouthernHemisphere = GetLoc("Situation_SouthernHemisphere"); // "south hemisphere"
 
-        public static string Situation_InnerBelt = GetLoc("Situation_InnerBelt"); // "inner belt"
-        public static string Situation_OuterBelt = GetLoc("Situation_OuterBelt"); // "outer belt"
-        public static string Situation_Magnetosphere = GetLoc("Situation_Magnetosphere"); // "magnetosphere"
         public static string Situation_Interstellar = GetLoc("Situation_Interstellar"); // "interstellar"
         public static string Situation_Reentry = GetLoc("Situation_Reentry"); // "reentry"
 

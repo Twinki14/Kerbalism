@@ -29,11 +29,6 @@ namespace Kerbalism.Planner
             Profile.Profile.supplies.FindAll(k => k.resource != "ElectricCharge")
                 .ForEach(k => supplies.Add(k.resource));
 
-            // special panels
-            // - stress & radiation panels require that a rule using the living_space/radiation modifier exist (current limitation)
-            if (Features.Radiation)
-                panel_special.Add("radiation");
-
             panel_environment.Add("environment");
         }
 

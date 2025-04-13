@@ -52,8 +52,6 @@
     <Compile Include="Comms\CommsMessages.cs"/>
     <Compile Include="Comms\ConnectionInfo.cs"/>
     <Compile Include="Comms\IConnectionInfo.cs"/>
-    <Compile Include="Contracts\CrossBelt.cs"/>
-    <Compile Include="Contracts\CrossHeliopause.cs" />
     <Compile Include="Contracts\SpaceAnalysis.cs"/>
     <Compile Include="Database\DB.cs"/>
     <Compile Include="Database\LandmarkData.cs"/>
@@ -164,7 +162,6 @@
     <Compile Include="Patches\DeployedScienceExperiment_SendDataToComms.cs"/>
     <Compile Include="Utility\Serenity.cs"/>
     <Compile Include="Patches\VesselRecovery_OnVesselRecovered.cs"/>
-    <Compile Include="Radiation\Radiation.cs"/>
     <Compile Include="Database\ResourceUpdateDelegate.cs"/>
     <Compile Include="Modules\IKerbalismModule.cs"/>
     <Compile Include="Patches\ModuleDataTransmitter_GetInfo.cs"/>
@@ -176,6 +173,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config"/>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Radiation\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets"/>
   <Import Project="$(SolutionDir)\KSPCommon.props"/>

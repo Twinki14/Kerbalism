@@ -19,8 +19,6 @@ namespace Kerbalism.Science
             TemperatureMax,
             AltitudeMin,
             AltitudeMax,
-            RadiationMin,
-            RadiationMax,
             Shadow,
             Sunlight,
             CrewMin,
@@ -34,10 +32,6 @@ namespace Kerbalism.Science
             SunAngleMax,
 
             AbsoluteZero,
-            InnerBelt,
-            OuterBelt,
-            MagneticBelt,
-            Magnetosphere,
             InterStellar,
 
             SurfaceSpeedMin,
@@ -147,12 +141,6 @@ namespace Kerbalism.Science
                         break;
                     case Require.AltitudeMax:
                         TestReq((c, r) => c <= r, v.altitude, (double) Requires[i].value, results[i]);
-                        break;
-                    case Require.RadiationMin:
-                        TestReq((c, r) => c >= r, vd.EnvRadiation, (double) Requires[i].value, results[i]);
-                        break;
-                    case Require.RadiationMax:
-                        TestReq((c, r) => c <= r, vd.EnvRadiation, (double) Requires[i].value, results[i]);
                         break;
 
                     case Require.SunAngleMin:
@@ -271,18 +259,6 @@ namespace Kerbalism.Science
                         break;
                     case Require.AbsoluteZero:
                         TestReq(() => vd.EnvTemperature < 30.0, results[i]);
-                        break;
-                    case Require.InnerBelt:
-                        TestReq(() => vd.EnvInnerBelt, results[i]);
-                        break;
-                    case Require.OuterBelt:
-                        TestReq(() => vd.EnvOuterBelt, results[i]);
-                        break;
-                    case Require.MagneticBelt:
-                        TestReq(() => vd.EnvInnerBelt || vd.EnvOuterBelt, results[i]);
-                        break;
-                    case Require.Magnetosphere:
-                        TestReq(() => vd.EnvMagnetosphere, results[i]);
                         break;
                     case Require.InterStellar:
                         TestReq(() => Lib.IsSun(v.mainBody) && vd.EnvInterstellar, results[i]);
@@ -444,8 +420,6 @@ namespace Kerbalism.Science
                 case Require.TemperatureMax:
                 case Require.AltitudeMin:
                 case Require.AltitudeMax:
-                case Require.RadiationMin:
-                case Require.RadiationMax:
                 case Require.AtmosphereAltMin:
                 case Require.AtmosphereAltMax:
                 case Require.SunAngleMin:
@@ -560,9 +534,6 @@ namespace Kerbalism.Science
                 case Require.AltAboveGroundMax:
                 case Require.MaxAsteroidDistance:
                     return Lib.HumanReadableDistance((double) reqValue);
-                case Require.RadiationMin:
-                case Require.RadiationMax:
-                    return Lib.HumanReadableRadiation((double) reqValue);
                 case Require.SurfaceSpeedMin:
                 case Require.SurfaceSpeedMax:
                 case Require.VerticalSpeedMin:
@@ -620,8 +591,6 @@ namespace Kerbalism.Science
                 case Require.TemperatureMax: return Local.ExperimentReq_TemperatureMax; //"Max. temperature "
                 case Require.AltitudeMin: return Local.ExperimentReq_AltitudeMin; //"Min. altitude "
                 case Require.AltitudeMax: return Local.ExperimentReq_AltitudeMax; //"Max. altitude "
-                case Require.RadiationMin: return Local.ExperimentReq_RadiationMin; //"Min. radiation "
-                case Require.RadiationMax: return Local.ExperimentReq_RadiationMax; //"Max. radiation "
                 case Require.SunAngleMin: return Local.ExperimentReq_SunAngleMin; //"Min sun-surface angle"
                 case Require.SunAngleMax: return Local.ExperimentReq_SunAngleMax; //"Max sun-surface angle"
                 case Require.SurfaceSpeedMin: return Local.ExperimentReq_SurfaceSpeedMin; //"Min. surface speed "
@@ -666,10 +635,6 @@ namespace Kerbalism.Science
                 case Require.Module: return Local.ExperimentReq_Module; //"Need module "
 
                 case Require.AbsoluteZero:
-                case Require.InnerBelt:
-                case Require.OuterBelt:
-                case Require.MagneticBelt:
-                case Require.Magnetosphere:
                 case Require.InterStellar:
                 case Require.Shadow:
                 case Require.Sunlight:

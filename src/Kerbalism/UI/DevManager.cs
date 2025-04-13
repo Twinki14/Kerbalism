@@ -194,8 +194,6 @@ namespace Kerbalism
                 case ScriptType.Shadow: return Local.DevManager_NameTabShadow;
                 case ScriptType.PowerHigh: return Local.DevManager_NameTabPowerHigh;
                 case ScriptType.PowerLow: return Local.DevManager_NameTabPowerLow;
-                case ScriptType.RadHigh: return Local.DevManager_NameTabRadHigh;
-                case ScriptType.RadLow: return Local.DevManager_NameTabRadLow;
                 case ScriptType.Linked: return Local.DevManager_NameTabLinked;
                 case ScriptType.Unlinked: return Local.DevManager_NameTabUnlinked;
                 case ScriptType.EvaOut: return Local.DevManager_NameTabEVAOut;
@@ -227,10 +225,6 @@ namespace Kerbalism
                     return Local.DevManager_TabPowerHigh; // <i>Called when EC level goes above 80%</i>
                 case ScriptType.PowerLow:
                     return Local.DevManager_TabPowerLow; // <i>Called when EC level goes below 20%</i>
-                case ScriptType.RadHigh:
-                    return Local.DevManager_TabRadHigh; // <i>Called when radiation exceed 0.05 rad/h</i>
-                case ScriptType.RadLow:
-                    return Local.DevManager_TabRadLow; // <i>Called when radiation goes below 0.02 rad/h</i>
                 case ScriptType.Linked: return Local.DevManager_TabLinked; // <i>Called when signal is regained</i>
                 case ScriptType.Unlinked: return Local.DevManager_TabUnlinked; // <i>Called when signal is lost</i>
                 case ScriptType.EvaOut: return Local.DevManager_TabEVAOut; // <i>Called when going out on EVA</i>

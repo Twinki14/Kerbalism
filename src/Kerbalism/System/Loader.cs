@@ -64,7 +64,6 @@ namespace Kerbalism.System
             Inject(root, "Profile", Lib.UppercaseFirst(Settings.Profile));
             if (Features.Automation) Inject(root, "Feature", "Automation");
             if (Features.Science) Inject(root, "Feature", "Science");
-            if (Features.Radiation) Inject(root, "Feature", "Radiation");
 
             // inject harmony patches
             harmonyInstance = new Harmony("Kerbalism");

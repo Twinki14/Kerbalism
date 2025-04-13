@@ -117,7 +117,6 @@ namespace Kerbalism.System
                 {
                     // core game systems
                     Sim.Init(); // find suns (Kopernicus support)
-                    Radiation.Init(); // create the radiation fields
                     ScienceDB.Init(); // build the science database (needs Sim.Init() and Radiation.Init() first)
                     Science.Science.Init(); // register the science hijacker
 
@@ -310,11 +309,6 @@ namespace Kerbalism.System
                     // get most used resource
                     ResourceInfo ec = resources.GetResource(v, "ElectricCharge");
 
-                    UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.FixedUpdate.Loaded.Radiation");
-                    // show belt warnings
-                    Radiation.BeltWarnings(v, vd);
-                    UnityEngine.Profiling.Profiler.EndSample();
-
                     UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.FixedUpdate.Loaded.Comms");
                     CommsMessages.Update(v, vd);
                     UnityEngine.Profiling.Profiler.EndSample();
@@ -382,12 +376,6 @@ namespace Kerbalism.System
 
                 // get most used resource
                 ResourceInfo last_ec = last_resources.GetResource(last_v, "ElectricCharge");
-
-                UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.FixedUpdate.Unloaded.Radiation");
-                // show belt warnings
-                Radiation.BeltWarnings(last_v, last_vd);
-
-                UnityEngine.Profiling.Profiler.EndSample();
 
                 UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.FixedUpdate.Unloaded.Comms");
                 CommsMessages.Update(last_v, last_vd);
@@ -558,9 +546,6 @@ namespace Kerbalism.System
             // - avoid weird situation when in some user installation MapIsEnabled is true in the space center
             if (!MapView.MapIsEnabled || HighLogic.LoadedScene == GameScenes.SPACECENTER)
                 return;
-
-            // commit all geometry
-            Radiation.Render();
 
             // render all committed geometry
             LineRenderer.Render();

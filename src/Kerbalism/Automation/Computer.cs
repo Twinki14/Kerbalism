@@ -21,8 +21,6 @@ namespace Kerbalism.Automation
         Landed = 9, // called on landing
         Atmo = 10, // called on entering atmosphere
         Space = 11, // called on reaching space
-        RadLow = 12, // called when radiation goes below 0.05 rad/h
-        RadHigh = 13, // called when radiation goes above 0.05 rad/h
         EvaOut = 14, // called when going out on eva
         EvaIn = 15, // called when coming back from eva
         Action1 = 16, // called when pressing 1
@@ -116,8 +114,6 @@ namespace Kerbalism.Automation
             var sunlight = !vd.EnvInFullShadow;
             var powerLow = ec.Level < 0.2;
             var powerHigh = ec.Level > 0.8;
-            var radiationLow = vd.EnvRadiation < 0.000005552; //< 0.02 rad/h
-            var radiationHigh = vd.EnvRadiation > 0.00001388; //< 0.05 rad/h
             var signal = vd.Connection.linked;
             var driveFull = vd.DrivesFreeSpace < double.MaxValue && (vd.DrivesFreeSpace / vd.DrivesCapacity < 0.15);
             var driveEmpty = vd.DrivesFreeSpace >= double.MaxValue || (vd.DrivesFreeSpace / vd.DrivesCapacity > 0.9);
@@ -188,16 +184,6 @@ namespace Kerbalism.Automation
                     case ScriptType.PowerLow:
                         if (powerLow && script.Prev == "0") toExec.Add(script);
                         script.Prev = powerLow ? "1" : "0";
-                        break;
-
-                    case ScriptType.RadLow:
-                        if (radiationLow && script.Prev == "0") toExec.Add(script);
-                        script.Prev = radiationLow ? "1" : "0";
-                        break;
-
-                    case ScriptType.RadHigh:
-                        if (radiationHigh && script.Prev == "0") toExec.Add(script);
-                        script.Prev = radiationHigh ? "1" : "0";
                         break;
                     case ScriptType.Linked:
                         if (signal && script.Prev == "0") toExec.Add(script);

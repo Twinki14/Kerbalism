@@ -35,9 +35,6 @@ namespace Kerbalism.Science
         NoBiome = byte.MaxValue, // if used, will be registered as the global, biome-agnostic situation
         NorthernHemisphere = 254,
         SouthernHemisphere = 253,
-        InnerBelt = 252,
-        OuterBelt = 251,
-        Magnetosphere = 250,
         Interstellar = 249,
         Reentry = 248
     }
@@ -93,15 +90,6 @@ namespace Kerbalism.Science
         {
             switch (virtualBiome)
             {
-                case VirtualBiome.InnerBelt:
-                    if (!Radiation.Info(body).model.has_inner) return false;
-                    break;
-                case VirtualBiome.OuterBelt:
-                    if (!Radiation.Info(body).model.has_outer) return false;
-                    break;
-                case VirtualBiome.Magnetosphere:
-                    if (!Radiation.Info(body).model.has_pause) return false;
-                    break;
                 case VirtualBiome.Interstellar:
                     if (!Lib.IsSun(body)) return false;
                     break;
@@ -214,9 +202,6 @@ namespace Kerbalism.Science
                 case VirtualBiome.NoBiome: return Local.Situation_NoBiome; //"global"
                 case VirtualBiome.NorthernHemisphere: return Local.Situation_NorthernHemisphere; //"north hemisphere"
                 case VirtualBiome.SouthernHemisphere: return Local.Situation_SouthernHemisphere; //"south hemisphere"
-                case VirtualBiome.InnerBelt: return Local.Situation_InnerBelt; //"inner belt"
-                case VirtualBiome.OuterBelt: return Local.Situation_OuterBelt; //"outer belt"
-                case VirtualBiome.Magnetosphere: return Local.Situation_Magnetosphere; //"magnetosphere"
                 case VirtualBiome.Interstellar: return Local.Situation_Interstellar; //"interstellar"
                 case VirtualBiome.Reentry: return Local.Situation_Reentry; //"reentry"
                 default: return Local.Situation_None; //"none"
@@ -248,9 +233,6 @@ namespace Kerbalism.Science
                 case VirtualBiome.NoBiome: return "NoBiome";
                 case VirtualBiome.NorthernHemisphere: return "NorthernHemisphere";
                 case VirtualBiome.SouthernHemisphere: return "SouthernHemisphere";
-                case VirtualBiome.InnerBelt: return "InnerBelt";
-                case VirtualBiome.OuterBelt: return "OuterBelt";
-                case VirtualBiome.Magnetosphere: return "Magnetosphere";
                 case VirtualBiome.Interstellar: return "Interstellar";
                 case VirtualBiome.Reentry: return "Reentry";
                 default: return "None";
@@ -282,9 +264,6 @@ namespace Kerbalism.Science
                 case "NoBiome": return VirtualBiome.NoBiome;
                 case "NorthernHemisphere": return VirtualBiome.NorthernHemisphere;
                 case "SouthernHemisphere": return VirtualBiome.SouthernHemisphere;
-                case "InnerBelt": return VirtualBiome.InnerBelt;
-                case "OuterBelt": return VirtualBiome.OuterBelt;
-                case "Magnetosphere": return VirtualBiome.Magnetosphere;
                 case "Interstellar": return VirtualBiome.Interstellar;
                 case "Reentry": return VirtualBiome.Reentry;
                 default: return VirtualBiome.None;
@@ -452,9 +431,6 @@ namespace Kerbalism.Science
         {
             VirtualBiome.NorthernHemisphere,
             VirtualBiome.SouthernHemisphere,
-            VirtualBiome.InnerBelt,
-            VirtualBiome.OuterBelt,
-            VirtualBiome.Magnetosphere,
             VirtualBiome.Interstellar,
             VirtualBiome.Reentry,
         };

@@ -156,26 +156,6 @@ namespace Kerbalism.Database
 
         double temperature;
 
-        /// <summary> [environment] radiation at vessel position</summary>
-        public double EnvRadiation => radiation;
-
-        double radiation;
-
-        /// <summary> [environment] true if vessel is inside a magnetopause (except the heliosphere)</summary>
-        public bool EnvMagnetosphere => magnetosphere;
-
-        bool magnetosphere;
-
-        /// <summary> [environment] true if vessel is inside a radiation belt</summary>
-        public bool EnvInnerBelt => innerBelt;
-
-        bool innerBelt;
-
-        /// <summary> [environment] true if vessel is inside a radiation belt</summary>
-        public bool EnvOuterBelt => outerBelt;
-
-        bool outerBelt;
-
         /// <summary> [environment] true if vessel is outside sun magnetopause</summary>
         public bool EnvInterstellar => interstellar;
 
@@ -952,21 +932,6 @@ namespace Kerbalism.Database
             UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.VesselData.Temperature");
             temperature = Sim.Temperature(Vessel, position, solarFluxTotal, out albedoFlux, out bodyFlux,
                 out totalFlux);
-            // radiation
-            UnityEngine.Profiling.Profiler.BeginSample("Kerbalism.VesselData.Radiation");
-            gammaTransparency = Sim.GammaTransparency(Vessel.mainBody, Vessel.altitude);
-
-            radiation = Radiation.Compute(Vessel, position, EnvGammaTransparency, mainSun.SunlightFactor,
-                out var new_magnetosphere, out var new_innerBelt, out var new_outerBelt, out interstellar);
-
-            if (new_innerBelt != innerBelt || new_outerBelt != outerBelt || new_magnetosphere != magnetosphere)
-            {
-                innerBelt = new_innerBelt;
-                outerBelt = new_outerBelt;
-                magnetosphere = new_magnetosphere;
-                if (Evaluated) API.OnRadiationFieldChanged.Notify(Vessel, innerBelt, outerBelt, magnetosphere);
-            }
-            UnityEngine.Profiling.Profiler.EndSample();
 
             thermosphere = Sim.InsideThermosphere(Vessel);
             exosphere = Sim.InsideExosphere(Vessel);

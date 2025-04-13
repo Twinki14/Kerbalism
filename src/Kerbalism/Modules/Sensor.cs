@@ -78,7 +78,6 @@ namespace Kerbalism.Modules
             switch (type)
             {
                 case "temperature": return Math.Min(vd.EnvTemperature / 11000.0, 1.0);
-                case "radiation": return Math.Min(vd.EnvRadiation * 3600.0 / 11.0, 1.0);
                 case "pressure":
                     return Math.Min(v.mainBody.GetPressure(v.altitude) / Sim.PressureAtSeaLevel() / 11.0, 1.0);
                 case "gravioli": return Math.Min(vd.EnvGravioli, 1.0);
@@ -93,7 +92,6 @@ namespace Kerbalism.Modules
             switch (type)
             {
                 case "temperature": return vd.EnvTemperature;
-                case "radiation": return vd.EnvRadiation;
                 case "gravioli": return vd.EnvGravioli;
             }
 
@@ -106,7 +104,6 @@ namespace Kerbalism.Modules
             switch (type)
             {
                 case "temperature": return Lib.HumanReadableTemp(vd.EnvTemperature);
-                case "radiation": return Lib.HumanReadableRadiation(vd.EnvRadiation);
                 case "gravioli":
                     return vd.EnvGravioli < 0.33 ? Local.Sensor_shorttextinfo1 :
                         vd.EnvGravioli < 0.66 ? Local.Sensor_shorttextinfo2 :

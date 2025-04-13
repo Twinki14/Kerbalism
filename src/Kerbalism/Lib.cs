@@ -907,23 +907,6 @@ namespace Kerbalism
             return KSPUtil.PrintSI(strength * 0.000001d, "T"); //< strength is micro-tesla
         }
 
-        ///<summary> Pretty-print radiation rate (value is in rem) </summary>
-        public static string SIRadiation(double rad, bool nominal = true)
-        {
-            if (nominal && rad <= Radiation.Nominal) return Local.Generic_NOMINAL; //"nominal"
-
-            rad *= 3600.0;
-            var unit = "rem/h";
-
-            if (Settings.RadiationInSievert)
-            {
-                rad /= 100.0;
-                unit = "Sv/h";
-            }
-
-            return KSPUtil.PrintSI(rad, unit, 3);
-        }
-
         ///<summary> Pretty-print pressure (value is in kPa) </summary>
         public static string SIPressure(double v)
         {
@@ -1088,47 +1071,6 @@ namespace Kerbalism
             return BuildString(flux >= 0.0001 ? flux.ToString("F1") : flux.ToString(), " W/m²");
         }
 
-        ///<summary> Pretty-print magnetic strength </summary>
-        public static string HumanReadableField(double strength)
-        {
-            if (Settings.UseSIUnits)
-                return SIField(strength);
-
-            return BuildString(strength.ToString("F1"), " uT"); //< micro-tesla
-        }
-
-        ///<summary> Pretty-print radiation rate </summary>
-        public static string HumanReadableRadiation(double rad, bool nominal = true)
-        {
-            if (Settings.UseSIUnits)
-                return SIRadiation(rad, nominal);
-
-            if (nominal && rad <= Radiation.Nominal) return Local.Generic_NOMINAL; //"nominal"
-
-            rad *= 3600.0;
-            var unit = "rad/h";
-            var prefix = "";
-
-            if (Settings.RadiationInSievert)
-            {
-                rad /= 100.0;
-                unit = "Sv/h";
-            }
-
-            if (rad < 0.00001)
-            {
-                rad *= 1000000;
-                prefix = "μ";
-            }
-            else if (rad < 0.01)
-            {
-                rad *= 1000;
-                prefix = "m";
-            }
-
-            return BuildString((rad).ToString("F3"), " ", prefix, unit);
-        }
-
         ///<summary> Pretty-print percentage </summary>
         public static string HumanReadablePerc(double v, string format = "F0")
         {
@@ -1142,18 +1084,6 @@ namespace Kerbalism
                 return SIPressure(v);
 
             return BuildString(v.ToString("F1"), " kPa");
-        }
-
-        ///<summary> Pretty-print volume (value is in m^3) </summary>
-        public static string HumanReadableVolume(double v)
-        {
-            return BuildString(v.ToString("F2"), " m³");
-        }
-
-        ///<summary> Pretty-print surface (value is in m^2) </summary>
-        public static string HumanReadableSurface(double v)
-        {
-            return BuildString(v.ToString("F2"), " m²");
         }
 
         ///<summary> Pretty-print mass </summary>

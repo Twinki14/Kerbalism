@@ -139,14 +139,6 @@ namespace Kerbalism.Database
             if (_vd.EnvInterstellar)
                 VirtualBiomes.Add(VirtualBiome.Interstellar);
 
-            if (_vd.EnvInnerBelt)
-                VirtualBiomes.Add(VirtualBiome.InnerBelt);
-            else if (_vd.EnvOuterBelt)
-                VirtualBiomes.Add(VirtualBiome.OuterBelt);
-
-            if (_vd.EnvMagnetosphere)
-                VirtualBiomes.Add(VirtualBiome.Magnetosphere);
-
             if (_vd.Vessel.latitude > 0.0)
                 VirtualBiomes.Add(VirtualBiome.NorthernHemisphere);
             else
